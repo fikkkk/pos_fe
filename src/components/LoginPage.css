@@ -1,0 +1,1450 @@
+/* === Fonts === */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Open+Sans:wght@400;600&display=swap");
+
+@font-face {
+  font-family: "Garet";
+  src: url("/fonts/Garet-Heavy.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* === CSS Variables (safe defaults) === */
+:root {
+  --batik-strip: 48px;   /* tinggi sisa batik bawah panel putih */
+  --otp-size: 64px;      /* sisi kotak OTP (dipakai di layout clean) */
+  --otp-font: 30px;      /* ukuran angka OTP */
+  --otp-gap: 14px;       /* jarak antar kotak OTP */
+}
+
+/* === Layout Utama === */
+.login-wrapper {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* === KIRI: konten text + ilustrasi === */
+.login-left {
+  flex: 1;
+  background-color: white;
+  padding: 48px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* teks & gambar berjarak */
+  align-items: flex-start;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.left-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: -10px;
+}
+
+.left-content h1 {
+  font-family: "Garet", sans-serif;
+  font-size: 50px;
+  font-weight: 700;
+  line-height: 1.4;
+  margin-bottom: 12px;
+}
+
+.red-text { color: #e35555; }
+.purple-text { color: #9747ff; }
+
+.lead {
+  margin-top: -40px !important;
+  color: #32446B;
+  font-size: 16px;
+  font-family: "Open Sans", sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.9px;
+  word-spacing: 0.5px;
+}
+
+/* Ilustrasi di kiri */
+.login-illustration {
+  align-self: center;
+  width: 520px;
+  max-width: 100%;
+  height: auto;
+  margin-top: -20px;
+  object-fit: contain;
+}
+
+/* === KANAN: background + login card === */
+.login-right {
+  flex: 1;
+  position: relative; /* diperlukan untuk center absolut login-card */
+  background: url("/bg-login.png") no-repeat center center;
+  background-size: cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  color: #fff;
+}
+
+/* Login card (tetap terlihat & di tengah) */
+.login-card {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(255, 255, 255, 0.15);
+  width: 480px;
+  height: 500px;
+  padding: 2.5rem 2.2rem;
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  z-index: 2;
+  transition: opacity 0.4s ease;
+}
+
+.login-card.dimmed {
+  opacity: 0.5;
+  filter: blur(1px);
+}
+
+/* Judul LOGIN */
+.card-title {
+  font-family: "Poppins", sans-serif;
+  font-size: 50px;
+  font-weight: 700;
+  color: #fff;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 20px;
+  line-height: 1;
+  transform: scale(1.35);
+  transform-origin: center top;
+  position: relative;
+  top: -20px;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+}
+
+/* Subtitle + garis tipis */
+.subtitle-container { width: 100%; text-align: left; margin-bottom: 24px; }
+.subtitle { font-family: "Poppins", sans-serif; font-size: 15px; color: #fff; font-weight: 500; margin-bottom: 8px; }
+.subtitle-line { width: 100%; height: 2px; background-color: #ffcc80; border-radius: 2px; opacity: 0.9; }
+
+/* Input group dengan ikon */
+.input-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+.input-group .icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #555;
+  width: 18px;
+  height: 18px;
+}
+.input-group::after {
+  content: "";
+  position: absolute;
+  left: 46px;
+  top: 8px;
+  bottom: 8px;
+  width: 1.5px;
+  background-color: rgba(0, 0, 0, 0.15);
+  border-radius: 1px;
+}
+.input-group input {
+  width: 100%;
+  padding: 12px 40px 12px 58px;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 15px;
+  color: #333;
+  border-radius: 8px;
+}
+.toggle-password {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  color: #555;
+}
+
+/* Remember + Forgot link */
+.options { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; margin-bottom: 20px; }
+.remember { display: flex; align-items: center; gap: 6px; }
+
+.custom-checkbox {
+  appearance: none; -webkit-appearance: none; -moz-appearance: none;
+  width: 18px; height: 18px; border-radius: 5px;
+  border: 2px solid #ffb347; background-color: rgba(255, 255, 255, 0.2);
+  cursor: pointer; transition: all 0.2s ease; position: relative;
+}
+.custom-checkbox:hover { background-color: rgba(255, 255, 255, 0.35); }
+.custom-checkbox:checked { background-color: #ffb347; border-color: #ffb347; }
+.custom-checkbox:checked::after {
+  content: "✓"; position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%);
+  color: white; font-size: 12px; font-weight: bold;
+}
+
+.forgot {
+  all: unset;
+  color: #ffffff;
+  font-family: "Poppins", sans-serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+.forgot:hover { transform: scale(1.05); }
+
+/* Terms & tombol login */
+.terms-text { font-family: "Open Sans", sans-serif; font-size: 13px; color: #fff; text-align: center; opacity: 0.9; margin-bottom: 14px; line-height: 1.5; }
+.terms-link { color: #ffcc80; font-weight: 600; text-decoration: none; transition: color 0.3s ease; }
+.terms-link:hover { color: #fff; text-decoration: underline; }
+
+.btn-login {
+  width: 100%; padding: 14px 18px; border-radius: 10px; border: none;
+  font-weight: 700; font-family: "Poppins", sans-serif; font-size: 16px;
+  cursor: pointer; background: linear-gradient(90deg, #ffb347 0%, #ff7a45 100%);
+  color: white; box-shadow: 0 6px 12px rgba(227, 85, 85, 0.4);
+  transition: transform 0.3s ease; margin-top: -6px;
+}
+.btn-login:hover { transform: scale(1.05); }
+
+.signup-text {
+  text-align: center; margin-top: 12px; opacity: 0.95; font-size: 14px; color: #fff; letter-spacing: 0.3px;
+}
+.signup-text a { color: #ff9a3c; text-decoration: none; margin-left: 6px; transition: all 0.3s ease; }
+.signup-text a:hover { color: #ffb347; text-shadow: 0 0 6px rgba(255, 179, 71, 0.4); transform: scale(1.08); font-weight: 600; }
+.signup-text a:active { color: #ff7a45; text-shadow: 0 0 8px rgba(255, 122, 69, 0.5); transform: scale(1.12); }
+
+/* ========== PANEL PUTIH (memuat Forgot / OTP / Create) ========== */
+.white-panel {
+  position: fixed;
+  inset: 0;
+  background: transparent;
+  z-index: 999;
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* kiri 50% - kanan 50% */
+  place-items: center;
+  padding: 40px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* Dekorasi wallpaper batik + scrim putih 90% */
+.white-bg { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+.white-wallpaper { position: absolute; inset: 0; background: url("/batik.png") center/cover no-repeat; opacity: 1; }
+.white-scrim { position: absolute; top: 0; left: 0; right: 0; bottom: var(--batik-strip); background: #ffffff; opacity: 0.9; }
+
+/* Kolom kiri: gambar */
+.white-panel__left { display: flex; align-items: center; justify-content: center; padding-right: 24px; z-index: 3; }
+.white-panel__left img { width: 380px; max-width: 90%; height: auto; object-fit: contain; margin-right: 24px; }
+
+/* Kolom kanan: stack card yang di-slide */
+.white-panel__right {
+  width: 480px;
+  max-width: 90%;
+  height: 500px;
+  position: relative;
+  overflow: visible; /* jangan klip efek scale tombol */
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  z-index: 2;
+}
+
+/* Setiap "card" di dalam stack */
+.stack-card {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 2rem 2rem;
+  box-sizing: border-box;
+  background: transparent; /* card kanan tampil clean */
+}
+
+/* Garis universal hijau */
+.section-line {
+  width: 100%;
+  height: 3px;
+  background-color: #10B981;
+  border-radius: 3px;
+  margin-top: -20px;
+  margin-bottom: 15px;
+  opacity: 0.9;
+}
+
+/* ========== Typografi & form Forgot/OTP/Create ========== */
+.forgot-header {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  margin-top: 10px;
+  margin-bottom: 16px;
+}
+.forgot-icon { width: 70px; height: auto; object-fit: contain; margin-bottom: 0; }
+.forgot-title {
+  font-family: "Poppins", sans-serif;
+  font-size: 50px;
+  font-weight: 700;
+  color: #6A7DA6;
+  line-height: 1.1;
+  margin: 50px 0 0 0;
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+}
+.forgot-F, .forgot-P { color: #32446B; }
+
+.forgot-description {
+  font-size: 15px;
+  color: #555;
+  line-height: 1.6;
+  width: 100%;
+  text-align: left;
+  margin-bottom: 14px;
+}
+
+.forgot-label { font-weight: 600; font-size: 14px; color: #333; margin-bottom: 6px; display: block; }
+
+.forgot-input-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border: 1.5px solid #ccc;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+}
+.forgot-input-group:focus-within { border-color: #2f80ed; box-shadow: 0 0 8px rgba(47, 128, 237, 0.3); }
+.forgot-input-group .icon { position: absolute; left: 12px; color: #888; font-size: 16px; }
+.forgot-input-group input { width: 100%; padding: 12px 14px 12px 36px; border: none; outline: none; font-size: 14px; border-radius: 8px; }
+
+/* Tombol di panel putih */
+.btn-request-forgot,
+.btn-verify,
+.btn-submit {
+  width: 100%;
+  padding: 14px 18px;
+  border-radius: 10px;
+  border: none;
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
+  background: linear-gradient(90deg, #7ed957 0%, #3cb043 100%);
+  color: #fff;
+  margin-bottom: 12px;
+  transition: transform 0.3s ease;
+}
+.btn-request-forgot:hover,
+.btn-verify:hover,
+.btn-submit:hover { transform: scale(1.05); }
+
+.btn-back-forgot-clean,
+.btn-back-otp,
+.btn-back-newpass {
+  width: 100%;
+  padding: 14px 18px;
+  border-radius: 10px;
+  border: none;
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
+  background: linear-gradient(90deg, #7b2ff7 0%, #f107a3 100%);
+  color: #fff;
+  transition: transform 0.3s ease;
+}
+.btn-back-forgot-clean:hover,
+.btn-back-otp:hover,
+.btn-back-newpass:hover { transform: scale(1.05); }
+
+/* Buat newpass-card pasti tampil clean tanpa glass */
+.white-panel__right .newpass-card {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  padding: 0 !important;
+}
+
+/* ========== OTP Layout (clean & center) ========== */
+.otp-right-wrap { display: flex; flex-direction: column; align-items: center; width: 100%; }
+.otp-right-wrap .forgot-label { align-self: flex-start; }
+
+/* Bar OTP di tengah, jarak konsisten */
+.otp-inputs.clean-otp {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--otp-gap);
+  width: 100%;
+  margin: 20px 0 24px 0;
+}
+
+/* Kotak OTP: pakai ukuran variabel */
+.otp-inputs .otp-box,
+.otp-inputs .otp-box.small {
+  flex: 0 0 var(--otp-size);
+  max-width: var(--otp-size);
+  height: var(--otp-size);
+  border-radius: 10px;
+  border: 2px solid orange;
+  background: rgba(255, 255, 255, 0.95);
+  text-align: center;
+  font-size: var(--otp-font);
+  font-weight: 700;
+  color: #333;
+  box-shadow: 0 2px 6px rgba(255, 165, 0, 0.3);
+  transition: all 0.25s ease-in-out;
+  caret-color: transparent;
+}
+.otp-inputs .otp-box:focus { outline: none; border-color: #4caf50; box-shadow: 0 0 10px rgba(76, 175, 80, 0.5); transform: scale(1.05); }
+.otp-inputs .otp-box.filled { border-color: #4caf50; background: #fff; box-shadow: 0 0 6px rgba(76, 175, 80, 0.4); }
+
+/* Teks bantuan & tautan resend */
+.hint-text { text-align: center; color: #666; font-size: 13px; margin: -5px 0 20px; }
+.resend-link { color: #2f80ed; text-decoration: underline; transition: color 0.2s ease; }
+.resend-link:hover { color: #1b5fcc; }
+
+/* === Responsif: kecilkan phone.png bertahap === */
+@media (max-width: 1200px){ .white-panel__left img { width: 340px; margin-right: 20px; } }
+@media (max-width: 900px){ .white-panel__left img { width: 300px; margin-right: 16px; } }
+
+/* === Responsif OTP pada layar kecil === */
+@media (max-width: 480px){
+  :root{
+    --otp-size: clamp(48px, 12vw, 60px);
+    --otp-font: clamp(20px, 5vw, 26px);
+    --otp-gap: 10px;
+  }
+}
+
+/* === Forgot Password only: rapatkan deskripsi ke title+icon === */
+.forgot-card .forgot-header {
+  margin-bottom: 8px !important;   /* dari 16px → 8px biar lebih dekat */
+}
+
+.forgot-card .forgot-description {
+  margin-top: -4px;                /* tarik deskripsi sedikit naik */
+}
+
+.forgot-card .line-forgot { 
+  margin-top: 4px;       /* perbesar untuk lebih turun */
+}
+
+.otp-card .line-otp {
+  margin-top: 12px;
+}
+
+/* Letakkan garis hijau DI BAWAH deskripsi */
+.forgot-card .section-line {
+  margin-bottom: 5px;
+}
+.otp-card .section-line,
+.newpass-card .section-line {
+  margin-top: -5px !important;   /* dari -20px → positif agar turun */
+}
+
+/* === OTP: samakan lebar bar OTP dengan tombol === */
+.otp-card .otp-right-wrap{
+  max-width: 420px;      /* << sesuaikan angka ini dgn lebar tombolmu */
+  width: 100%;
+  margin: 0 auto;        /* center */
+}
+
+/* Pastikan tombol tetap full terhadap container di atas */
+.otp-card .btn-verify,
+.otp-card .btn-back-otp{
+  width: 100%;
+}
+
+/* Kecilkan kotak OTP supaya 6 kotak + gap MUAT di lebar 420px */
+.otp-card{
+  --otp-size: 56px;      /* dari 64px */
+  --otp-gap: 16px;       /* dari 14px */
+}
+
+/* Responsif (opsional) */
+@media (max-width: 480px){
+  .otp-card{
+    --otp-size: clamp(44px, 11vw, 52px);
+    --otp-gap: 10px;
+  }
+  .otp-card .otp-right-wrap{ max-width: 360px; }
+}
+
+.otp-card .forgot-description {
+  padding-bottom: 8px;
+  border-bottom: 3px solid #10B981;
+}
+.otp-card .section-line { display: none; }
+
+/* === Center vertikal semua konten di OTP === */
+.otp-card {
+  justify-content: center !important; /* override dari flex-start */
+}
+
+/* Rapikan jarak biar benar-benar center rapi */
+.otp-card .forgot-header { margin-top: 0 !important; }
+.otp-card .forgot-title  { margin-top: 6px !important; }   /* kalau mau lebih nempel: 0 */
+.otp-card .section-line  { margin-top: 8px !important; }   /* pastikan garis di bawah teks */
+
+/* === Center vertikal untuk Create Password === */
+.newpass-card {
+  justify-content: center !important;  /* dari flex-start → center */
+}
+
+/* Rapikan jarak header biar centering benar-benar pas */
+.newpass-card .forgot-header { margin-top: 0 !important; margin-bottom: 8px !important; }
+.newpass-card .forgot-title  { margin-top: 6px !important; }   /* override yg 50px */
+.newpass-card .section-line  { margin-top: 8px !important; }   /* garis tepat di bawah teks */
+
+/* === (A) Samakan LEBAR kontainer tombol di tiap step === */
+/* Forgot form, OTP wrapper, dan Create form dibuat punya lebar patokan yang sama */
+.forgot-card form,
+.otp-card .otp-right-wrap,
+.newpass-card form {
+  max-width: 420px;   /* << patokan lebar yang dipakai di OTP */
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* === (B) Satukan bentuk tombol hijau & ungu (sudah 100% width) === */
+/* Hijau: Request / Verify / Submit  → semua satu gaya */
+.btn-request-forgot,
+.btn-verify,
+.btn-submit {
+  width: 100%;
+  min-height: 48px;              /* biar tinggi konsisten */
+  padding: 14px 18px;
+  border-radius: 10px;
+  border: none;
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
+  background: linear-gradient(90deg, #7ed957 0%, #3cb043 100%);
+  color: #fff;
+  margin-bottom: 12px;
+  transition: transform 0.3s ease, opacity 0.25s ease;  /* +opacity utk pudar mulus */
+}
+.btn-request-forgot:hover,
+.btn-verify:hover,
+.btn-submit:hover { transform: scale(1.05); }
+
+/* Ungu: Back di semua step → satu gaya */
+.btn-back-forgot-clean,
+.btn-back-otp,
+.btn-back-newpass {
+  width: 100%;
+  min-height: 48px;
+  padding: 14px 18px;
+  border-radius: 10px;
+  border: none;
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
+  background: linear-gradient(90deg, #7b2ff7 0%, #f107a3 100%);
+  color: #fff;
+  transition: transform 0.3s ease;
+}
+.btn-back-forgot-clean:hover,
+.btn-back-otp:hover,
+.btn-back-newpass:hover { transform: scale(1.05); }
+
+/* === (C) Verify “hijau pudar” saat OTP belum penuh (disabled) === */
+/* Kita pakai attribute :disabled agar efeknya otomatis, animasinya pakai transition di atas */
+.btn-verify:disabled {
+  opacity: 0.6;          /* hijau pudar, tidak hilang */
+  cursor: not-allowed;
+  transform: none;       /* jangan membesar saat hover */
+}
+.btn-verify:disabled:hover { transform: none; }
+
+/* === Create Password: tanpa ikon gembok === */
+.newpass-card .forgot-icon {
+  display: none !important;
+}
+
+/* === Create Password: semua konten ikut lebar tombol (≈ 420px) === */
+.newpass-card {
+  align-items: center;                 /* center horizontal */
+  justify-content: center !important;  /* center vertical (biar rapi) */
+}
+
+/* Header, deskripsi, garis hijau, form, & tombol punya lebar yang sama */
+.newpass-card > * {
+  max-width: 420px;   /* samakan dengan lebar tombol */
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Rapikan jarak header & garis biar proporsional */
+.newpass-card .forgot-header { margin-top: 0 !important; margin-bottom: 8px !important; }
+.newpass-card .forgot-title  { margin-top: 6px !important; }  /* override dari 50px */
+.newpass-card .section-line  { margin: 8px auto 14px; }       /* 100% dari 420px */
+
+/* Create Password: deskripsi lebih hemat ruang */
+.newpass-card .forgot-description{
+  font-size: 13px;        /* dari 16px → 15px (boleh 14–15) */
+  line-height: 2;      /* dari ~1.6 → lebih rapat */
+  margin: 6px 0 8px;      /* kurangi jarak atas/bawah */
+  letter-spacing: 0.1px;  /* tetap terbaca */
+}
+
+/* rapatkan garis hijau ke teks */
+.newpass-card .section-line{
+  margin-top: 6px !important;
+}
+
+/* Create Password: rapatkan jarak antar KATA & HURUF deskripsi */
+.newpass-card .forgot-description{
+  word-spacing: 1px;     /* antar KATA — coba rentang -0.6px s/d -1.4px */
+  letter-spacing: -0.2px; /* antar HURUF — kecil saja agar tetap enak dibaca */
+}
+
+/* (opsional) gunakan font yang lebih nyaman untuk paragraf panjang */
+.newpass-card .forgot-description{
+  font-family: "Open Sans", sans-serif;
+}
+
+/* (opsional) di layar kecil, jangan terlalu rapat */
+@media (max-width: 480px){
+  .newpass-card .forgot-description{
+    word-spacing: -0.6px;
+    letter-spacing: -0.1px;
+  }
+}
+
+/* Create Password: rapatkan jarak BAWAH paragraf deskripsi */
+.newpass-card .forgot-description{
+  margin-bottom: 6px !important;  /* default kamu 14px, silakan coba 4–8px */
+  line-height: 1.45;              /* (opsional) barisnya sedikit lebih rapat */
+}
+
+/* pastikan garis hijau ikut mendekat ke deskripsi */
+.newpass-card .section-line{
+  margin-top: 12px !important;     /* sesuaikan: 4–8px */
+}
+
+/* Center judul "NewPassword" hanya di Create Password */
+.newpass-card .forgot-header{
+  justify-content: center;   /* posisikan ke tengah secara horizontal */
+  width: 100%;
+}
+
+/* Sedikit besarkan huruf N & P, dan rapikan baseline */
+.newpass-card .forgot-title .forgot-F,
+.newpass-card .forgot-title .forgot-P{
+  font-size: 65px;           /* default 42px → naik sedikit */
+  line-height: 1;
+  transform: translateY(1px); /* biar sejajar dengan teks lainnya */
+}
+
+/* (opsional) kecilkan top margin judul agar tidak terlalu turun */
+.newpass-card .forgot-title{
+  margin-top: 6px !important;  /* override dari 50px; rapi di tengah */
+}
+
+.newpass-card .forgot-title { display: flex; gap: 10px; } /* ubah 6–16px sesuai selera */
+
+/* === Knob ukuran title per step === */
+:root{
+  --title-forgot:   38px;  /* Forgot Password */
+  --title-otp:      45px;  /* Code Verification */
+  --title-newpass:  45px;  /* Create/New Password */
+}
+
+/* Buat tiap title pakai ukuran berbeda */
+.forgot-card .forgot-title   { font-size: var(--title-forgot) !important; }
+.otp-card    .forgot-title   { font-size: var(--title-otp) !important; }
+.newpass-card .forgot-title  { font-size: var(--title-newpass) !important; }
+
+/* Kecilkan top-margin bawaan 50px agar judul tidak turun */
+.forgot-card .forgot-title,
+.otp-card    .forgot-title,
+.newpass-card .forgot-title  { margin-top: 6px !important; }
+
+/* Huruf awal berwarna ikut proporsional (opsional) */
+.forgot-card .forgot-title .forgot-F,
+.forgot-card .forgot-title .forgot-P { font-size: 1.10em; }
+
+.otp-card .forgot-title .forgot-F,
+.otp-card .forgot-title .forgot-P    { font-size: 1.40em; }
+
+.newpass-card .forgot-title .forgot-F,
+.newpass-card .forgot-title .forgot-P{ font-size: 1.40em; }
+
+/* OTP: sembunyikan label "Enter Code" */
+.otp-card .forgot-label{
+  display: none !important;
+}
+
+/* OTP: rapatkan jarak dari deskripsi+garis ke bar OTP */
+.otp-card .forgot-description{
+  margin-bottom: 15px !important;   /* dari 14px → 6px */
+}
+.otp-card .otp-inputs.clean-otp{
+  margin: 8px 0 24px 0 !important; /* top lebih kecil supaya bar naik */
+}
+
+/* OTP: rapatkan JUDUL ↔ DESKRIPSI */
+.otp-card .forgot-title{
+  margin-top: 4px !important;     /* buang top-margin besar bawaan */
+}
+
+.otp-card .forgot-header{
+  margin-bottom: 15px !important;  /* jarak bawah header → deskripsi */
+}
+
+.otp-card .forgot-description{
+  margin-top: -2px !important;    /* tarik deskripsi sedikit naik */
+}
+
+/* === Center VERTIKAL untuk SEMUA card kanan === */
+/* Kartu kamu (stack-card) sudah absolute & flex-column; kita override per card */
+.forgot-card,
+.otp-card,
+.newpass-card {
+  justify-content: center !important;   /* dari flex-start → center */
+}
+
+/* Rapikan header supaya tidak “narik” ke atas */
+.forgot-card .forgot-header,
+.otp-card .forgot-header,
+.newpass-card .forgot-header {
+  margin-top: 0 !important;
+  margin-bottom: 8px !important;
+}
+
+/* Buang top-margin besar bawaan title agar benar-benar center */
+.forgot-card .forgot-title,
+.otp-card .forgot-title,
+.newpass-card .forgot-title {
+  margin-top: 6px !important;           /* kalau mau lebih nempel: 0 */
+  line-height: 1.1;
+}
+
+/* Garis hijau tetap dekat dengan deskripsi */
+.forgot-card .section-line,
+.otp-card .section-line,
+.newpass-card .section-line {
+  margin-top: 8px !important;
+}
+
+/* OTP: bar OTP-nya tetap agak naik (sesuai permintaan sebelumnya) */
+.otp-card .otp-inputs.clean-otp {
+  margin: 8px 0 24px 0 !important;      /* kecilkan lagi kalau mau lebih naik */
+}
+
+/* === Tambah gap antara phone.png (kiri) dan card (kanan) === */
+.white-panel{
+  column-gap: 180px;              /* ubah 40–72px sesuai selera */
+}
+
+/* Hilangkan jarak ganda dari sisi kiri agar gap murni dari column-gap */
+.white-panel__left{ padding-right: 0 !important; }
+.white-panel__left img{ margin-right: 0 !important; }
+
+/* Responsif: sedikit kecilkan gap di layar lebih sempit */
+@media (max-width: 1200px){
+  .white-panel{ column-gap: 44px; }
+}
+@media (max-width: 900px){
+  .white-panel{ column-gap: 32px; }
+}
+
+/* === Besarkan phone.png (sedikit) === */
+.white-panel__left img{
+  width: 420px !important;   /* dari 380px → ~+10% */
+  max-width: 100%;
+  height: auto;
+}
+
+/* Responsif: tetap proporsional di layar lebih kecil */
+@media (max-width: 1200px){
+  .white-panel__left img{ width: 360px !important; }
+}
+@media (max-width: 900px){
+  .white-panel__left img{ width: 320px !important; }
+}
+
+/* ===== SUCCESS STEP (Check mark) ===== */
+.success-card{
+  justify-content: center !important;   /* center vertikal */
+  align-items: center;
+  text-align: center;
+  gap: 16px;
+}
+
+.success-hero{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.success-icon{
+  width: 140px;            /* ubah 120–180px sesuai selera */
+  height: 140px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 12px;
+}
+
+.success-img{
+  width: 100%;
+  height: 100%;
+  object-fit: contain;      /* jaga proporsi check.png */
+  display: block;
+  filter: drop-shadow(0 6px 14px rgba(0,0,0,0.12));
+}
+
+.success-text{
+  max-width: 420px;         /* selaras lebar tombol/form lain */
+  width: 100%;
+  margin: 10px;
+  font-size: 14px;
+  line-height: 1.55;
+  color: #32446B;
+}
+
+.success-actions{
+  max-width: 420px;
+  width: 100%;
+  margin: 0 auto;
+}
+/* Tombol Continue otomatis pakai .btn-submit (hijau) yang sudah ada */
+
+.forgot-hint {
+    font-size: 14px;
+  color: #555;
+  line-height: 1.6;
+  width: 100%;
+  text-align: center;
+  margin-bottom: 14px;
+}
+
+/* Forgot: gerakkan TEKS, bukan garis */
+.forgot-card .forgot-description{
+  position: relative;
+  top: 6px;              /* + nilai = turun; − nilai = naik */
+  margin-bottom: 0;      /* hilangkan jarak bawaan agar tidak dobel */
+}
+
+/* Kunci posisi garis tetap */
+.forgot-card .section-line{
+  margin-top: 12px !important;  /* biarkan tetap */
+}
+
+/* === Horizontal Stepper (fix: single-row & responsive width) === */
+.hstepper{
+  --hs-size: 42px;        /* diameter bulatan (turunkan sedikit) */
+  --hs-icon: 18px;        /* ukuran ikon */
+  --hs-gap: 8px;
+
+  max-width: 420px;       /* samakan dengan lebar form/tombol */
+  width: 100%;
+  margin: 4px auto 10px;  /* di atas title */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: nowrap;      /* << JANGAN boleh pindah baris */
+}
+
+.hstep{
+  display: flex;
+  align-items: center;
+  flex: 1 1 0;            /* konektor bisa melebar */
+  min-width: 0;
+}
+
+.hnode{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 0 0 auto;         /* node berukuran tetap */
+  width: 96px;            /* cukup untuk label 2 kata */
+}
+
+.h-icon-wrap{
+  width: var(--hs-size);
+  height: var(--hs-size);
+  border-radius: 50%;
+  display: grid; place-items: center;
+  background: rgba(255,255,255,0.95);
+  border: 3px solid #d1d5db;     /* default abu-abu */
+  box-shadow: 0 2px 8px rgba(0,0,0,.06);
+  transition: all .25s ease;
+}
+.h-icon-wrap svg{ width: var(--hs-icon); height: var(--hs-icon); }
+
+.h-icon-wrap.is-todo  { color:#9ca3af; border-color:#d1d5db; opacity:.95; }
+.h-icon-wrap.is-active{ color:#1e90ff; border-color:#1e90ff; box-shadow:0 0 0 4px rgba(30,144,255,.18); }
+.h-icon-wrap.is-done  { color:#10B981; border-color:#10B981; box-shadow:0 0 0 4px rgba(16,185,129,.18); }
+
+.h-label{
+  margin-top: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+  letter-spacing: .2px;
+  white-space: nowrap;     /* biar tidak turun baris */
+}
+.h-label.is-todo  { color:#9ca3af; font-weight: 500; }
+.h-label.is-active{ color:#2563eb; }
+.h-label.is-done  { color:#059669; }
+
+/* Konektor fleksibel: akan mengisi sisa ruang di antara node */
+.h-connector{
+  flex: 1 1 0;             /* << lebar fleksibel */
+  min-width: 24px;         /* jangan sampai hilang */
+  height: 6px;
+  background: #d1d5db;
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 0 var(--hs-gap);
+  position: relative;
+}
+.h-connector .h-connector-fill{
+  position: absolute; left: 0; top: 0; bottom: 0;
+  width: 0;
+  background: #10B981;    /* hijau progress */
+  border-radius: 4px;
+}
+
+/* Spasi aman antara stepper dan title di semua card */
+.forgot-card .forgot-header,
+.otp-card .forgot-header,
+.newpass-card .forgot-header,
+.success-card .success-hero{
+  margin-top: 6px !important;
+}
+
+/* === White panel: jadikan 3 kolom: phone | stepper | card === */
+.white-panel{
+  grid-template-columns: 1fr auto 480px;  /* kiri fleksibel, stepper auto, kanan 480px */
+  column-gap: 56px;                       /* jarak antar kolom */
+}
+
+/* Kolom tengah khusus untuk stepper */
+.white-panel__stepper{
+  align-self: center;
+  z-index: 4;             /* di atas card, tapi tetap di luar card */
+  pointer-events: none;   /* tidak ganggu klik pada form di kanan */
+}
+
+/* === Vertical stepper (samping card) === */
+.vstepper{
+  --vs-size: 52px;       /* diameter bulatan */
+  --vs-icon: 22px;       /* ukuran ikon react-icons */
+  --vs-connector: 72px;  /* panjang garis antar bulatan */
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 96px;           /* lebar “rail” stepper */
+}
+
+.vstep{ display: flex; flex-direction: column; align-items: center; }
+
+.v-icon{
+  width: var(--vs-size);
+  height: var(--vs-size);
+  border-radius: 50%;
+  display: grid; place-items: center;
+  background: rgba(255,255,255,.95);
+  border: 4px solid #d1d5db;          /* default abu-abu */
+  box-shadow: 0 2px 8px rgba(0,0,0,.06);
+  transition: all .25s ease;
+}
+.v-icon svg{ width: var(--vs-icon); height: var(--vs-icon); }
+
+.v-icon.is-todo   { color:#9ca3af; border-color:#d1d5db; opacity:.95; }
+.v-icon.is-active { color:#1e90ff; border-color:#1e90ff; box-shadow:0 0 0 4px rgba(30,144,255,.18); }
+.v-icon.is-done   { color:#10B981; border-color:#10B981; box-shadow:0 0 0 4px rgba(16,185,129,.18); }
+
+.v-label{
+  margin-top: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+  letter-spacing: .2px;
+  white-space: nowrap;
+}
+.v-label.is-todo   { color:#9ca3af; font-weight: 500; }
+.v-label.is-active { color:#2563eb; }
+.v-label.is-done   { color:#059669; }
+
+/* Garis penghubung vertikal */
+.v-connector{
+  width: 6px;
+  height: var(--vs-connector);
+  background: #d1d5db;
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+  margin: 8px 0;
+}
+.v-connector .v-fill{
+  position: absolute; left:0; right:0; bottom:0;
+  height: 0;                     /* di-animate dengan framer-motion */
+  background: #10B981;
+  border-radius: 4px;
+}
+
+/* (opsional) sedikit rapikan gap kanan–kiri agar card tetap “lega” */
+.white-panel__left{ padding-right: 0 !important; }
+.white-panel__left img{ margin-right: 0 !important; }
+
+/* Pastikan bar OTP lebarnya sama dengan tombol */
+.otp-card .otp-right-wrap{
+  max-width: 420px;   /* samakan dg lebar tombol */
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* Hitung ukuran kotak agar 6 kotak + 5 gap pas di container */
+.otp-card{
+  --otp-gap: 16px;
+  --otp-size: min(56px, calc((100% - (5 * var(--otp-gap))) / 6));
+  --otp-font: calc(var(--otp-size) * 0.52);
+}
+
+/* >>> FIX: kotak tetap PERSEGI di semua browser */
+.otp-inputs .otp-box,
+.otp-inputs .otp-box.small{
+  width: var(--otp-size) !important;       /* bukan hanya flex-basis */
+  height: var(--otp-size) !important;
+  aspect-ratio: 1 / 1;                      /* kunci 1:1 */
+  box-sizing: border-box;
+  padding: 0;                                /* hilangkan pengaruh padding */
+  line-height: normal;                       /* jangan pakai line-height aneh */
+  display: inline-block;                     /* stabil di flex */
+  font-size: var(--otp-font);
+  text-align: center;
+}
+
+/* Bar tetap mengikuti lebar container */
+.otp-inputs.clean-otp{
+  width: 100%;
+  gap: var(--otp-gap);
+  justify-content: center; /* atau space-between kalau ingin merata */
+}
+
+/* === OTP: BIGGER BUT STILL ALIGNED === */
+.otp-card .otp-right-wrap{
+  max-width: 520px !important;  /* dari 420px, bar jadi sedikit lebih lebar */
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* Hitung ukuran kotak agar 6 kotak + 5 gap pas di container di atas */
+.otp-card{
+  --otp-gap: 16px;                                     /* jarak antar kotak */
+  --otp-size: calc((100% - (5 * var(--otp-gap))) / 6); /* kotak otomatis pas */
+  --otp-font: calc(var(--otp-size) * 0.58);            /* angka ikut membesar */
+}
+
+/* Pastikan benar-benar persegi & stabil di semua browser */
+.otp-inputs .otp-box,
+.otp-inputs .otp-box.small{
+  width: var(--otp-size) !important;
+  height: var(--otp-size) !important;
+  aspect-ratio: 1 / 1;
+  font-size: var(--otp-font);
+  padding: 0;
+  line-height: normal;
+}
+
+/* ==== OTP Card ==== */
+.otp-card{
+  --otp-size: 50px;   /* ← BESARKAN di sini (contoh: 64→72/76/80) */
+  --otp-gap: 16px;    /* jarak antar kotak (sesuaikan jika perlu) */
+  /* opsional, agar angka ikut besar: */
+  /* --otp-font: 36px; */
+}
+
+/* ===== SIGN UP / REGISTER ===== */
+.signup-card{
+  justify-content: center !important;   /* center vertikal */
+  align-items: stretch;
+}
+
+.signup-card form{
+  max-width: 420px;                     /* seragam dgn step lain */
+  width: 100%;
+  margin: 0 auto;
+}
+
+.register-title{
+  font-family: "Poppins", sans-serif;
+  font-size: 64px;
+  font-weight: 800;
+  color: #6A7DA6;        /* sama keluarga warna title lain */
+  letter-spacing: 1px;
+  margin: 0;
+  line-height: 1.05;
+}
+
+/* garis hijau di bawah title sudah pakai .section-line */
+
+/* Hint confirm */
+.confirm-hint{
+  font-size: 12.5px;
+  margin: 6px 0 10px;
+  color: #6b7280;
+}
+
+/* ===== Password Rules (ceklist dinamis) ===== */
+.pwd-rules{
+  list-style: none;
+  padding: 0;
+  margin: 6px 0 12px 0;
+  display: grid;
+  gap: 6px;
+}
+.rule{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.8px;
+  line-height: 1.35;
+  transition: color .25s ease;
+}
+.rule .ico{
+  display: inline-grid;
+  place-items: center;
+  font-size: 16px;
+  transition: transform .25s ease, color .25s ease;
+}
+.rule.ok{ color:#059669; }             /* hijau */
+.rule.ok .ico{ transform: scale(1.05); color:#10B981; }
+.rule.bad{ color:#ef4444; }            /* merah */
+.rule.bad .ico{ color:#ef4444; }
+
+/* tombol hijau/ungu sudah ada: gunakan .btn-submit, .btn-back-newpass */
+.btn-submit:disabled{
+  opacity: .6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ====== REGISTER: Floating Label + Icon Kanan (final) ====== */
+.signup-card .field-row{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-bottom:18px;
+}
+
+.signup-card .float-field{
+  position:relative;
+  flex:1;
+}
+
+.signup-card .float-field input{
+  width:100%;
+  height:46px;
+  background:#fff;
+  border:1.5px solid #d1d5db;
+  border-radius:10px;
+  padding:14px 44px 0 14px;            /* ruang label & ikon */
+  font-size:14px;
+  outline:none;
+  transition:border-color .2s ease, box-shadow .2s ease;
+}
+
+.signup-card .float-field input:focus{
+  border-color:#10B981;
+  box-shadow:0 0 0 3px rgba(16,185,129,.15);
+}
+
+.signup-card .float-field.right-icon input{
+  padding-right:44px;
+}
+
+/* label awal di dalam bar */
+.signup-card .float-field label{
+  position:absolute;
+  left:14px;
+  top:50%;
+  transform:translateY(-50%);
+  font-size:14px;
+  color:#6b7280;
+  pointer-events:none;
+  background:transparent;
+  transition:all .18s ease;
+  line-height:1;
+}
+
+/* >>> saat fokus/terisi: label NANGKRING DI GARIS (chip menimpa border) <<< */
+.signup-card .float-field input:focus + label,
+.signup-card .float-field input:not(:placeholder-shown) + label{
+  top:0;                                 /* tepat di garis atas */
+  transform:translateY(-50%);            /* center di garis → menimpa border */
+  background:#fff;                       /* hilangkan garis di bawah label */
+  padding:0 6px;                         /* chip kecil */
+  font-size:12px;
+  color:#10B981;
+  z-index:1;                             /* berada di atas border */
+}
+
+/* ikon kecil di DALAM bar (kanan) */
+.signup-card .float-field .inbar-icon{
+  position:absolute;
+  right:12px;
+  top:50%;
+  transform:translateY(-50%);
+  font-size:16px;
+  color:#9ca3af;
+  pointer-events:none;
+}
+
+/* ikon mata di LUAR bar */
+.signup-card .outside-ico{
+  width:34px; height:34px; border-radius:999px;
+  border:1.5px solid #d1d5db; background:#fff;
+  display:grid; place-items:center; cursor:pointer;
+  transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+}
+.signup-card .outside-ico:hover{ transform:translateY(-1px); box-shadow:0 4px 12px rgba(0,0,0,.08); border-color:#bfc6ce; }
+.signup-card .outside-ico:active{ transform:translateY(0); box-shadow:none; }
+.signup-card .outside-ico svg{ font-size:16px; color:#6b7280; }
+
+/* tombol (kembali vertikal seperti layar lain) */
+.signup-card .btn-submit:disabled{ opacity:.6; cursor:not-allowed; transform:none; }
+
+/* ==== CENTER REGISTER CARD DI DALAM PANEL PUTIH ==== */
+/* Pastikan kolom kanan (white-panel__right) full height */
+.white-panel,
+.white-panel__right { height: 100%; }
+
+/* Saat REGISTER tampil, jadikan kolom kanan grid & center */
+.white-panel__right:has(.signup-card){
+  display: grid;              /* aman untuk animasi framer */
+  align-content: center;      /* center vertikal konten */
+  justify-items: center;      /* center horizontal */
+  padding: 36px 40px;         /* JARAK atas & bawah -> tombol tidak nempel */
+  box-sizing: border-box;
+}
+
+/* Hilangkan margin default card ketika dicenter */
+.white-panel__right:has(.signup-card) .stack-card{
+  margin: 0;
+}
+
+/* Lebar form tetap proporsional di tengah */
+.signup-card form{
+  max-width: 520px;           /* silakan sesuaikan 480–560 */
+  width: 100%;
+}
+
+/* ============ REGISTER COMPACT ============ */
+/* Kecilkan ukuran bar, jarak, dan ikon—khusus di Register */
+.signup-card .register-title{
+  font-size: 56px;                 /* sedikit lebih kecil dari 64px */
+}
+
+.signup-card .section-line{
+  height: 2px;                     /* garis lebih tipis */
+  margin-top: -12px;
+  margin-bottom: 10px;
+}
+
+.signup-card .field-row{
+  gap: 8px;                        /* dari 12px */
+  margin-bottom: 12px;             /* dari 18px */
+}
+
+.signup-card .float-field input{
+  height: 40px;                    /* dari 46px */
+  padding: 10px 38px 0 12px;       /* ruang label & ikon diperkecil */
+  font-size: 13px;                 /* dari 14px */
+  border-radius: 8px;              /* dari 10px */
+}
+
+.signup-card .float-field.label-small label,
+.signup-card .float-field label{
+  left: 12px;
+  font-size: 13px;                 /* dari 14px */
+}
+
+/* label naik: tetap menimpa border tapi lebih kecil */
+.signup-card .float-field input:focus + label,
+.signup-card .float-field input:not(:placeholder-shown) + label{
+  font-size: 11px;                 /* dari 12px */
+  padding: 0 5px;                  /* dari 6px */
+}
+
+.signup-card .float-field .inbar-icon{
+  right: 10px;
+  font-size: 14px;                 /* dari 16px */
+}
+
+/* Mata di luar bar diperkecil */
+.signup-card .outside-ico{
+  width: 30px;                     /* dari 34px */
+  height: 30px;
+  border-radius: 999px;
+}
+
+/* Daftar aturan password lebih ringkas */
+.signup-card .pwd-rules{
+  margin: 4px 0 8px;
+  gap: 4px;
+}
+.signup-card .rule{ font-size: 12px; gap: 6px; }
+.signup-card .rule .ico{ font-size: 14px; }
+
+/* (opsional) rapikan jarak tombol agar tak mepet bawah panel */
+.white-panel__right:has(.signup-card){ padding-bottom: 56px; }
+
+/* === Sign Up Success: kecilkan check mark & panjangkan tombol === */
+
+/* 1) Kecilkan gambar check mark */
+.signup-success-card .success-icon{
+  width: 150px;          /* sebelumnya 220px */
+  height: 150px;
+}
+
+/* 2) Izinkan kartu lebih lebar supaya tombol bisa "panjang" */
+.white-panel__right:has(.signup-success-card) .signup-success-card{
+  max-width: 680px;      /* sebelumnya 560px */
+}
+
+/* 3) Lebarkan container tombol dan besarkan tinggi/teks tombol */
+.signup-success-card .success-actions{
+  max-width: 640px;      /* lebar area tombol */
+  width: 100%;
+  margin: 0 auto;
+}
+
+.signup-success-card .btn-submit{
+  width: 100%;
+  min-height: 60px;      /* lebih tinggi */
+  font-size: 18px;       /* teks lebih besar */
+  border-radius: 999px;  /* jadi pill/oval */
+  letter-spacing: .6px;
+}
+
+/* Fallback jika :has() belum didukung (aman untuk semua browser) */
+@supports not (selector(:has(*))){
+  .white-panel__right .signup-success-card{ max-width: 680px; }
+}
+
+/* === SIGN UP SUCCESS — Pusatkan penuh + teks center === */
+
+/* 1) Kolom kanan jadi center saat card success tampil */
+.white-panel__right:has(.signup-success-card){
+  display: flex;                 /* center horizontal & vertical */
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 44px 44px 60px;       /* spasi supaya tombol tidak nempel bawah */
+  box-sizing: border-box;
+}
+
+/* 2) Matikan absolute & batasi lebar card agar benar-benar di tengah */
+.white-panel__right:has(.signup-success-card) .signup-success-card{
+  position: static !important;   /* override .stack-card { position:absolute } */
+  inset: auto !important;
+  width: 100%;
+  max-width: 520px;              /* lebar blok sukses; ubah bila perlu */
+  margin: 0 auto;
+}
+
+/* 3) Kecilkan ikon centang, ratakan ke tengah */
+.signup-success-card .success-hero{
+  display: flex;
+  flex-direction: column;
+  align-items: center;           /* center ikon */
+  gap: 12px;
+}
+.signup-success-card .success-icon{
+  width: 150px;                  /* lebih kecil dari sebelumnya */
+  height: 150px;
+}
+
+/* 4) Teks center seperti contoh */
+.signup-success-card .success-text{
+  max-width: 520px;
+  width: 100%;
+  margin: 6px auto 14px;         /* auto → benar-benar di tengah */
+  text-align: center;            /* <<< TEKS CENTER */
+}
+
+/* 5) Tombol panjang & berada di tengah */
+.signup-success-card .success-actions{
+  max-width: 520px;
+  width: 100%;
+  margin: 0 auto;
+}
+.signup-success-card .btn-submit{
+  width: 100%;
+  min-height: 60px;
+  font-size: 18px;
+  border-radius: 12px;           /* pill, bisa 999px kalau mau lebih oval */
+  letter-spacing: .5px;
+}
+
+/* Fallback kalau browser belum support :has() */
+@supports not (selector(:has(*))){
+  .white-panel__right{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: 44px 44px 60px;
+  }
+  .white-panel__right .signup-success-card{
+    position: static !important;
+    inset: auto !important;
+    width: 100%;
+    max-width: 520px;
+    margin: 0 auto;
+  }
+  .signup-success-card .success-text,
+  .signup-success-card .success-actions{ margin-left:auto; margin-right:auto; text-align:center; }
+}
+
+/* ===== Center-kan title "Register" di step Sign Up ===== */
+.signup-card .forgot-header{
+  justify-content: center;     /* pusatkan container judul */
+  width: 100%;
+}
+
+.signup-card .register-title{
+  display: block;
+  width: 100%;
+  text-align: center;          /* teks ke tengah */
+}
+
+/* opsional: garis hijau di bawah judul tetap rapi */
+.signup-card .section-line{
+  margin-left: auto;
+  margin-right: auto;
+}

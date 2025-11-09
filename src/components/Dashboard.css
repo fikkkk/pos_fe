@@ -1,0 +1,1413 @@
+:root{
+  --bg:#e9f1f6; --line:#d7e0e7; --brand:#32446B; --side:#e7a21a; --side-active:#ffd46b;
+  --blue:#1560d9; --green:#2ba84a; --orange:#f19f00; --red:#de4f4f;
+}
+
+/* ===== Global ===== */
+html,body{height:100%;margin:0;overflow:hidden;}
+.dashboard{display:grid;grid-template-columns:176px 1fr;height:100vh;min-height:0;width:100%;background:var(--bg);color:var(--brand);font-family:"Poppins",system-ui,Arial,sans-serif;}
+
+/* ===== Sidebar ===== */
+.ds-sidebar{background:var(--side);display:flex;flex-direction:column;border-right:1px solid rgba(0,0,0,.08);}
+.ds-side-header{height:64px;display:grid;place-items:center;color:#2b2b2b;font-size:18px;border-bottom:1px solid rgba(0,0,0,.08);}
+.ds-nav{padding:10px 8px;display:grid;gap:6px;}
+.ds-nav-item{display:grid;grid-template-columns:24px 1fr;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;color:#1f2937;font-weight:600;cursor:pointer;transition:background .2s ease;}
+.ds-nav-item .ico{display:grid;place-items:center;font-size:14px;}
+.ds-nav-item:hover{background:rgba(255,255,255,.25);}
+.ds-nav-item.active{background:var(--side-active);}
+
+/* ===== Main ===== */
+.ds-main{display:grid;grid-template-rows:72px minmax(0,1fr);min-height:0;}
+.ds-topbar{background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 24px;}
+.ds-topbar .left .brand{font-weight:700;font-size:28px;letter-spacing:.5px;}
+.ds-topbar .left .date{display:flex;align-items:center;gap:8px;color:#6b7a8e;font-size:12px;margin-top:2px;}
+
+/* ===== Isi yang scroll ===== */
+.ds-inner{padding:18px 22px 24px;overflow-y:auto;min-height:0;-webkit-overflow-scrolling:touch;scrollbar-width:none;scroll-behavior:smooth;}
+.ds-inner::-webkit-scrollbar{display:none;width:0;height:0;}
+.ds-section-title{display:flex;align-items:center;gap:10px;font-weight:700;color:#6b7a8e;margin-bottom:10px;}
+
+/* ===== Cards ===== */
+.ds-cards{display:grid;grid-template-columns:repeat(4,minmax(220px,1fr));gap:16px;margin-bottom:16px;}
+.ds-card{position:relative;border-radius:10px;padding:14px 16px 38px;color:#fff;box-shadow:0 4px 14px rgba(0,0,0,.12);}
+.ds-card .ds-card-value{font-size:22px;font-weight:800;}
+.ds-card .ds-card-sub{font-size:12px;opacity:.95;margin-top:6px;}
+.ds-card .ds-card-pill{position:absolute;right:14px;top:14px;width:32px;height:32px;border-radius:999px;background:rgba(255,255,255,.35);}
+.ds-card .ds-card-footer{position:absolute;left:16px;right:16px;bottom:10px;display:flex;align-items:center;justify-content:space-between;font-size:12px;opacity:.95;}
+.ds-card.blue{background:var(--blue);} .ds-card.green{background:var(--green);} .ds-card.orange{background:var(--orange);} .ds-card.red{background:var(--red);}
+
+/* ===== Panels ===== */
+.ds-panels{display:grid;grid-template-columns:1.35fr 1fr;gap:16px;}
+.panel-combo{
+  background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,.04);
+  height:360px;display:flex;flex-direction:column;min-height:0;margin-top:16px;
+}
+
+/* === Header panel gabungan (kiri: perbulan + legend + filter, kanan: judul pertahun) === */
+.panel-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--line);font-weight:700;color:#5f6f84;}
+.panel-header--chart{display:grid;grid-template-columns:1fr auto;column-gap:16px;align-items:center;}
+.ph-leftwrap{display:grid;grid-template-columns:auto 1fr auto;align-items:center;column-gap:16px;}
+.ph-title{font-weight:800;color:#2f3f59;font-size:18px;}
+.legend--pills{display:flex;align-items:center;}
+.legend-text{font-weight:800;color:#2f3f59;font-size:14px;margin-left:8px;}
+.pill{width:36px;height:14px;border-radius:8px;display:inline-block;box-shadow:inset 0 1px 0 rgba(255,255,255,.45), inset 0 -1px 0 rgba(0,0,0,.08);border:1px solid rgba(0,0,0,.08);}
+.pill-2024{background:#f6b21c;} .pill-2025{background:#1560d9;}
+.ph-filter{justify-self:end;display:flex;align-items:center;gap:8px;}
+.filter-label{font-size:11px;color:#8a97a9;font-weight:700;line-height:1;}
+.chart-filter{font-size:12px;padding:6px 10px;border:1px solid var(--line);border-radius:8px;background:#fff;color:#5f6f84;outline:none;}
+.ph-righttitle{justify-self:end;font-weight:800;color:#2f3f59;font-size:18px;}
+
+/* === Body panel === */
+.pc-body{flex:1;min-height:0;display:grid;grid-template-columns:1.6fr 1fr;gap:16px;padding:12px;}
+.mini-title{display:none;} /* judul pertahun dipindah ke header */
+
+/* >>> BAWAH: sejajar dengan panel-combo, jarak lebih lega */
+.ds-panels--bottom{
+  grid-template-columns:0.75fr 2.25fr;
+  gap:26px;
+  margin-top:22px;
+  padding:0;
+}
+.ds-panel{
+  background:#fff;border-radius:10px;border:1px solid var(--line);box-shadow:0 2px 10px rgba(0,0,0,.04);
+  display:flex;flex-direction:column;min-height:0;height:auto;
+}
+.ds-panel.tall{height:auto;}
+.panel-body{flex:1;min-height:0;padding:16px;overflow:visible;}
+
+/* ===== Donut ===== */
+.donut-wrap{position:relative;display:grid;grid-template-rows:auto auto;justify-items:center;align-content:start;gap:14px;}
+.donut-box{position:relative;}
+.donut-center{position:absolute;inset:0;display:grid;place-items:center;text-align:center;pointer-events:none;}
+.dc-top{font-size:12px;color:#7b8aa0;}
+.dc-big{font-weight:800;color:#2f3f59;font-size:18px;}
+.dc-sub{font-size:12px;color:#7b8aa0;margin-top:2px;}
+.donut-legend{list-style:none;margin:0;padding:0;width:100%;display:grid;gap:8px;}
+.donut-legend li{display:flex;align-items:center;gap:10px;color:#4b5b71;font-size:13px;}
+.donut-legend .dot{width:12px;height:12px;border-radius:999px;}
+.dl-label{min-width:64px;font-weight:700;}
+.dl-count{margin-left:auto;color:#2f3f59;font-weight:800;}
+.donut-pct{font-size:12px;font-weight:800;fill:#2f3f59;paint-order:stroke;stroke:#fff;stroke-width:3px;}
+
+/* ===== Table (kecil & tanpa scroll internal) ===== */
+.ds-table-wrap{height:auto;overflow:visible;border-radius:8px;}
+.ds-table{width:100%;border-collapse:separate;border-spacing:0;font-size:11px;}
+.ds-table thead th{position:sticky;top:0;background:#f6f8fb;z-index:1;text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);color:#5a6b82;font-weight:700;}
+.ds-table tbody td{padding:8px 10px;border-bottom:1px solid var(--line);color:#334155;}
+.badge{padding:2px 8px;border-radius:999px;font-weight:700;font-size:11px;}
+.badge.paid{background:#e7f6ec;color:#1e7a35;}
+.badge.pending{background:#fff4e5;color:#9a5f00;}
+.table-shell{display:flex;flex-direction:column;height:auto;min-height:0;}
+.table-controls{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:12px;}
+.table-buttons{display:flex;gap:8px;}
+.btn{display:inline-flex;align-items:center;justify-content:center;padding:6px 10px;border:1px solid var(--line);border-radius:8px;background:#fff;font-weight:700;font-size:12px;cursor:pointer;}
+.btn:hover{background:#f6f8fb;}
+.btn-green{background:#e7f6ec;border-color:#cfe9d6;}
+.btn-green:hover{background:#dcf2e4;}
+.tc-right{display:flex;align-items:center;gap:6px;padding:4px 8px;border:1px solid var(--line);border-radius:8px;background:#fff;}
+.tc-right input{border:0;outline:none;font-size:12px;}
+.aksi-link{padding:4px 10px;border:1px solid var(--line);background:#fff;border-radius:8px;cursor:pointer;font-size:12px;font-weight:700;}
+.table-footer{display:flex;justify-content:space-between;align-items:center;padding-top:8px;}
+.table-footer .tf-right{display:flex;align-items:center;gap:8px;}
+.pager{gap:6px;}
+.pager .ellipsis{padding:0 4px;color:#6b7a8e;}
+.pager button{padding:6px 10px;border:1px solid var(--line);background:#fff;border-radius:8px;cursor:pointer;}
+.pager button.active{background:#1560d9;color:#fff;border-color:#1560d9;}
+
+/* ===== Responsive ===== */
+@media (max-width:1200px){
+  .ds-cards{grid-template-columns:repeat(2,1fr);}
+  .ds-panels{grid-template-columns:1fr;}
+  .panel-combo{height:auto;}
+  .pc-body{grid-template-columns:1fr;}
+  .ds-panels--bottom{grid-template-columns:1fr;gap:18px;margin-top:18px;padding:0;}
+}
+@media (max-width:768px){
+  .dashboard{grid-template-columns:72px 1fr;}
+  .ds-nav-item span:nth-child(2){display:none;}
+}
+
+/* === OVERRIDE: hilangkan garis abu-abu pembatas header di kartu
+   Penjualan Perbulan & Penjualan Pertahun (panel gabungan) === */
+.panel-combo .panel-header{
+  border-bottom: 0;
+}
+
+/* (opsional) beri sedikit jarak supaya header tidak terlalu rapat */
+.panel-combo .panel-header { padding-bottom: 10px; }
+
+/* --- PANJANGKAN KARTU BAWAH + TAMPILKAN TITLE DI ATAS --- */
+.ds-panels--bottom .ds-panel{
+  min-height: 560px;            /* tinggi minimum kartu bawah (perpanjang) */
+  display: flex;
+}
+.ds-panels--bottom {            /* beri jarak bawah global */
+  margin-bottom: 18px;
+}
+.ds-panels--bottom .panel-body{
+  padding: 14px 16px 18px;      /* ruang atas/kanan/kiri/bawah yang proporsional */
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* Judul di atas isi kartu: tampil & dibesarkan */
+.ds-panels--bottom .mini-title{
+  display: block;               /* override: tadinya hidden */
+  font-weight: 800;
+  color: #2f3f59;
+  font-size: 18px;
+  margin: 2px 0 12px;           /* jarak judul ke konten */
+}
+
+/* Pusatkan header & data hanya untuk tabel "Transaksi Terbaru" (panel kanan bawah) */
+.ds-panels--bottom .ds-panel:nth-child(2) .ds-table thead th,
+.ds-panels--bottom .ds-panel:nth-child(2) .ds-table tbody td{
+  text-align: center !important;
+}
+
+.ds-panels--bottom .ds-panel:nth-child(2) .ds-table tbody td{
+  vertical-align: middle; /* tombol Detail juga pas di tengah */
+}
+
+/* Legend Metode Pembayaran: layout 3 kolom (dot | label+sub | count) */
+.donut-legend li{
+  display: grid;
+  grid-template-columns: 14px 1fr auto; /* dot | teks | jumlah */
+  align-items: center;
+  column-gap: 10px;
+}
+
+/* Blok teks (label + subteks) */
+.dl-text{
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+/* Label metode */
+.dl-label{
+  font-weight: 800;
+  min-width: 0;          /* override aturan lama yang memaksa lebar tetap */
+}
+
+/* Subteks "Jumlah Transaksi Sebanyak" menempel ke tiap label */
+.dl-sub{
+  font-size: 12px;
+  color: #7b8aa0;
+  margin-top: 2px;
+}
+
+/* Jumlah di sisi kanan */
+.dl-count{
+  margin-left: 0;
+  font-weight: 800;
+  color: #2f3f59;
+}
+
+/* Buat legend memenuhi tinggi sisa kartu & item tersebar merata */
+.donut-wrap{
+  grid-template-rows: auto 1fr;     /* chart di atas, legend ambil sisa tinggi */
+  align-content: stretch;
+}
+
+.donut-legend{
+  display: flex;                     /* dari grid -> flex kolom */
+  flex-direction: column;
+  justify-content: space-between;    /* sebar rata dari atas ke bawah */
+  height: 100%;
+  gap: 0;                            /* biar jaraknya dikontrol oleh space-between */
+  margin-top: 6px;
+}
+
+/* Sedikit padding tiap baris agar tetap lega */
+.donut-legend li{
+  padding: 6px 0;
+}
+
+/* Metode Pembayaran — renggang penuh DI DALAM card (tinggi card tidak diubah) */
+.ds-panels--bottom .ds-panel:first-child .donut-wrap{
+  grid-template-rows: auto 1fr;         /* donut di atas, legend isi sisa tinggi */
+}
+
+.ds-panels--bottom .ds-panel:first-child .donut-legend{
+  flex: 1;                               /* ambil ruang sisa card */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;         /* sebar item merata dari atas ke bawah */
+  gap: 22px;                             /* jarak ekstra antar item */
+  padding: 12px 0;                       /* ruang atas–bawah legend */
+}
+
+.ds-panels--bottom .ds-panel:first-child .donut-legend li{
+  padding: 14px 0;                       /* tinggi tiap baris agar terasa lega */
+}
+
+/* === Keep card height auto (jangan ikut dipanjangin) === */
+.ds-panels--bottom .ds-panel{
+  height: auto !important;
+}
+.ds-panels--bottom .panel-body{
+  flex: initial !important;
+}
+
+/* === Metode Pembayaran: atur jarak legend TANPA mempengaruhi tinggi card === */
+.ds-panels--bottom .ds-panel:first-child .donut-wrap{
+  grid-template-rows: auto auto;       /* donut + legend biasa (tidak dipaksa 1fr) */
+}
+
+.ds-panels--bottom .ds-panel:first-child .donut-legend{
+  display: flex;
+  flex-direction: column;
+  justify-content: initial !important;  /* matikan space-evenly yg bikin card ikut tinggi */
+  gap: 16px;                            /* jarak antar item (aman, tidak menambah tinggi card berlebih) */
+  padding: 8px 0 10px;
+  height: auto;                         /* jangan ambil sisa tinggi */
+}
+
+.ds-panels--bottom .ds-panel:first-child .donut-legend li{
+  padding: 8px 0;                       /* nafas tiap baris, tetap irit tinggi */
+  min-height: 0;                        /* netralkan min-height besar sebelumnya */
+}
+
+/* Sembunyikan kontrol periode di grafik */
+.chart-overlay,
+.chart-overlay .filter-label,
+.chart-overlay .chart-filter{
+  display: none !important;
+}
+
+/* === Filter Periode: muncul di pojok kanan atas grafik bulanan === */
+.chart-container { position: relative; }
+
+.chart-overlay{
+  position: absolute;
+  top: 6px;            /* di atas garis chart */
+  right: 10px;         /* pojok kanan */
+  display: flex !important;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  z-index: 2;
+}
+
+.chart-overlay .filter-label{ 
+  display: block !important;
+  font-size: 11px; 
+  color: #8a97a9; 
+  font-weight: 700; 
+  line-height: 1;
+}
+
+.chart-overlay .chart-filter{
+  display: block !important;
+  font-size: 12px;
+  padding: 6px 10px;
+  border: 1px solid #d7e0e7;
+  border-radius: 8px;
+  background: #fff;
+  color: #5f6f84;
+  outline: none;
+}
+
+/* Naikkan area overlay di Penjualan Perbulan agar berada di atas grafik */
+.chart-container{
+  position: relative;
+  padding-top: 42px;     /* beri ruang di atas SVG utk label+select */
+}
+
+.chart-overlay{
+  position: absolute;
+  top: 6px;              /* pojok kanan, di dalam ruang padding tadi */
+  right: 10px;
+  display: flex !important;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  z-index: 2;
+}
+@media (max-width: 1200px){
+  .chart-container{ padding-top: 48px; }  /* sedikit ekstra di layar kecil */
+}
+
+/* === Samakan top chart: bulanan = tahunan === */
+/* Hilangkan padding atas di chart bulanan agar plot area naik sejajar */
+.pc-body .pc-col:first-child .chart-container{
+  padding-top: 0 !important;   /* override aturan sebelumnya */
+  position: relative;
+}
+
+/* Taruh label + select di atas plot area (tidak menimpa grafik) */
+.pc-body .pc-col:first-child .chart-overlay{
+  position: absolute;
+  top: -30px;                  /* angkat ke atas — sejajarkan dengan chart kanan */
+  right: 10px;
+  z-index: 3;
+}
+
+/* (opsional) di layar lebih kecil, angkat sedikit lagi agar tetap rapi */
+@media (max-width: 1200px){
+  .pc-body .pc-col:first-child .chart-overlay{ top: -32px; }
+}
+
+/* Naikkan lagi posisi "Pilih Periode" + select di grafik bulanan */
+.pc-body .pc-col:first-child .chart-overlay{
+  top: -40px;        /* sebelumnya -30 / -32; dinaikkan agar tak menimpa garis */
+  right: 10px;
+}
+
+/* (opsional) beri jarak antar label & select biar ringkas */
+.pc-body .pc-col:first-child .chart-overlay{ gap: 4px; }
+
+/* Sembunyikan overlay filter (jika ada) di chart Penjualan Pertahun (kolom kanan) */
+.pc-body .pc-col:last-child .chart-overlay,
+.pc-body .pc-col:last-child .chart-overlay .filter-label,
+.pc-body .pc-col:last-child .chart-overlay .chart-filter{
+  display: none !important;
+}
+
+/* Pastikan overlay tetap tampil di Penjualan Perbulan (kolom kiri) */
+.pc-body .pc-col:first-child .chart-overlay{
+  display: flex !important;
+}
+
+/* === Overlay Penjualan Perbulan: label di atas, legend di kiri, select di kanan === */
+.chart-container { position: relative; }
+
+/* posisi overlay (pojok kanan atas grafik bulanan) */
+.chart-overlay{
+  position: absolute;
+  right: 10px;
+  top: -40px;                /* sesuaikan kalau perlu: -38/-42 */
+  display: flex !important;
+  flex-direction: column;    /* label di atas, baris di bawahnya */
+  align-items: flex-end;
+  gap: 6px;
+  z-index: 3;
+}
+
+/* label kecil di atas select */
+.chart-overlay .filter-label{
+  font-size: 11px;
+  font-weight: 700;
+  color: #8a97a9;
+  line-height: 1;
+}
+
+/* baris legend + select: JANGAN WRAP */
+.chart-overlay .filter-row{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: nowrap;         /* <— kunci agar tidak membungkus */
+  white-space: nowrap;       /* <— pastikan tetap satu baris */
+}
+
+/* legend di kiri select */
+.chart-overlay .overlay-legend{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;            /* ukuran sesuai konten, tidak melebar */
+  white-space: nowrap;
+}
+
+/* pastikan "pill" tidak menyebabkan wrap aneh */
+.chart-overlay .overlay-legend .pill{
+  display: inline-block;
+  width: 26px; height: 12px; /* atau ukuran pill yang kamu pakai */
+  border-radius: 6px;
+}
+
+/* teks legend */
+.chart-overlay .overlay-legend .legend-text{
+  font-size: 12px;
+  font-weight: 700;
+  color: #4b5b71;
+}
+
+/* select jangan melar sehingga mendorong legend */
+.chart-overlay .chart-filter{
+  flex: 0 0 auto;
+}
+
+/* Sembunyikan legend yang lama di header bila masih ada */
+.panel-header--chart .legend--pills{ display: none !important; }
+
+/* Besarkan ukuran "button warna" (pill) di legend overlay grafik bulanan */
+.chart-overlay .overlay-legend{
+  gap: 10px;                      /* jarak antar item legend */
+}
+.chart-overlay .filter-row{
+  gap: 16px;                      /* jarak legend <-> select */
+}
+.chart-overlay .overlay-legend .pill{
+  width: 40px;                    /* <— besar pill */
+  height: 16px;                   /* <— tinggi pill */
+  border-radius: 999px;           /* kapsul */
+  display: inline-block;
+  box-shadow: inset 0 -1px 0 rgba(0,0,0,.15); /* sedikit depth */
+  transform: translateY(1px);     /* biar sejajar dengan teks */
+}
+.chart-overlay .overlay-legend .legend-text{
+  font-size: 13px;                /* teks ikut sedikit lebih besar */
+  font-weight: 700;
+}
+
+/* (opsional) kalau di layar kecil terasa sempit, sedikit dikecilkan */
+@media (max-width: 1200px){
+  .chart-overlay .overlay-legend .pill{ width: 34px; height: 14px; }
+}
+
+/* Sembunyikan title kanan di header (kita pindah ke dalam chart kanan) */
+.panel-header--chart .ph-righttitle{
+  display: none !important;
+}
+
+/* Sembunyikan title kanan di header (kita pindah ke dalam chart kanan) */
+.panel-header--chart .ph-righttitle{
+  display: none !important;
+}
+
+/* TAMPILKAN kembali title kanan (Penjualan Pertahun) di header panel gabungan */
+.panel-header--chart .ph-righttitle{
+  display: block !important;
+}
+
+/* Pindahkan judul pertahun: sembunyikan title kanan di header */
+.panel-header--chart .ph-righttitle{
+  display: none !important;
+}
+
+/* Tampilkan judul "Penjualan Pertahun" di kiri atas area grafik pertahun */
+.panel-combo .pc-col:nth-child(2) .mini-title{
+  display: block !important;          /* override rule .mini-title {display:none} */
+  font-weight: 800;
+  color: #2f3f59;
+  font-size: 18px;                     /* samakan ukuran dengan title */
+  margin: 0 0 8px;                     /* beri jarak ke grafik */
+}
+
+/* Sembunyikan judul kanan bawaan header */
+.panel-header--chart .ph-righttitle{
+  display: none !important;
+}
+
+/* Tampilkan & naikkan judul di kiri grafik pertahun agar sejajar header kiri */
+.panel-combo .pc-col:nth-child(2){ position: relative; }
+.panel-combo .pc-col:nth-child(2) .mini-title{
+  display: block !important;   /* override .mini-title { display:none } */
+  font-weight: 800;
+  color: #2f3f59;
+  font-size: 18px;
+  line-height: 1.2;
+  margin: 0 0 8px;
+  transform: translateY(-28px); /* naikkan ~28px; sesuaikan -26/-30 jika perlu */
+}
+
+@media (max-width:1200px){
+  .panel-combo .pc-col:nth-child(2) .mini-title{ transform: translateY(-24px); }
+}
+
+/* Naikkan seluruh kolom kanan (title + grafik pertahun) agar sejajar header kiri */
+.panel-combo .pc-body .pc-col:nth-child(2){
+  margin-top: -18px;               /* geser ke atas; sesuaikan -16/-20 jika perlu */
+}
+
+/* Rapatkan jarak title ke grafik & batalkan translate sebelumnya */
+.panel-combo .pc-col:nth-child(2) .mini-title{
+  transform: none !important;      /* override jika sebelumnya diangkat pakai translate */
+  margin: 0 0 6px;                  /* kecilkan jarak ke grafik */
+  display: block !important;        /* pastikan tampil */
+}
+
+@media (max-width:1200px){
+  .panel-combo .pc-body .pc-col:nth-child(2){ margin-top: -16px; }
+}
+/* 1) Matikan judul kanan bawaan header gabungan */
+.panel-header--chart .ph-righttitle{
+  display: none !important;
+}
+
+/* 2) Pastikan kolom kanan (grafik pertahun) start di titik yang sama dgn kolom kiri */
+.panel-combo .pc-body .pc-col:nth-child(2){
+  margin-top: 0 !important;
+  position: relative;            /* anchor utk judul absolut */
+}
+
+/* 3) Taruh judul 'Penjualan Pertahun' di level yang sama dengan judul kiri */
+.panel-combo .pc-col:nth-child(2) .mini-title{
+  display: block !important;     /* override default .mini-title {display:none} */
+  position: absolute;
+  top: -44px;                    /* sejajarkan dengan 'Penjualan Perbulan' */
+  left: 0;
+  margin: 0;
+  line-height: 1;
+  font-weight: 800;
+  color: #2f3f59;
+  font-size: 18px;
+}
+
+/* (opsional) kalau masih beda 1–2px, geser halus: -42 / -46 */
+@media (max-width:1200px){
+  .panel-combo .pc-col:nth-child(2) .mini-title{ top: -42px; }
+}
+
+.white-scrim {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;              /* dulu bottom: var(--batik-strip); */
+  background: #ffffff;
+  opacity: 0.96;          /* dari 0.9 → 0.96 */
+}
+
+/* ===== Single Panel (full width) — gaya mirip panel-combo ===== */
+.panel-single{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:10px;
+  box-shadow:0 2px 10px rgba(0,0,0,.04);
+  height:360px;                  /* samakan tinggi default */
+  display:flex;
+  flex-direction:column;
+  min-height:0;
+  margin-top:18px;               /* jarak dari panel bawah */
+}
+
+/* header sudah pakai .panel-header .panel-header--chart yang ada */
+
+.ps-body{
+  flex:1;
+  min-height:0;
+  padding:12px 16px;
+  display:grid;
+  place-items:center;            /* sementara: pusat placeholder */
+}
+
+/* Placeholder tampilan awal (boleh dihapus saat isi konten) */
+.ps-placeholder{
+  font-size:13px;
+  color:#7b8aa0;
+  border:1px dashed var(--line);
+  padding:18px 22px;
+  border-radius:10px;
+  background:#f9fbfe;
+}
+
+/* Responsif: biar enak di layar kecil */
+@media (max-width:1200px){
+  .panel-single{
+    height:auto;                 /* biar fleksibel konten memanjang */
+  }
+}
+
+/* Hilangkan garis abu-abu (border-bottom) untuk card Produk Terlaris */
+.panel-single .panel-header--chart {
+  border-bottom: none !important;
+}
+
+/* ===== Produk Terlaris (layout dua kolom: kiri tabel, kanan chart) ===== */
+.pt-grid{
+  width:100%;
+  display:grid;
+  grid-template-columns: minmax(560px, 1.1fr) minmax(360px, 1fr);
+  gap:24px;
+  align-items:start;
+}
+
+.pt-left{ min-width:0; }
+.pt-right{ min-width:0; display:flex; justify-content:center; }
+
+.pt-chart-slot{
+  width:100%;
+  max-width:520px;
+  min-height:260px;           /* slot kosong supaya proporsional seperti gambar */
+  border-radius:12px;
+  background:transparent;     /* sengaja transparan; nanti diisi donut */
+}
+
+/* Toolbar tombol di atas tabel (Copy | Excel) */
+.pt-toolbar{
+  display:flex;
+  gap:8px;
+  margin-bottom:10px;
+}
+.btn{
+  font: 500 12px/1 "Poppins", system-ui, Arial, sans-serif;
+  padding:8px 12px;
+  border-radius:8px;
+  border:1px solid var(--line);
+  background:#f1f5f9;
+  box-shadow:0 1px 0 rgba(0,0,0,.02);
+  cursor:pointer;
+}
+.btn-gray:hover{ filter:brightness(0.98); }
+
+/* Bungkus tabel */
+.table-wrap{
+  border:1px solid var(--line);
+  border-radius:8px;
+  overflow:hidden;
+  background:#fff;
+  box-shadow:0 1.5px 8px rgba(0,0,0,.03);
+}
+
+/* Tabel */
+.pt-table{
+  width:100%;
+  border-collapse:separate;
+  border-spacing:0;
+  font-size:13px;
+  color:#2b3b54;
+}
+.pt-table thead th{
+  background:#f7fafc;
+  font-weight:600;
+  text-align:left;
+  padding:10px 12px;
+  border-bottom:1px solid var(--line);
+}
+.pt-table tbody td{
+  padding:10px 12px;
+  border-bottom:1px solid #edf2f7;
+}
+.pt-table tbody tr:last-child td{ border-bottom:none; }
+
+/* Kolom lebar seperti contoh */
+.pt-table .col-no{ width:44px; text-align:center; }
+.pt-table .col-img{ width:92px; }
+
+/* “Gambar” placeholder bulat kapsul */
+.img-pill{
+  display:inline-flex; align-items:center; justify-content:center;
+  min-width:64px; height:28px; padding:0 10px;
+  border-radius:999px;
+  border:1px solid var(--line);
+  background:#f2f6fb;
+  font-size:12px; color:#66768f;
+}
+
+/* Responsif: stack vertikal di layar sempit */
+@media (max-width: 1200px){
+  .pt-grid{
+    grid-template-columns: 1fr;
+  }
+  .pt-chart-slot{
+    max-width:none; min-height:220px;
+  }
+}
+
+/* === Resize tabel Produk Terlaris agar pas di card === */
+
+/* Card boleh auto-height biar tidak “mendorong” layout */
+.panel-single{ height:auto; }
+
+/* Grid: kolom kiri (tabel) dipersempit */
+.pt-grid{
+  grid-template-columns: minmax(440px, 0.9fr) minmax(420px, 1.1fr);
+  gap:20px;
+}
+
+/* Batasi lebar maksimal tabel */
+.pt-left{ min-width:0; justify-self:start; }
+.table-wrap{ max-width: 500px; }   /* <- sesuaikan kalau mau lebih kecil/besar */
+
+/* Perkecil tipografi & padding tabel */
+.pt-table{ font-size:12px; }
+.pt-table thead th{ padding:8px 10px; }
+.pt-table tbody td{ padding:8px 10px; }
+
+/* Perkecil lebar kolom */
+.pt-table .col-no{ width:38px; }
+.pt-table .col-img{ width:84px; }
+
+/* Perkecil “Gambar” pill */
+.img-pill{
+  min-width:56px; height:24px; padding:0 8px; font-size:11px;
+}
+
+/* Sedikit rapatkan toolbar */
+.pt-toolbar{ gap:6px; margin-bottom:8px; }
+.btn{ padding:6px 10px; font-size:11.5px; }
+
+/* Jaga tetap rapi di layar sempit */
+@media (max-width:1200px){
+  .pt-grid{ grid-template-columns:1fr; }
+  .table-wrap{ max-width:none; }
+}
+
+/* 1) Kembalikan tinggi card seperti panel chart lain */
+.panel-single{ 
+  height:360px !important;   /* samakan dengan tinggi card sebelumnya */
+}
+
+/* 2) Pastikan isi card tidak dipusatkan */
+.panel-single .ps-body{
+  display:block;
+  padding:12px 16px;
+}
+
+/* 3) Kolom kiri (tabel) fleksibel vertikal */
+.pt-left{
+  display:flex;
+  flex-direction:column;
+  min-width:0;
+}
+
+/* 4) Tabel mengikuti tinggi card (bukan sebaliknya) */
+.table-wrap{
+  flex:1;
+  min-height:0;
+  /* 360 - header(±56) - padding(24) - toolbar(±32) = ~248px tersedia */
+  max-height:248px;
+  overflow:auto;             /* jika baris > muat, tabel yang scroll */
+}
+
+/* (opsional) rapatkan baris agar muat 10 item tanpa mengubah tinggi card */
+.pt-table{ font-size:12px; }
+.pt-table thead th{ padding:7px 10px; }
+.pt-table tbody td{ padding:7px 10px; }
+
+/* Produk Terlaris: tabel mengikuti tinggi Transaksi Terbaru */
+.panel-single{ height:360px; }               /* samakan tinggi card bawah */
+.panel-single .ps-body{ padding:12px 16px; }
+
+.pt-left .table-wrap{
+  max-height:none !important; /* jangan dibatasi oleh aturan sebelumnya */
+  height:auto;                /* akan di-set inline oleh JS */
+  overflow:auto;              /* jika baris lebih banyak, scroll di dalam */
+}
+
+/* === Produk Terlaris: tampilkan 10 baris penuh tanpa scroll === */
+.panel-single { 
+  height: auto !important;           /* card ikut tinggi konten */
+}
+
+.panel-single .ps-body{
+  display: block;                     /* pastikan bukan grid-center */
+  padding: 12px 16px;
+}
+
+.pt-left .table-wrap{
+  height: auto !important;            /* lepaskan batas tinggi */
+  max-height: none !important;
+  overflow: visible !important;       /* hilangkan scroll */
+}
+
+/* (opsional) rapatkan sedikit agar proporsional */
+.pt-table{ font-size: 12px; }
+.pt-table thead th{ padding: 8px 10px; }
+.pt-table tbody td{ padding: 8px 10px; }
+.img-pill{ height:24px; min-width:56px; padding:0 8px; font-size:11px; }
+
+/* === Produk Terlaris — Full width sampai garis kuning === */
+
+/* Jadikan satu kolom penuh */
+.pt-grid{
+  grid-template-columns: 1fr !important;
+}
+
+/* Pastikan konten kiri (tabel) membentang penuh */
+.pt-left{
+  grid-column: 1 / -1;
+}
+
+/* (Opsional) sembunyikan slot kanan kalau masih ada */
+.pt-right{
+  display: none;
+}
+
+/* Hilangkan batasan lebar tabel */
+.table-wrap{
+  width: 100%;
+  max-width: none !important;
+}
+
+/* Pastikan tabel mengikuti lebar kontainer */
+.pt-table{
+  width: 100%;
+  table-layout: auto;
+}
+
+/* === Produk Terlaris — ukuran seperti gambar contoh === */
+.pt-grid{
+  /* kiri (tabel) ~650–700px, kanan fleksibel */
+  grid-template-columns: minmax(660px, 0.95fr) minmax(360px, 1.05fr) !important;
+  gap: 24px;
+}
+
+/* batasi lebar tabel agar tidak melebar lagi */
+.table-wrap{
+  max-width: 680px !important;   /* boleh 660–720 sesuai selera */
+  width: 100%;
+}
+
+/* tipografi & padding tabel sedikit lebih rapat seperti mock */
+.pt-table{ font-size: 12px; }
+.pt-table thead th{ padding: 8px 10px; }
+.pt-table tbody td{ padding: 8px 10px; }
+
+/* lebar kolom kecil */
+.pt-table .col-no{ width: 44px; text-align: center; }
+.pt-table .col-img{ width: 92px; }
+
+/* responsif: tumpuk vertikal di layar kecil */
+@media (max-width: 1200px){
+  .pt-grid{ grid-template-columns: 1fr !important; }
+  .table-wrap{ max-width: none !important; }
+}
+
+/* === Produk Terlaris: lebih kecil + ada space bawah === */
+
+/* 1) Perkecil lebar kolom kiri (tabel) */
+.pt-grid{
+  grid-template-columns: minmax(420px, 0.85fr) minmax(420px, 1.15fr) !important;
+  gap: 22px;
+}
+
+/* 2) Batasi lebar maksimum tabel agar tampak lebih ramping */
+.table-wrap{
+  max-width: 460px !important;   /* boleh turunkan ke 440px jika mau lebih kecil */
+  width: 100%;
+}
+
+/* 3) Pad & font lebih rapat supaya tinggi total konten ikut berkurang */
+.pt-table{ font-size: 11.5px; }
+.pt-table thead th,
+.pt-table tbody td{ padding: 6px 8px; }
+
+/* 4) Tambah ruang kosong di bawah kartu Produk Terlaris */
+.panel-single{ margin-bottom: 22px !important; }
+
+/* === Produk Terlaris — Pendekkan tinggi tabel (tanpa scroll) === */
+.panel-single .ps-body{ padding:10px 14px !important; }  /* body card lebih rapat */
+.pt-toolbar{ margin-bottom:6px !important; }              /* toolbar Copy/Excel lebih rapat */
+
+.pt-table{ font-size:11px; line-height:1.25; }            /* default kamu 13px → 11px */
+.pt-table thead th{ padding:6px 10px !important; }        /* header tabel lebih pendek */
+.pt-table tbody td{ padding:5px 10px !important; }        /* baris tabel lebih pendek */
+.img-pill{ height:22px; min-width:52px; padding:0 8px; font-size:10.5px; } /* kapsul "Gambar" ikut kecil */
+
+/* donut kanan sedikit lebih pendek supaya proporsional */
+.pt-chart-slot{ min-height:240px !important; }
+
+/* beri space di bawah kartu */
+.panel-single{ margin-bottom:24px !important; }
+
+/* === Produk Terlaris — Lebarkan tabel sampai tepi (garis kuning) === */
+
+/* Kolom kiri (tabel) ambil seluruh sisa lebar; kolom kanan fixed 420–520px */
+.pt-grid{
+  grid-template-columns: 1fr minmax(420px, 520px) !important;
+  gap: 24px;
+}
+
+/* Lepaskan batas lebar tabel supaya bisa melebar penuh */
+.table-wrap{
+  max-width: none !important;
+  width: 100%;
+}
+
+/* Biarkan slot donut max 520px agar proporsional */
+.pt-chart-slot{
+  max-width: 520px !important;
+  width: 100%;
+}
+
+/* === Produk Terlaris — tambah jarak antara card & table === */
+
+/* Jarak horizontal antar kolom kiri–kanan */
+.pt-grid{
+  gap: 32px !important;          /* sebelumnya 24px */
+}
+
+/* (opsional) jarak kecil ekstra antara toolbar Copy/Excel dan tabel */
+.pt-toolbar{
+  margin-bottom: 12px !important; /* bikin napas di atas tabel */
+}
+
+/* (opsional) kalau masih terasa nempel, beri sedikit offset kanan area chart */
+.pt-right{
+  margin-left: 2px;               /* sangat kecil, tidak mempengaruhi lebar tabel */
+}
+
+/* === Produk Terlaris: garis vertikal antar kolom === */
+.pt-table thead th + th,
+.pt-table tbody td + td{
+  border-left: 1px solid var(--line);
+}
+
+/* (opsional) bikin garis body sedikit lebih halus */
+.pt-table tbody td + td{
+  border-left-color: #e6edf5;
+}
+
+/* === Produk Terlaris — center header + kolom tertentu === */
+
+/* 1) Judul (TH) semua kolom jadi center */
+.pt-table thead th{
+  text-align: center !important;
+}
+
+/* 2) Data (TD) yang dipusatkan: Gambar(2), Terjual(4), Persentase(6) */
+.pt-table tbody td:nth-child(2),
+.pt-table tbody td:nth-child(4),
+.pt-table tbody td:nth-child(6){
+  text-align: center !important;
+  vertical-align: middle;
+}
+
+/* (opsional) kalau pill "Gambar" mau ekstra center secara fleksibel */
+.pt-table tbody td:nth-child(2) .img-pill{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+/* ==== Produk Terlaris: tambah jarak antara garis biru & garis kuning ==== */
+.panel-single .pt-left{
+  margin-left: 14px;         /* naik-turunkan 10–18px sesuai selera */
+}
+
+/* (opsional) di layar sempit sedikit lebih kecil */
+@media (max-width:1200px){
+  .panel-single .pt-left{ margin-left: 10px; }
+}
+
+/* === Produk Terlaris — tambah space di bawah tabel, posisi tabel tidak berubah === */
+.panel-single .ps-body{
+  padding-bottom: 28px !important;   /* ruang ekstra di dalam card */
+  position: relative;
+}
+.panel-single .ps-body::after{
+  content: "";
+  display: block;
+  height: 18px;                      /* spacer di paling bawah card */
+}
+
+/* (opsional) sedikit lebih hemat ruang di layar kecil */
+@media (max-width:1200px){
+  .panel-single .ps-body{ padding-bottom: 20px !important; }
+  .panel-single .ps-body::after{ height: 12px; }
+}
+
+/* === Transaksi Terbaru → samakan dengan Produk Terlaris === */
+
+/* Bungkus tabel: border, radius, shadow seperti Produk Terlaris */
+.ds-table-wrap{
+  border:1px solid var(--line);
+  border-radius:8px;
+  overflow:hidden;
+  background:#fff;
+  box-shadow:0 1.5px 8px rgba(0,0,0,.03);
+}
+
+/* Tabel + tipografi */
+.ds-table{
+  width:100%;
+  border-collapse:separate;
+  border-spacing:0;
+  font-size:12px;               /* sama dengan .pt-table */ 
+  color:#2b3b54;
+}
+
+/* Header: latar abu, center */
+.ds-table thead th{
+  background:#f7fafc;
+  font-weight:600;
+  text-align:center;
+  padding:8px 10px;
+  border-bottom:1px solid var(--line);
+}
+
+/* Body: padding + garis horizontal */
+.ds-table tbody td{
+  padding:8px 10px;
+  border-bottom:1px solid #edf2f7;
+}
+.ds-table tbody tr:last-child td{ border-bottom:none; }
+
+/* Garis vertikal antar kolom */
+.ds-table thead th + th,
+.ds-table tbody td + td{
+  border-left:1px solid var(--line);
+}
+.ds-table tbody td + td{ border-left-color:#e6edf5; }
+
+/* Perataan data kolom tertentu */
+.ds-table tbody td:nth-child(1),   /* No */
+.ds-table tbody td:nth-child(5),   /* Total Item */
+.ds-table tbody td:nth-child(8){   /* Aksi */
+  text-align:center;
+  vertical-align:middle;
+}
+
+/* (opsional) tombol aksi agar rapi */
+.aksi-link{
+  border:1px solid var(--line);
+  background:#f1f5f9;
+  padding:6px 10px;
+  border-radius:8px;
+  font-size:11.5px;
+}
+
+/* === Transaksi Terbaru — Compact mode (lebih kecil) === */
+
+/* Ukuran font global tabel + line-height lebih rapat */
+.ds-table{
+  font-size: 11px !important;
+  line-height: 1.25;
+}
+
+/* Header lebih kecil & pendek */
+.ds-table thead th{
+  font-size: 11.5px !important;
+  padding: 6px 8px !important;
+}
+
+/* Sel body lebih rapat */
+.ds-table tbody td{
+  padding: 5px 8px !important;
+}
+
+/* Tombol/aksi di kolom terakhir ikut diperkecil */
+.aksi-link{
+  padding: 4px 8px !important;
+  font-size: 10.5px !important;
+  border-radius: 6px;
+}
+
+/* (opsional) tambah sedikit kerapihan untuk baris terakhir */
+.ds-table tbody tr:last-child td{ padding-bottom: 6px !important; }
+
+/* === Metode Pembayaran — sejajarkan label & angka + kecilkan font === */
+
+/* 1) Top-align semua sel (dot | teks | count) */
+.donut-legend li{
+  align-items: start !important;           /* sebelumnya center */
+}
+
+/* 2) Angka di kanan sejajarkan ke baris label (bukan ditengah dua baris teks) */
+.dl-count{
+  align-self: start;                        /* naik ke atas, sejajar label */
+  padding-top: 1px;                         /* micro adjust; 0–2px sesuai tampilan */
+  font-size: 12.5px;                        /* sedikit lebih kecil dari default 13px */
+  line-height: 1.2;
+}
+
+/* 3) Kecilkan teks kiri agar muat rapi */
+.dl-label{
+  font-size: 12.5px;                        /* label “Cash/Debit/…” */
+  line-height: 1.15;
+}
+.dl-sub{
+  font-size: 11px !important;               /* “Jumlah Transaksi Sebanyak” */
+  line-height: 1.2;
+  margin-top: 2px;
+}
+
+/* === Metode Pembayaran — label, subteks, dan angka dalam satu baris === */
+
+/* item legend: dot | (label + sub + angka) */
+.donut-legend li{
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px;
+  padding: 6px 0;
+}
+
+/* blok teks jadi satu baris fleksibel */
+.dl-text{
+  display: flex !important;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;           /* aman jika ruang sempit */
+  line-height: 1.2;
+}
+
+/* nama metode tebal */
+.dl-label{
+  font-weight: 800;
+}
+
+/* kalimat + angka pada baris yang sama */
+.dl-sub{
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;                  /* jarak kecil sebelum angka */
+  font-size: 12px;
+  color: #7b8aa0;
+}
+
+.dl-sub .dl-count{
+  font-weight: 800;
+  color: #2f3f59;
+  font-size: 12.5px;
+}
+
+/* === Legend Metode Pembayaran — sejajarkan semua dalam satu baris === */
+.donut-legend li{
+  display: flex !important;
+  align-items: center !important;  /* dot, label, teks sejajar vertikal */
+  gap: 10px;
+  padding: 4px 0 !important;
+}
+
+/* blok teks kiri: label + kalimat jadi satu baris */
+.dl-text{
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px;
+  flex-wrap: nowrap;               /* jangan pindah baris */
+}
+
+/* nama metode (Cash/Debit/...) jangan center & jangan turun baris */
+.dl-label{
+  display: inline-block !important;
+  margin: 0 6px 0 0 !important;
+  text-align: left !important;
+  font-weight: 800;
+}
+
+/* “Jumlah Transaksi Sebanyak” + angka di baris yang sama */
+.dl-sub{
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px;
+  margin: 0 !important;
+  white-space: nowrap;             /* tetap satu baris */
+}
+
+/* angka tebal */
+.dl-count{ font-weight: 800; }
+
+/* pastikan dot tidak offset ke atas */
+.donut-legend .dot{ margin-top: 0 !important; }
+
+/* === Legend Metode Pembayaran — horizontal sejajar === */
+
+/* Setiap item legend: dot | (label+sub) | angka di satu garis */
+.donut-legend li{
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px;
+  padding: 4px 0 !important;
+}
+
+/* Bikin .dl-label dan .dl-sub jadi satu baris */
+.dl-text{
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 8px;
+  white-space: nowrap !important;      /* cegah turun baris */
+}
+
+/* Nama metode + kalimat tetap horizontal */
+.dl-label{
+  margin: 0 6px 0 0 !important;
+  font-weight: 800;
+}
+.dl-sub{
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px;
+  margin: 0 !important;
+  white-space: nowrap !important;
+}
+
+/* Angka tetap di kanan; tebal */
+.dl-count{
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+/* Pastikan dot tidak offset */
+.donut-legend .dot{ margin-top: 0 !important; }
+
+.dl-label, .dl-sub, .dl-count { font-size: 12px !important; }
+
+/* === Pendekin METODE PEMBAYARAN & TRANSAKSI TERBARU (tanpa ubah isi) === */
+.ds-panels--bottom .ds-panel.tall{
+  height: 420px !important;      /* ← atur sesuai selera: 360–460px */
+  display: flex;
+  flex-direction: column;
+}
+
+.ds-panels--bottom .ds-panel.tall .panel-body{
+  flex: 1 1 auto;
+  overflow-y: auto;              /* konten di dalam bisa discroll jika kepanjangan */
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Scrollbar tipis agar rapi (opsional) */
+.ds-panels--bottom .ds-panel.tall .panel-body::-webkit-scrollbar{ width: 6px; }
+.ds-panels--bottom .ds-panel.tall .panel-body::-webkit-scrollbar-thumb{
+  background: #e0e6ee; border-radius: 8px;
+}
+.ds-panels--bottom .ds-panel.tall .panel-body::-webkit-scrollbar-track{ background: transparent; }
+
+/* Firefox (opsional) */
+.ds-panels--bottom .ds-panel.tall .panel-body{
+  scrollbar-width: thin;
+  scrollbar-color: #e0e6ee transparent;
+}
+
+/* ==== Tinggi target 2 card bawah (atur supaya pas garis ungu) ==== */
+:root{
+  /* ubah angka ini sampai pas garis ungu */
+  --bottomCardHeight: 10px;   /* coba 360–380px; naik-turun 2–4px untuk presisi */
+}
+
+.ds-panels--bottom .ds-panel.tall{
+  height: var(--bottomCardHeight) !important;
+  display: flex;
+  flex-direction: column;
+}
+
+.ds-panels--bottom .ds-panel.tall .panel-body{
+  flex: 1 1 auto;
+  overflow-y: auto;            /* isi card scroll jika lebih tinggi */
+  -webkit-overflow-scrolling: touch;
+}
+
+/* (opsional) scrollbar tipis agar rapi */
+.ds-panels--bottom .ds-panel.tall .panel-body::-webkit-scrollbar{ width: 6px; }
+.ds-panels--bottom .ds-panel.tall .panel-body::-webkit-scrollbar-thumb{
+  background:#e0e6ee; border-radius: 8px;
+}
+.ds-panels--bottom .ds-panel.tall .panel-body{ scrollbar-width: thin; scrollbar-color:#e0e6ee transparent; }
+
+/* sekitar baris 247–252 di Dashboard.css */
+.ds-panels--bottom .ds-panel{ height:auto !important; }
+.ds-panels--bottom .panel-body{ flex: initial !important; }
+
+/* ==== Force height 2 card bawah sampai garis ungu ==== */
+:root{
+  /* atur sampai pas garis ungu (coba 340–380px) */
+  --bottomCardHeight: 520px;
+}
+
+.ds-panels--bottom .ds-panel.tall{
+  height: var(--bottomCardHeight) !important;
+  min-height: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.ds-panels--bottom .ds-panel.tall .panel-body{
+  flex: 1 1 auto !important;
+  overflow-y: auto !important;   /* isi scroll jika lebih tinggi */
+  -webkit-overflow-scrolling: touch;
+}
+
+/* scrollbar tipis (opsional) */
+.ds-panels--bottom .ds-panel.tall .panel-body::-webkit-scrollbar{ width:6px; }
+.ds-panels--bottom .ds-panel.tall .panel-body::-webkit-scrollbar-thumb{ background:#e0e6ee; border-radius:8px; }
+.ds-panels--bottom .ds-panel.tall .panel-body{ scrollbar-width:thin; scrollbar-color:#e0e6ee transparent; }
+
+/* === Produk Terbaru & Semua Data Produk (card gabungan) === */
+
+/* Grid 2 kolom: kiri sempit, kanan lebar */
+.pj-grid{
+  display: grid;
+  grid-template-columns: minmax(420px, 480px) 1fr; /* sesuaikan 420–500px */
+  gap: 24px;
+  align-items: start;
+}
+
+/* Catatan kecil di atas tabel "Produk Terbaru" */
+.pj-left .note{
+  margin: 0 0 10px 0;
+  color: #6b7a90;
+  font-size: 12px;
+}
+
+/* Kolom "Stok" pada tabel kiri rata tengah */
+.pj-left .pt-table th:nth-child(4),
+.pj-left .pt-table td:nth-child(4){
+  text-align: center;
+  vertical-align: middle;
+}
+
+/* Toolbar kanan: tombol Copy/Excel + Search seperti contoh */
+.pj-right .pt-toolbar{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+/* Kotak pencarian kecil di kanan */
+.pj-right .pt-toolbar .tc-right{
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 8px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+}
+.pj-right .pt-toolbar .tc-right input{
+  border: 0;
+  outline: 0;
+  background: transparent;
+  height: 28px;
+  font-size: 12px;
+  width: 180px;              /* ubah bila perlu */
+}
+
+/* Judul kanan (Semua Data Produk) tetap rata kanan header */
+.panel-header.panel-header--chart .ph-righttitle{
+  font-weight: 700;
+}
+
+/* Responsive: jika layar sempit, tumpuk jadi 1 kolom */
+@media (max-width: 1200px){
+  .pj-grid{ grid-template-columns: 1fr; }
+  /* (opsional) sembunyikan judul kanan agar tidak numpuk */
+  /* .panel-header.panel-header--chart .ph-righttitle{ display:none; } */
+}
+
+
+/* === Produk Terbaru & Semua Data Produk — tampil penuh tanpa scroll === */
+
+/* Matikan batas tinggi & scroll pada wrapper tabel di card ini saja */
+.panel-single .pj-grid .table-wrap,
+.pj-left .table-wrap,
+.pj-right .table-wrap{
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+/* Pastikan kontainer card tidak membatasi tinggi */
+.panel-single .ps-body{
+  overflow: visible !important;
+}
+.pj-left, .pj-right{
+  height: auto !important;
+  overflow: visible !important;
+}
+
+/* (opsional) kalau ada rule global yang membatasi tinggi .table-wrap */
+.table-wrap{ scrollbar-width: auto; }  /* no-op, hanya untuk memastikan tidak ada styling scrollbar khusus */
+
+/* === Perlebar tabel "Semua Data Produk" ke kiri === */
+:root{
+  /* bebas kamu atur untuk pas-nya */
+  --pj-left-min: 360px;  /* sebelumnya 420px */
+  --pj-left-max: 420px;  /* sebelumnya 480px */
+  --pj-gap: 16px;        /* sebelumnya 24px */
+}
+
+.pj-grid{
+  grid-template-columns: minmax(var(--pj-left-min), var(--pj-left-max)) 1fr !important;
+  gap: var(--pj-gap) !important;
+  align-items: start;
+}
+
+/* pastikan tidak ada margin/padding yang menahan di sisi kiri/kanan */
+.pj-left{ margin-right: 0 !important; }
+.pj-right{ margin-left: 0 !important; }
