@@ -1411,3 +1411,163 @@ html,body{height:100%;margin:0;overflow:hidden;}
 /* pastikan tidak ada margin/padding yang menahan di sisi kiri/kanan */
 .pj-left{ margin-right: 0 !important; }
 .pj-right{ margin-left: 0 !important; }
+
+/* === Samakan lebar kolom kiri dg Produk Terlaris & lebarkan tabel kanan === */
+
+/* Satu variabel untuk “lebar kolom kiri” (tabel) — sesuaikan sampai pas garis ungu */
+:root{
+  --pt-left-width: 560px;   /* ubah 540–600px sesuai garis ungu di layar kamu */
+}
+
+/* Pakai lebar yang sama untuk grid Produk Terlaris (pt-grid) dan card baru (pj-grid) */
+.pt-grid{
+  grid-template-columns: var(--pt-left-width) 1fr !important;
+}
+.pj-grid{
+  grid-template-columns: var(--pt-left-width) 1fr !important;  /* kiri = tabel Produk Terbaru, kanan = Semua Data Produk */
+  gap: 20px !important;                                        /* jarak antar tabel */
+  align-items: start;
+}
+
+/* Pastikan wrapper & tabel mengisi kolomnya penuh (tidak ada batasan internal) */
+.pt-left, .pj-left, .pj-right{ min-width: 0 !important; }
+.pt-left .table-wrap,
+.pj-left .table-wrap,
+.pj-right .table-wrap{ width: 100% !important; }
+.pt-left .pt-table,
+.pj-left .pt-table,
+.pj-right .pt-table{ width: 100% !important; }
+
+/* Hilangkan padding ekstra yang bisa bikin terlihat “nggak nempel” ke garis grid */
+.pj-left, .pj-right{ margin: 0 !important; }
+
+/* === Samakan garis kiri dg Produk Terlaris & lebarkan kanan sampai garis ungu === */
+
+/* Atur sekali di sini sampai pas garis ungu kiri */
+:root{
+  --left-col-width: 560px;   /* coba 540–600px sampai benar-benar sejajar */
+  --mid-gap: 18px;           /* jarak di tengah */
+}
+
+/* Grid card "Produk Terlaris" & card "Produk Terbaru + Semua Data Produk" sama lebarnya */
+.panel-single .pt-grid{
+  grid-template-columns: var(--left-col-width) 1fr !important;
+}
+.panel-single .pj-grid{
+  grid-template-columns: var(--left-col-width) 1fr !important;
+  gap: var(--mid-gap) !important;
+  align-items: start;
+}
+
+/* Pastikan tidak ada margin/padding yang menahan lebar */
+.pj-left, .pj-right, .pt-left{ margin:0 !important; min-width:0 !important; }
+.pj-left .table-wrap,
+.pj-right .table-wrap,
+.pt-left .table-wrap{ width:100% !important; margin:0 !important; }
+.pj-left .pt-table,
+.pj-right .pt-table,
+.pt-left .pt-table{ width:100% !important; box-sizing:border-box; }
+
+/* Hilangkan batas tinggi/scroll agar tabel tampil penuh */
+.pj-grid .table-wrap{ max-height:none !important; overflow:visible !important; }
+
+:root{
+  /* Naikkan sampai kolom kiri pas & tidak menumpahkan kolom "Stok" */
+  --left-col-width: 640px;   /* coba 630–660px sesuai garis ungu kiri */
+}
+
+/* Pastikan grid card baru ikut pakai lebar ini */
+.panel-single .pj-grid{
+  grid-template-columns: var(--left-col-width) 1fr !important;
+  gap: 18px !important;
+}
+
+/* === Card Produk Terbaru & Semua Data Produk: kiri kecil, kanan besar === */
+
+/* Lebar kolom kiri khusus card ini */
+:root{
+  --pj-left-width: 420px;   /* kecilkan/naikkan (380–460px) sesuai kebutuhan */
+  --pj-gap: 18px;
+}
+
+.panel-single .pj-grid{
+  grid-template-columns: var(--pj-left-width) 1fr !important; /* kiri kecil, kanan ambil sisa */
+  gap: var(--pj-gap) !important;
+  align-items: start;
+}
+
+/* Pastikan tabel kiri muat di lebar kecil */
+.pj-left .pt-table{ table-layout: fixed; width: 100%; }
+.pj-left .pt-table th, 
+.pj-left .pt-table td{
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Lebar kolom-kolom tabel kiri supaya rapih */
+.pj-left .pt-table .col-no{ width: 45px; }
+.pj-left .pt-table .col-img{ width: 95px; }
+.pj-left .pt-table th:nth-child(4),
+.pj-left .pt-table td:nth-child(4){ /* Stok */
+  width: 72px; 
+  text-align: center;
+}
+
+/* Biarkan kolom nama ambil sisa */
+.pj-left .pt-table th:nth-child(3),
+.pj-left .pt-table td:nth-child(3){
+  width: auto;
+}
+
+/* Pastikan wrapper tak menahan lebar/tinggi */
+.pj-left, .pj-right{ min-width:0 !important; margin:0 !important; }
+.pj-left .table-wrap, .pj-right .table-wrap{ width:100% !important; max-height:none !important; overflow:visible !important; }
+
+/* === Tambah gap antar tabel kiri & kanan pada card produk === */
+:root{
+  --pj-gap: 150px;            /* ubah 24–40px sesuai selera */
+}
+
+.panel-single .pj-grid{
+  column-gap: var(--pj-gap) !important;  /* jarak horizontal */
+  row-gap: 12px !important;              /* (opsional) jarak vertikal dalam grid */
+}
+
+/* === Lebarkan tabel kanan (Semua Data Produk) === */
+:root{
+  /* kecilkan kiri -> kanan bertambah lebar */
+  --pj-left-width: 380px;   /* sebelumnya 420px; coba 360–420px sesuai selera */
+  --pj-gap: 24px;           /* jarak tengah (boleh ubah) */
+}
+
+.panel-single .pj-grid{
+  grid-template-columns: var(--pj-left-width) 1fr !important;  /* kanan ambil sisa */
+  column-gap: var(--pj-gap) !important;
+  align-items: start;
+}
+
+/* pastikan tabel kanan mengisi penuh kolomnya */
+.pj-right .table-wrap,
+.pj-right .pt-table{ width:700px !important; }
+
+.pj-right .pt-table{ table-layout:auto !important; } /* biar kolomnya bebas melebar */
+
+/* === 1) Kolom kiri & kanan harus sama-tinggi === */
+.panel-single .pj-grid{ align-items: stretch !important; }
+.pj-left, .pj-right{
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 0;
+}
+.pj-left .table-wrap,
+.pj-right .table-wrap{
+  flex: 1 1 auto !important;   /* area tabel mengisi tinggi kolom */
+  width: 100%;
+}
+
+/* === 2) Tinggikan baris tabel kanan agar garis bawahnya sejajar === */
+/* (atur angka padding jika masih kurang/lebih) */
+.pj-right .pt-table thead th{ padding-top: 10px; padding-bottom: 10px; }
+.pj-right .pt-table tbody td{ padding-top: 12px; padding-bottom: 12px; }
+
