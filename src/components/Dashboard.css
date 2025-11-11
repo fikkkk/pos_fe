@@ -1571,3 +1571,22 @@ html,body{height:100%;margin:0;overflow:hidden;}
 .pj-right .pt-table thead th{ padding-top: 10px; padding-bottom: 10px; }
 .pj-right .pt-table tbody td{ padding-top: 12px; padding-bottom: 12px; }
 
+/* ==== Full-height untuk Tabel Kanan (Semua Data Produk) ==== */
+.panel-single .ps-body,
+.panel-single .pt-grid { min-height: 0; }
+
+/* kolom kanan jadi flex supaya table-wrap bisa flex:1 */
+.panel-single .pj-grid .pj-right{ display:flex; flex-direction:column; min-height:0; }
+.panel-single .pj-grid .pj-right .table-wrap{
+  flex:1; min-height:0; height:auto;           /* ambil tinggi sisa card */
+  display:block;                                /* tetap table normal di dalam */
+}
+
+/* tabel isi mengikuti tinggi wrapper */
+.panel-single .pj-grid .pj-right .pt-table{ height:100%; }
+.panel-single .pj-grid .pj-right .pt-table tbody tr{
+  height: var(--rowH, 48px);                    /* akan diisi dari JSX, default 48px */
+}
+
+/* supaya tak ada area kosong aneh di bawah header sticky */
+.panel-single .pj-grid .pj-right .pt-table thead th{ position:sticky; top:0; z-index:2; }

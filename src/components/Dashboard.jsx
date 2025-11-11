@@ -1,5 +1,5 @@
 // Dashboard.jsx
-import React, { useMemo, useState, useEffect, useRef } from "react";
+import React, { useMemo, useState, useEffect, useRef, useLayoutEffect } from "react";
 import {
   FaBars, FaCalendarAlt, FaTachometerAlt, FaCashRegister,
   FaDatabase, FaChartBar, FaUserCircle, FaChevronDown, FaChevronUp, FaSearch,
@@ -273,7 +273,7 @@ function PaymentDonut(){
           {rings}
           {pctLabels.map((pt,i)=>(<text key={i} x={pt.x} y={pt.y} textAnchor="middle" className="donut-pct">{pt.text}</text>))}
         </svg>
-        <div className="donut-center" style={{inset:`${pad}px`}}>
+        <div className="donut-center" style={{inset:`${24}px`}}>
           <div>
             <div className="dc-top">Total Transaksi</div>
             <div className="dc-big">{idFmt(TOTAL_TRANSAKSI)}</div>
@@ -352,7 +352,7 @@ function TransactionsTable(){
               <th style={{width:76}}>Aksi</th>
             </tr>
           </thead>
-          <tbody>
+        <tbody>
             {rows.map((r,idx)=>(
               <tr key={start+idx}>
                 <td>{r.no}</td><td>{r.id}</td><td>{r.dt}</td><td>{r.kasir}</td>
@@ -387,7 +387,16 @@ export default function Dashboard(){
     {color:"red",value:"2.190",label:"Total Pelanggan",year:"2025"},
   ];
 
-  /* data & helper untuk card “Semua Data Produk” */
+  /* ====== SEMUA DATA PRODUK – kanan, full height 10 baris ====== */
+  const MAX_PROD_ROWS = 10;
+  const rightWrapRef = useRef(null);
+  const [rowHRight, setRowHRight] = useState(0);
+
+  /* ====== PRODUK TERBARU – kiri, full height 10 baris ====== */
+  const leftWrapRef = useRef(null);
+  const [rowHLeft, setRowHLeft] = useState(0);
+
+  // data & helper untuk card “Semua Data Produk”
   const [qProduk,setQProduk] = useState("");
   const filteredProduk = useMemo(()=>{
     const s=qProduk.trim().toLowerCase();
@@ -398,6 +407,37 @@ export default function Dashboard(){
       r.stok.toLowerCase().includes(s) || r.supplier.toLowerCase().includes(s)
     );
   },[qProduk]);
+
+  const produkRows10 = useMemo(()=>filteredProduk.slice(0, MAX_PROD_ROWS),[filteredProduk]);
+  const fillerCountRight = Math.max(0, MAX_PROD_ROWS - produkRows10.length);
+
+  // helper calc row height
+  const calcRowH = (wrapEl, setter) => {
+    if (!wrapEl) return;
+    const thead = wrapEl.querySelector("thead");
+    const wrapH = wrapEl.clientHeight;
+    const headH = thead ? thead.offsetHeight : 0;
+    const innerH = Math.max(0, wrapH - headH - 1);
+    const h = Math.max(36, Math.floor(innerH / MAX_PROD_ROWS));
+    setter(h);
+  };
+
+  useLayoutEffect(() => {
+    const calcRight = () => calcRowH(rightWrapRef.current, setRowHRight);
+    const calcLeft  = () => calcRowH(leftWrapRef.current,  setRowHLeft);
+    const ro1 = new ResizeObserver(calcRight);
+    const ro2 = new ResizeObserver(calcLeft);
+    if (rightWrapRef.current) ro1.observe(rightWrapRef.current);
+    if (leftWrapRef.current)  ro2.observe(leftWrapRef.current);
+    window.addEventListener("resize", calcRight);
+    window.addEventListener("resize", calcLeft);
+    calcRight(); calcLeft();
+    return () => {
+      ro1.disconnect(); ro2.disconnect();
+      window.removeEventListener("resize", calcRight);
+      window.removeEventListener("resize", calcLeft);
+    };
+  }, []);
 
   const copySemuaProduk = async () => {
     const header = ["No","Kode Produk","Nama Produk","Harga Satuan","Satuan","Stok","Supplier"].join("\t");
@@ -534,13 +574,20 @@ export default function Dashboard(){
                 className="pj-grid"
                 style={{display:"grid", gridTemplateColumns:"minmax(420px,480px) 1fr", gap:"24px"}}
               >
-                {/* KIRI: Produk Terbaru */}
-                <div className="pj-left">
+                {/* KIRI: Produk Terbaru – full height 10 baris */}
+                <div
+                  className="pj-left"
+                  style={{ display:"flex", flexDirection:"column", minHeight:0 }} /* penting */
+                >
                   <p style={{margin:"0 0 10px 0", color:"#6b7a90", fontSize:12}}>
                     Produk terbaru akan diperbarui setiap <b>2 minggu sekali</b>, berlaku
                     hingga tanggal <b>12 Oktober 2025</b>
                   </p>
-                  <div className="table-wrap">
+                  <div
+                    className="table-wrap"
+                    ref={leftWrapRef}
+                    style={{ flex:1, minHeight:0 }}
+                  >
                     <table className="pt-table">
                       <thead>
                         <tr>
@@ -552,7 +599,7 @@ export default function Dashboard(){
                       </thead>
                       <tbody>
                         {produkTerbaruRows.map(r=>(
-                          <tr key={r.no}>
+                          <tr key={r.no} style={rowHLeft ? { height: `${rowHLeft}px` } : undefined}>
                             <td className="col-no">{r.no}</td>
                             <td className="col-img"><div className="img-pill">{r.img}</div></td>
                             <td>{r.nama}</td>
@@ -564,53 +611,76 @@ export default function Dashboard(){
                   </div>
                 </div>
 
-                {/* KANAN: Semua Data Produk */}
-                <div className="pj-right">
-                  <div
-                    className="pt-toolbar"
-                    style={{display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:10}}
-                  >
-                    <div>
-                      <button className="btn btn-gray" onClick={copySemuaProduk}>Copy</button>
-                      <button className="btn btn-gray" onClick={excelSemuaProduk} style={{marginLeft:8}}>Excel</button>
-                    </div>
-                    <div style={{display:"flex", alignItems:"center", gap:10}}>
-                      <span style={{fontSize:12, color:"#6b7a90"}}>Search</span>
-                      <div className="tc-right" style={{gap:6}}>
-                        <FaSearch/><input value={qProduk} onChange={(e)=>setQProduk(e.target.value)} placeholder="Cari Transaksi"/>
-                      </div>
-                    </div>
-                  </div>
+                {/* KANAN: Semua Data Produk – full height 10 baris */}
+<div
+  className="pj-right"
+  style={{ display:"flex", flexDirection:"column", minHeight:0 }}
+>
+  {/* <<< TITLE BARU >>> */}
+  <div className="mini-title" style={{ marginBottom: 10 }}>Semua Data Produk</div>
 
-                  <div className="table-wrap">
-                    <table className="pt-table">
-                      <thead>
-                        <tr>
-                          <th className="col-no">No</th>
-                          <th>Kode Produk</th>
-                          <th>Nama Produk</th>
-                          <th>Harga Satuan</th>
-                          <th>Satuan</th>
-                          <th>Stok</th>
-                          <th>Supplier</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {filteredProduk.map(r=>(
-                          <tr key={r.no}>
-                            <td className="col-no">{r.no}</td>
-                            <td>{r.kode}</td>
-                            <td>{r.nama}</td>
-                            <td>{r.harga}</td>
-                            <td>{r.satuan}</td>
-                            <td>{r.stok}</td>
-                            <td>{r.supplier}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
+  <div
+    className="pt-toolbar"
+    style={{display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:10}}
+  >
+    <div>
+      <button className="btn btn-gray" onClick={copySemuaProduk}>Copy</button>
+      <button className="btn btn-gray" onClick={excelSemuaProduk} style={{marginLeft:8}}>Excel</button>
+    </div>
+    <div style={{display:"flex", alignItems:"center", gap:10}}>
+      <span style={{fontSize:12, color:"#6b7a90"}}>Search</span>
+      <div className="tc-right" style={{gap:6}}>
+        <FaSearch/>
+        <input value={qProduk} onChange={(e)=>setQProduk(e.target.value)} placeholder="Cari Transaksi"/>
+      </div>
+    </div>
+  </div>
+
+  <div
+    className="table-wrap"
+    ref={rightWrapRef}
+    style={{ flex:1, minHeight:0 }}
+  >
+    <table className="pt-table">
+      <thead>
+        <tr>
+          <th className="col-no">No</th>
+          <th>Kode Produk</th>
+          <th>Nama Produk</th>
+          <th>Harga Satuan</th>
+          <th>Satuan</th>
+          <th>Stok</th>
+          <th>Supplier</th>
+        </tr>
+      </thead>
+      <tbody>
+        {produkRows10.map(r=>(
+          <tr key={r.no} style={rowHRight ? { height: `${rowHRight}px` } : undefined}>
+            <td className="col-no">{r.no}</td>
+            <td>{r.kode}</td>
+            <td>{r.nama}</td>
+            <td>{r.harga}</td>
+            <td>{r.satuan}</td>
+            <td>{r.stok}</td>
+            <td>{r.supplier}</td>
+          </tr>
+        ))}
+        {Array.from({length: Math.max(0, 10 - produkRows10.length)}).map((_,i)=>(
+          <tr key={`empty-${i}`} style={rowHRight ? { height: `${rowHRight}px` } : undefined}>
+            <td className="col-no">&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</div>
+
 
               </div>
             </div>
