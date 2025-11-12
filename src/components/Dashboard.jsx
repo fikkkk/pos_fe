@@ -1,4 +1,4 @@
-// Dashboard.jsx
+// Dashboard.jsx (FINAL)
 import React, { useMemo, useState, useEffect, useRef, useLayoutEffect } from "react";
 import {
   FaBars, FaCalendarAlt, FaTachometerAlt, FaCashRegister,
@@ -22,37 +22,39 @@ const TOTAL_TRANSAKSI = 30000;
 
 /* ========= DATA PRODUK ========= */
 const topProducts = [
-  { no: 1, nama: "Aqua Botol 600ml",        terjual: 1250, total: 6250000, persen: 18, img: "Gambar" },
-  { no: 2, nama: "Indomie Goreng",          terjual: 1000, total: 4500000, persen: 13, img: "Gambar" },
-  { no: 3, nama: "Kopi Kapal Api Special 65g", terjual: 850, total: 3400000, persen: 10, img: "Gambar" },
-  { no: 4, nama: "SilverQueen Chunky Bar 65g", terjual: 700, total: 4200000, persen: 12, img: "Gambar" },
-  { no: 5, nama: "Roti Sari Roti Coklat",   terjual: 680, total: 3400000, persen: 10, img: "Gambar" },
-  { no: 6, nama: "Teh Pucuk Harum 350ml",   terjual: 640, total: 3200000, persen: 9,  img: "Gambar" },
-  { no: 7, nama: "Beng-Beng Wafer",         terjual: 620, total: 2480000, persen: 7,  img: "Gambar" },
-  { no: 8, nama: "Tisu Paseo 250 Sheets",   terjual: 400, total: 3200000, persen: 9,  img: "Gambar" },
-  { no: 9, nama: "Pepsodent 190g",          terjual: 320, total: 2880000, persen: 8,  img: "Gambar" },
-  { no:10, nama: "Lifebuoy Sabun Cair 250ml", terjual: 280, total: 2240000, persen: 6, img: "Gambar" },
+  { no: 1, nama: "Aqua Botol 600ml",            terjual: 1250, total: 6250000, persen: 18, img: "Gambar" },
+  { no: 2, nama: "Indomie Goreng",              terjual: 1000, total: 4500000, persen: 13, img: "Gambar" },
+  { no: 3, nama: "Kopi Kapal Api Special 65g",  terjual:  850, total: 3400000, persen: 10, img: "Gambar" },
+  { no: 4, nama: "SilverQueen Chunky Bar 65g",  terjual:  700, total: 4200000, persen: 12, img: "Gambar" },
+  { no: 5, nama: "Roti Sari Roti Coklat",       terjual:  680, total: 3400000, persen: 10, img: "Gambar" },
+  { no: 6, nama: "Teh Pucuk Harum 350ml",       terjual:  640, total: 3200000, persen:  9, img: "Gambar" },
+  { no: 7, nama: "Beng-Beng Wafer",             terjual:  620, total: 2480000, persen:  7, img: "Gambar" },
+  { no: 8, nama: "Tisu Paseo 250 Sheets",       terjual:  400, total: 3200000, persen:  9, img: "Gambar" },
+  { no: 9, nama: "Pepsodent 190g",              terjual:  320, total: 2880000, persen:  8, img: "Gambar" },
+  { no:10, nama: "Lifebuoy Sabun Cair 250ml",   terjual:  280, total: 2240000, persen:  6, img: "Gambar" },
 ];
 
-const produkTerbaruRows = Array.from({length:10}, (_,i)=>({
-  no:i+1, img:"Gambar", nama:"Nama Barang", stok:"Stok"
-}));
-const semuaProdukRows = Array.from({length:10}, (_,i)=>({
+const produkTerbaruRows = Array.from({length:10}, (_,i)=>({ no:i+1, img:"Gambar", nama:"Nama Barang", stok:"Stok" }));
+const semuaProdukRows   = Array.from({length:10}, (_,i)=>({
   no:i+1, kode:"Kode Produk", nama:"Nama Produk", harga:"Harga Satuan", satuan:"Satuan", stok:"Stok", supplier:"Supplier"
 }));
 
-const formatRp = (n) => n.toLocaleString("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 });
+const formatRp     = (n) => n.toLocaleString("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 });
 const formatNumber = (n) => n.toLocaleString("id-ID");
 
 /* Utils */
 function useClickOutside(onClose){
   const ref = useRef(null);
-  useEffect(()=>{ const h=(e)=>{if(ref.current && !ref.current.contains(e.target)) onClose?.();}; document.addEventListener("mousedown",h); return()=>document.removeEventListener("mousedown",h);},[onClose]);
+  useEffect(()=>{
+    const h=(e)=>{ if(ref.current && !ref.current.contains(e.target)) onClose?.(); };
+    document.addEventListener("mousedown",h);
+    return()=>document.removeEventListener("mousedown",h);
+  },[onClose]);
   return ref;
 }
 const idFmt=(n)=>Number(n).toLocaleString("id-ID");
 
-/* Profile */
+/* Profile (opsional) */
 function ProfilePill(){
   const [open,setOpen]=useState(false);
   const ref=useClickOutside(()=>setOpen(false));
@@ -85,7 +87,7 @@ function ChartHeader({ title, rightTitle }){
   );
 }
 
-/* ===== Chart Bulanan ===== */
+/* ===== Chart Bulanan (garis) ===== */
 function SalesChartMonthly(){
   const W=700,H=270,PL=68,PR=18,PT=16,PB=30;
   const innerW=W-PL-PR, innerH=H-PT-PB;
@@ -180,7 +182,7 @@ function SalesChartMonthly(){
   );
 }
 
-/* ===== Chart Pertahun ===== */
+/* ===== Chart Pertahun (bar) ===== */
 function SalesChartYearly(){
   const W=420,H=270,PL=48,PR=16,PT=16,PB=30;
   const innerW=W-PL-PR, innerH=H-PT-PB;
@@ -251,7 +253,7 @@ function SalesChartYearly(){
   );
 }
 
-/* ===== Donut ===== */
+/* ===== Donut Metode Pembayaran ===== */
 function PaymentDonut(){
   const size=210, stroke=22, pad=24;
   const r=(size-stroke)/2, W=size+pad*2, H=size+pad*2, cx=pad+size/2, cy=pad+size/2;
@@ -300,13 +302,13 @@ function PaymentDonut(){
   );
 }
 
-/* ===== Table 10 rows, no internal scroll ===== */
+/* ===== Table Transaksi Terbaru (10/hal) ===== */
 function TransactionsTable(){
   const base10=[
     { dt:"2025-10-22 08:45", kasir:"Andi Pratama", items:3, harga:245000, method:"Cash" },
     { dt:"2025-10-22 09:10", kasir:"Rina Setiawan", items:5, harga:132000, method:"Cash" },
     { dt:"2025-10-22 09:35", kasir:"Budi Santoso", items:6, harga:480000, method:"Cash" },
-    { dt:"2025-10-22 10:05", kasir:"Dita Rahmawati", items:3, harga: 76000, method:"Cash" },
+    { dt:"2025-10-22 10:05", kasir:"Nasyila Putri Ardita", items:3, harga: 76000, method:"Cash" },
     { dt:"2025-10-22 10:20", kasir:"Andi Pratama", items:7, harga:310000, method:"Debit" },
     { dt:"2025-10-22 11:20", kasir:"Rina Setiawan", items:4, harga:158000, method:"Cash" },
     { dt:"2025-10-22 13:00", kasir:"Dita Rahmawati", items:2, harga:420000, method:"Debit" },
@@ -352,7 +354,7 @@ function TransactionsTable(){
               <th style={{width:76}}>Aksi</th>
             </tr>
           </thead>
-        <tbody>
+          <tbody>
             {rows.map((r,idx)=>(
               <tr key={start+idx}>
                 <td>{r.no}</td><td>{r.id}</td><td>{r.dt}</td><td>{r.kasir}</td>
@@ -377,7 +379,94 @@ function TransactionsTable(){
   );
 }
 
-/* ===== Page ===== */
+/* ===== Pie Chart Top 10 Produk Terlaris (di SAMPING tabel) ===== */
+function TopProductsPie(){
+  const data = [
+    { label:"Aqua Botol 600Ml",             color:"#1E88E5", val:18 },
+    { label:"Indomie Goreng",               color:"#29B6F6", val:13 },
+    { label:"Kopi Kapal Api Special 65g",   color:"#43A047", val:10 },
+    { label:"Silverqueen Chunky Bar 65g",   color:"#81C784", val:12 },
+    { label:"Roti Sari Roti Coklat",        color:"#FDD835", val:10 },
+    { label:"Teh Pucuk Harum 350Ml",        color:"#FB8C00", val: 9 },
+    { label:"Beng-Beng Wafer",              color:"#E53935", val: 7 },
+    { label:"Tisue Paseo 250 Sheets",       color:"#F06292", val: 9 },
+    { label:"Pepsodent 190g",               color:"#8E24AA", val: 8 },
+    { label:"Lifebouy Sabun Cair 250Ml",    color:"#B0BEC5", val: 6 },
+  ];
+  const total = data.reduce((a,b)=>a+b.val,0);
+  const size = 280, stroke = 60, pad = 8;
+  const r = (size - stroke)/2, W = size + pad*2, H = size + pad*2;
+  const cx = pad + size/2, cy = pad + size/2;
+  const C = 2*Math.PI*r, gapArc = 6;
+
+  let acc = 0;
+  const rings = data.map(d=>{
+    const frac = d.val / total;
+    const dash = Math.max(0, frac*C - gapArc);
+    const offset = (C*0.25) - (acc*C) - (gapArc/2);
+    const startA = -Math.PI/2 + acc*2*Math.PI;
+    const midA   = startA + frac*Math.PI;
+    const tx = cx + (r + stroke*0.12) * Math.cos(midA);
+    const ty = cy + (r + stroke*0.12) * Math.sin(midA) + 4;
+    acc += frac;
+    return (
+      <g key={d.label}>
+        <circle cx={cx} cy={cy} r={r} fill="none"
+          stroke={d.color} strokeWidth={stroke} strokeLinecap="round"
+          strokeDasharray={`${dash} ${C-dash}`} strokeDashoffset={offset}/>
+        <text x={tx} y={ty} className="pie-pct" textAnchor="middle">{d.val}%</text>
+      </g>
+    );
+  });
+
+  const left  = data.slice(0,5);
+  const right = data.slice(5);
+
+  return (
+    <div className="pie-wrap">
+      <div className="pie-box">
+        <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`}>
+          <circle cx={cx} cy={cy} r={r} fill="none" stroke="#e9eef5" strokeWidth={stroke}/>
+          {rings}
+        </svg>
+        <div className="pie-center" style={{ inset:`${pad}px` }}>
+          <div>
+            <div className="pc-top">Top 10</div>
+            <div className="pc-sub">Produk Terlaris</div>
+          </div>
+        </div>
+      </div>
+
+      <div className="pie-legend2c">
+        <ul>
+          {left.map(d=>(
+            <li key={d.label}>
+              <span className="dot" style={{background:d.color}}/><span className="name">{d.label}</span>
+            </li>
+          ))}
+        </ul>
+        <ul>
+          {right.map(d=>(
+            <li key={d.label}>
+              <span className="dot" style={{background:d.color}}/><span className="name">{d.label}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+/* ===== Placeholder supaya tidak white screen kalau SkillsWheel belum dibuat ===== */
+function SkillsWheel(){
+  return (
+    <div className="ps-placeholder">
+      (Skills Wheel placeholder)
+    </div>
+  );
+}
+
+/* ===== PAGE ===== */
 export default function Dashboard(){
   const today="Kamis, 2 Oktober 2025";
   const stats=[
@@ -409,9 +498,8 @@ export default function Dashboard(){
   },[qProduk]);
 
   const produkRows10 = useMemo(()=>filteredProduk.slice(0, MAX_PROD_ROWS),[filteredProduk]);
-  const fillerCountRight = Math.max(0, MAX_PROD_ROWS - produkRows10.length);
 
-  // helper calc row height
+  // helper hitung tinggi baris agar pas 10 baris penuh
   const calcRowH = (wrapEl, setter) => {
     if (!wrapEl) return;
     const thead = wrapEl.querySelector("thead");
@@ -470,12 +558,13 @@ export default function Dashboard(){
             <div className="brand">POS NUKA</div>
             <div className="date"><FaCalendarAlt/> {today}</div>
           </div>
-          <div className="right">{/* profile/search */}</div>
+          <div className="right">{/* <ProfilePill/> dsb jika perlu */}</div>
         </header>
 
         <section className="ds-inner">
           <div className="ds-section-title"><FaChartBar/><span>Statistik Bisnis</span></div>
 
+          {/* Kartu ringkas */}
           <div className="ds-cards">
             {stats.map((s,idx)=>(
               <div key={idx} className={`ds-card ${s.color}`}>
@@ -516,53 +605,67 @@ export default function Dashboard(){
             </div>
           </div>
 
-          {/* ===== Produk Terlaris ===== */}
-          <div className="panel-single">
-            <div className="panel-header panel-header--chart">
-              <div className="ph-leftwrap"><div className="ph-title">Produk Terlaris</div></div>
-            </div>
-            <div className="ps-body">
-              <div className="pt-grid">
-                <div className="pt-left">
-                  <div className="pt-toolbar">
-                    <button className="btn btn-gray">Copy</button>
-                    <button className="btn btn-gray">Excel</button>
-                  </div>
-                  <div className="table-wrap">
-                    <table className="pt-table">
-                      <thead>
-                        <tr>
-                          <th className="col-no">No</th>
-                          <th className="col-img">Gambar</th>
-                          <th>Nama Barang</th>
-                          <th>Terjual</th>
-                          <th>Total (Rp)</th>
-                          <th>Persentase Penjualan</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {topProducts.map(p => (
-                          <tr key={p.no}>
-                            <td className="col-no">{p.no}</td>
-                            <td className="col-img"><div className="img-pill">{p.img}</div></td>
-                            <td>{p.nama}</td>
-                            <td>{formatNumber(p.terjual)}</td>
-                            <td>{formatRp(p.total)}</td>
-                            <td>{p.persen}%</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-                <div className="pt-right">
-                  <div className="pt-chart-slot">{/* slot donut top 10 */}</div>
-                </div>
-              </div>
-            </div>
-          </div>
+          {/* ===== Produk Terlaris (tabel kiri, PIE kanan) ===== */}
+<div className="panel-single">
+  <div className="panel-header panel-header--chart">
+    <div className="ph-leftwrap"><div className="ph-title">Produk Terlaris</div></div>
+  </div>
 
-          {/* ===== Produk Terbaru + Semua Data Produk (satu card) ===== */}
+  <div className="ps-body">
+    {/* GRID 2 KOLOM: kiri tabel ~620px, kanan slot pie 420px */}
+    <div
+      className="pt-grid"
+      style={{
+        display: "grid",
+        gridTemplateColumns: "minmax(620px,1fr) 420px",
+        gap: "24px",
+        alignItems: "start"
+      }}
+    >
+      {/* KIRI: TABEL */}
+      <div className="pt-left">
+        <div className="pt-toolbar">
+          <button className="btn btn-gray">Copy</button>
+          <button className="btn btn-gray">Excel</button>
+        </div>
+
+        <div className="table-wrap">
+          <table className="pt-table">
+            <thead>
+              <tr>
+                <th className="col-no">No</th>
+                <th className="col-img">Gambar</th>
+                <th>Nama Barang</th>
+                <th>Terjual</th>
+                <th>Total (Rp)</th>
+                <th>Persentase Penjualan</th>
+              </tr>
+            </thead>
+            <tbody>
+              {topProducts.map(p => (
+                <tr key={p.no}>
+                  <td className="col-no">{p.no}</td>
+                  <td className="col-img"><div className="img-pill">{p.img}</div></td>
+                  <td>{p.nama}</td>
+                  <td>{formatNumber(p.terjual)}</td>
+                  <td>{formatRp(p.total)}</td>
+                  <td>{p.persen}%</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* KANAN: PIE — dipaksa nempel kanan */}
+      <div className="pt-right" style={{ justifySelf: "end" }}>
+        <TopProductsPie/>
+      </div>
+    </div>
+  </div>
+</div>
+
+          {/* ===== Produk Terbaru (kiri) + Semua Data Produk (kanan) ===== */}
           <div className="panel-single">
             <div className="panel-header panel-header--chart">
               <div className="ph-leftwrap"><div className="ph-title">Produk Terbaru</div></div>
@@ -574,20 +677,13 @@ export default function Dashboard(){
                 className="pj-grid"
                 style={{display:"grid", gridTemplateColumns:"minmax(420px,480px) 1fr", gap:"24px"}}
               >
-                {/* KIRI: Produk Terbaru – full height 10 baris */}
-                <div
-                  className="pj-left"
-                  style={{ display:"flex", flexDirection:"column", minHeight:0 }} /* penting */
-                >
+                {/* KIRI: Produk Terbaru – penuh 10 baris */}
+                <div className="pj-left" style={{ display:"flex", flexDirection:"column", minHeight:0 }}>
                   <p style={{margin:"0 0 10px 0", color:"#6b7a90", fontSize:12}}>
                     Produk terbaru akan diperbarui setiap <b>2 minggu sekali</b>, berlaku
                     hingga tanggal <b>12 Oktober 2025</b>
                   </p>
-                  <div
-                    className="table-wrap"
-                    ref={leftWrapRef}
-                    style={{ flex:1, minHeight:0 }}
-                  >
+                  <div className="table-wrap" ref={leftWrapRef} style={{ flex:1, minHeight:0 }}>
                     <table className="pt-table">
                       <thead>
                         <tr>
@@ -611,82 +707,69 @@ export default function Dashboard(){
                   </div>
                 </div>
 
-                {/* KANAN: Semua Data Produk – full height 10 baris */}
-<div
-  className="pj-right"
-  style={{ display:"flex", flexDirection:"column", minHeight:0 }}
->
-  {/* <<< TITLE BARU >>> */}
-  <div className="mini-title" style={{ marginBottom: 10 }}>Semua Data Produk</div>
+                {/* KANAN: Semua Data Produk – penuh 10 baris */}
+                <div className="pj-right" style={{ display:"flex", flexDirection:"column", minHeight:0 }}>
+                  <div className="mini-title" style={{ marginBottom: 10 }}>Semua Data Produk</div>
 
-  <div
-    className="pt-toolbar"
-    style={{display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:10}}
-  >
-    <div>
-      <button className="btn btn-gray" onClick={copySemuaProduk}>Copy</button>
-      <button className="btn btn-gray" onClick={excelSemuaProduk} style={{marginLeft:8}}>Excel</button>
-    </div>
-    <div style={{display:"flex", alignItems:"center", gap:10}}>
-      <span style={{fontSize:12, color:"#6b7a90"}}>Search</span>
-      <div className="tc-right" style={{gap:6}}>
-        <FaSearch/>
-        <input value={qProduk} onChange={(e)=>setQProduk(e.target.value)} placeholder="Cari Transaksi"/>
-      </div>
-    </div>
-  </div>
+                  <div className="pt-toolbar" style={{display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:10}}>
+                    <div>
+                      <button className="btn btn-gray" onClick={copySemuaProduk}>Copy</button>
+                      <button className="btn btn-gray" onClick={excelSemuaProduk} style={{marginLeft:8}}>Excel</button>
+                    </div>
+                    <div style={{display:"flex", alignItems:"center", gap:10}}>
+                      <span style={{fontSize:12, color:"#6b7a90"}}>Search</span>
+                      <div className="tc-right" style={{gap:6}}>
+                        <FaSearch/>
+                        <input value={qProduk} onChange={(e)=>setQProduk(e.target.value)} placeholder="Cari Transaksi"/>
+                      </div>
+                    </div>
+                  </div>
 
-  <div
-    className="table-wrap"
-    ref={rightWrapRef}
-    style={{ flex:1, minHeight:0 }}
-  >
-    <table className="pt-table">
-      <thead>
-        <tr>
-          <th className="col-no">No</th>
-          <th>Kode Produk</th>
-          <th>Nama Produk</th>
-          <th>Harga Satuan</th>
-          <th>Satuan</th>
-          <th>Stok</th>
-          <th>Supplier</th>
-        </tr>
-      </thead>
-      <tbody>
-        {produkRows10.map(r=>(
-          <tr key={r.no} style={rowHRight ? { height: `${rowHRight}px` } : undefined}>
-            <td className="col-no">{r.no}</td>
-            <td>{r.kode}</td>
-            <td>{r.nama}</td>
-            <td>{r.harga}</td>
-            <td>{r.satuan}</td>
-            <td>{r.stok}</td>
-            <td>{r.supplier}</td>
-          </tr>
-        ))}
-        {Array.from({length: Math.max(0, 10 - produkRows10.length)}).map((_,i)=>(
-          <tr key={`empty-${i}`} style={rowHRight ? { height: `${rowHRight}px` } : undefined}>
-            <td className="col-no">&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  </div>
-</div>
-
+                  <div className="table-wrap" ref={rightWrapRef} style={{ flex:1, minHeight:0 }}>
+                    <table className="pt-table">
+                      <thead>
+                        <tr>
+                          <th className="col-no">No</th>
+                          <th>Kode Produk</th>
+                          <th>Nama Produk</th>
+                          <th>Harga Satuan</th>
+                          <th>Satuan</th>
+                          <th>Stok</th>
+                          <th>Supplier</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {produkRows10.map(r=>(
+                          <tr key={r.no} style={rowHRight ? { height: `${rowHRight}px` } : undefined}>
+                            <td className="col-no">{r.no}</td>
+                            <td>{r.kode}</td>
+                            <td>{r.nama}</td>
+                            <td>{r.harga}</td>
+                            <td>{r.satuan}</td>
+                            <td>{r.stok}</td>
+                            <td>{r.supplier}</td>
+                          </tr>
+                        ))}
+                        {Array.from({length: Math.max(0, 10 - produkRows10.length)}).map((_,i)=>(
+                          <tr key={`empty-${i}`} style={rowHRight ? { height: `${rowHRight}px` } : undefined}>
+                            <td className="col-no">&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
 
               </div>
             </div>
           </div>
           {/* ===== /Produk Terbaru + Semua Data Produk ===== */}
-
         </section>
       </main>
     </div>

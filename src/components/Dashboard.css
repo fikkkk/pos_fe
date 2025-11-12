@@ -1590,3 +1590,85 @@ html,body{height:100%;margin:0;overflow:hidden;}
 
 /* supaya tak ada area kosong aneh di bawah header sticky */
 .panel-single .pj-grid .pj-right .pt-table thead th{ position:sticky; top:0; z-index:2; }
+
+/* ===== Wheel Chart (Top 5 Skills) ===== */
+.wheel-wrap{
+  display:flex;align-items:center;gap:28px;flex-wrap:wrap;
+}
+.wheel-box{
+  position:relative;width:420px;max-width:100%;
+}
+.wheel-center{
+  position:absolute;display:grid;place-items:center;border-radius:12px;
+}
+.wheel-center .wc-outer{
+  width:140px;height:140px;border-radius:999px;
+  background:#ffffff;box-shadow:inset 0 0 0 10px rgba(45,55,72,.16);
+  display:grid;place-items:center;
+}
+.wheel-center .wc-inner{
+  width:110px;height:110px;border-radius:999px;background:#fff;
+  box-shadow:0 6px 14px rgba(0,0,0,.06);
+  display:grid;place-items:center;border:1px solid rgba(0,0,0,.06);
+}
+.wheel-center .wc-top{
+  font-weight:800;font-size:22px;line-height:1;color:#2b3a57;letter-spacing:.3px;
+}
+.wheel-center .wc-sub{
+  font-weight:600;font-size:11px;color:#6b7a90;letter-spacing:.8px;margin-top:2px;
+  text-align:center;
+}
+
+.wheel-pct{
+  font-size:13px;font-weight:800;fill:#2b3a57;
+  paint-order:stroke; stroke:#fff; stroke-width:3px;
+}
+
+.wheel-legend{list-style:none;margin:0;padding:0;min-width:260px}
+.wheel-legend li{
+  display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px dashed #e3e9f2;
+}
+.wheel-legend li:last-child{border-bottom:none}
+.wheel-legend .dot{
+  width:14px;height:14px;border-radius:999px;display:inline-block;flex:0 0 auto;
+  box-shadow:0 0 0 3px #fff, 0 0 0 4px rgba(0,0,0,.04);
+}
+.wheel-legend .wl-text{flex:1 1 auto}
+.wheel-legend .wl-label{font-weight:700;color:#2b3a57;font-size:13px}
+.wheel-legend .wl-count{font-weight:800;color:#2b3a57;font-size:13px}
+
+/* ===== Pie di samping tabel Produk Terlaris ===== */
+.pt-right{display:flex;align-items:center;justify-content:center;padding:8px}
+
+.pie-wrap{display:flex;flex-direction:column;align-items:center;gap:14px;min-width:320px}
+.pie-box{position:relative}
+.pie-center{position:absolute;display:grid;place-items:center;pointer-events:none}
+.pie-center .pc-top{font-weight:800;font-size:18px;line-height:1;color:#2b3a57;text-align:center}
+.pie-center .pc-sub{font-weight:700;font-size:11px;color:#6b7a90;letter-spacing:.3px;text-align:center;margin-top:2px}
+
+.pie-pct{font-size:12px;font-weight:800;fill:#2b3a57;paint-order:stroke;stroke:#fff;stroke-width:3px}
+
+.pie-legend2c{display:grid;grid-template-columns:1fr 1fr;gap:8px 28px}
+.pie-legend2c ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.pie-legend2c li{display:flex;align-items:center;gap:10px;font-size:12.5px;color:#2b3a57}
+.pie-legend2c .dot{width:12px;height:12px;border-radius:999px;box-shadow:0 0 0 2px #fff,0 0 0 3px rgba(0,0,0,.04);flex:0 0 auto}
+.pie-legend2c .name{font-weight:600}
+
+/* --- FORCE tampilkan pie di sisi kanan tabel Produk Terlaris --- */
+.pt-right{display:flex !important; align-items:center; justify-content:center; padding:8px}
+
+/* --- Legend pie 2 kolom (5 + 5) --- */
+.pie-legend2c{
+  display:grid; grid-template-columns:1fr 1fr; gap:8px 28px;
+}
+.pie-legend2c ul{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px}
+.pie-legend2c li{display:flex; align-items:center; gap:10px; font-size:12.5px; color:#2b3a57}
+.pie-legend2c .dot{width:12px; height:12px; border-radius:999px; box-shadow:0 0 0 2px #fff,0 0 0 3px rgba(0,0,0,.04); flex:0 0 auto}
+.pie-pct{font-size:12px; font-weight:800; fill:#2b3a57; paint-order:stroke; stroke:#fff; stroke-width:3px}
+
+/* ==== Produk Terlaris: paksa layout dua kolom & pie di kanan ==== */
+.pt-grid{ display:grid !important; grid-template-columns:minmax(620px,1fr) 420px !important; gap:24px !important; align-items:start !important; }
+.pt-right{ justify-self:end !important; }
+.pie-wrap{ max-width:420px; width:100%; }
+
+/* kalau sebelumnya ada rule yang bikin .pt-grid satu kolom, ini akan override */
