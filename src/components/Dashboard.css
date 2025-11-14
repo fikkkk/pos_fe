@@ -63,8 +63,8 @@ html,body{height:100%;margin:0;overflow:hidden;}
 
 /* >>> BAWAH: sejajar dengan panel-combo, jarak lebih lega */
 .ds-panels--bottom{
-  grid-template-columns:0.75fr 2.25fr;
-  gap:26px;
+  grid-template-columns:0.9fr 2.1fr;
+  gap:18px;         
   margin-top:22px;
   padding:0;
 }
@@ -225,22 +225,25 @@ html,body{height:100%;margin:0;overflow:hidden;}
   padding: 6px 0;
 }
 
-/* Metode Pembayaran — renggang penuh DI DALAM card (tinggi card tidak diubah) */
+/* Metode Pembayaran: donut + legend */
 .ds-panels--bottom .ds-panel:first-child .donut-wrap{
-  grid-template-rows: auto 1fr;         /* donut di atas, legend isi sisa tinggi */
+  grid-template-rows: auto auto;
+  gap: 8px;                 /* kurangi gap supaya legend lebih dekat ke donut (naik sedikit) */
 }
 
+/* Legend: Cash / Debit / Kredit / Qris */
 .ds-panels--bottom .ds-panel:first-child .donut-legend{
-  flex: 1;                               /* ambil ruang sisa card */
   display: flex;
   flex-direction: column;
-  justify-content: space-evenly;         /* sebar item merata dari atas ke bawah */
-  gap: 22px;                             /* jarak ekstra antar item */
-  padding: 12px 0;                       /* ruang atas–bawah legend */
+  justify-content: initial !important;
+  gap: 6px;                 /* sebelumnya 16px → sekarang lebih bedempet */
+  padding: 4px 0 6px;       /* kurangi padding atas & bawah supaya naik sedikit */
+  height: auto;
 }
 
 .ds-panels--bottom .ds-panel:first-child .donut-legend li{
-  padding: 14px 0;                       /* tinggi tiap baris agar terasa lega */
+  padding: 4px 0;           /* sebelumnya 8px → baris lebih rapat */
+  min-height: 0;
 }
 
 /* === Keep card height auto (jangan ikut dipanjangin) === */
@@ -254,6 +257,7 @@ html,body{height:100%;margin:0;overflow:hidden;}
 /* === Metode Pembayaran: atur jarak legend TANPA mempengaruhi tinggi card === */
 .ds-panels--bottom .ds-panel:first-child .donut-wrap{
   grid-template-rows: auto auto;       /* donut + legend biasa (tidak dipaksa 1fr) */
+  margin-top: 15px;                     /* TURUNKAN SEDIKIT POSISI DONUT */
 }
 
 .ds-panels--bottom .ds-panel:first-child .donut-legend{
@@ -801,23 +805,6 @@ html,body{height:100%;margin:0;overflow:hidden;}
 .pt-table thead th{ padding: 8px 10px; }
 .pt-table tbody td{ padding: 8px 10px; }
 .img-pill{ height:24px; min-width:56px; padding:0 8px; font-size:11px; }
-
-/* === Produk Terlaris — Full width sampai garis kuning === */
-
-/* Jadikan satu kolom penuh */
-.pt-grid{
-  grid-template-columns: 1fr !important;
-}
-
-/* Pastikan konten kiri (tabel) membentang penuh */
-.pt-left{
-  grid-column: 1 / -1;
-}
-
-/* (Opsional) sembunyikan slot kanan kalau masih ada */
-.pt-right{
-  display: none;
-}
 
 /* Hilangkan batasan lebar tabel */
 .table-wrap{
@@ -1637,9 +1624,6 @@ html,body{height:100%;margin:0;overflow:hidden;}
 .wheel-legend .wl-label{font-weight:700;color:#2b3a57;font-size:13px}
 .wheel-legend .wl-count{font-weight:800;color:#2b3a57;font-size:13px}
 
-/* ===== Pie di samping tabel Produk Terlaris ===== */
-.pt-right{display:flex;align-items:center;justify-content:center;padding:8px}
-
 .pie-wrap{display:flex;flex-direction:column;align-items:center;gap:14px;min-width:320px}
 .pie-box{position:relative}
 .pie-center{position:absolute;display:grid;place-items:center;pointer-events:none}
@@ -1668,7 +1652,456 @@ html,body{height:100%;margin:0;overflow:hidden;}
 
 /* ==== Produk Terlaris: paksa layout dua kolom & pie di kanan ==== */
 .pt-grid{ display:grid !important; grid-template-columns:minmax(620px,1fr) 420px !important; gap:24px !important; align-items:start !important; }
-.pt-right{ justify-self:end !important; }
+
 .pie-wrap{ max-width:420px; width:100%; }
 
-/* kalau sebelumnya ada rule yang bikin .pt-grid satu kolom, ini akan override */
+/* === OVERRIDE FINAL: Produk Terlaris (tabel kiri, pie kanan) === */
+
+/* Card Produk Terlaris */
+.panel-single{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:10px;
+  box-shadow:0 2px 10px rgba(0,0,0,.04);
+  margin-top:18px;
+}
+
+/* Hilangkan garis abu-abu di header card ini */
+.panel-single .panel-header--chart{
+  border-bottom:none !important;
+}
+
+/* Isi card: agak lega */
+.panel-single .ps-body{
+  padding:12px 16px 20px;
+}
+
+/* GRID: kiri = tabel, kanan = pie */
+.pt-grid{
+  display:grid !important;
+  grid-template-columns:minmax(620px,1fr) 420px !important;
+  gap:24px !important;
+  align-items:flex-start !important;
+}
+
+/* Kiri: tabel */
+.pt-left{
+  min-width:0;
+}
+
+/* Kanan: pie chart – PAKSA tampil di samping kanan */
+.pt-right{
+  min-width:0;
+  display:flex !important;
+  align-items:center;
+  justify-content:center;
+  padding:8px 0;
+}
+
+/* Ukuran slot pie */
+.pie-wrap{
+  width:100%;
+  max-width:420px;
+}
+
+/* Pastikan tabel Produk Terlaris tetap full lebar kolom kirinya */
+.pt-left .table-wrap{
+  width:100%;
+  max-width:none;
+}
+
+/* Responsif: layar sempit → pie turun ke bawah tabel (1 kolom) */
+@media (max-width:1200px){
+  .pt-grid{
+    grid-template-columns:1fr !important;
+  }
+  .pt-right{
+    justify-content:center;
+    margin-top:12px;
+  }
+}
+
+/* ===== Single Panel (full width) — gaya mirip panel-combo ===== */
+.panel-single{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:10px;
+  box-shadow:0 2px 10px rgba(0,0,0,.04);
+  height:auto;                /* tinggi ikut isi */
+  display:flex;
+  flex-direction:column;
+  min-height:0;
+  margin-top:18px;
+}
+
+/* header pakai .panel-header / .panel-header--chart yang sudah ada */
+
+/* body umum card single */
+.panel-single .ps-body{
+  flex:1;
+  min-height:0;
+  padding:12px 16px;
+}
+
+/* Placeholder (kalau dibutuhkan di card lain) */
+.ps-placeholder{
+  font-size:13px;
+  color:#7b8aa0;
+  border:1px dashed var(--line);
+  padding:18px 22px;
+  border-radius:10px;
+  background:#f9fbfe;
+}
+
+/* Responsif: biar fleksibel di layar kecil */
+@media (max-width:1200px){
+  .panel-single{
+    height:auto;
+  }
+}
+
+/* Hilangkan garis abu-abu di header card Produk Terlaris */
+.panel-single .panel-header--chart{
+  border-bottom:none !important;
+}
+
+/* ===== Produk Terlaris (layout 2 kolom: kiri tabel, kanan pie) ===== */
+
+.pt-grid{
+  width:100%;
+  display:grid;
+  grid-template-columns:minmax(620px,1fr) 420px; /* kiri tabel, kanan pie */
+  column-gap:24px;
+  align-items:flex-start;
+}
+
+.pt-left{
+  min-width:0;
+}
+
+.pt-right{
+  min-width:0;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+/* Slot pie (dibungkus TopProductsPie) */
+.pt-chart-slot{
+  width:100%;
+  max-width:420px;
+  min-height:260px;
+  border-radius:12px;
+  background:transparent;
+}
+
+/* Toolbar tombol di atas tabel (Copy | Excel) */
+.pt-toolbar{
+  display:flex;
+  gap:8px;
+  margin-bottom:10px;
+}
+
+/* Bungkus tabel Produk Terlaris */
+.table-wrap{
+  border:1px solid var(--line);
+  border-radius:8px;
+  overflow:hidden;
+  background:#fff;
+  box-shadow:0 1.5px 8px rgba(0,0,0,.03);
+}
+
+/* Tabel Produk Terlaris */
+.pt-table{
+  width:100%;
+  border-collapse:separate;
+  border-spacing:0;
+  font-size:12px;
+  color:#2b3b54;
+}
+
+.pt-table thead th{
+  background:#f7fafc;
+  font-weight:600;
+  text-align:center;
+  padding:8px 10px;
+  border-bottom:1px solid var(--line);
+}
+
+.pt-table tbody td{
+  padding:8px 10px;
+  border-bottom:1px solid #edf2f7;
+}
+
+.pt-table tbody tr:last-child td{
+  border-bottom:none;
+}
+
+/* garis vertikal antar kolom */
+.pt-table thead th + th,
+.pt-table tbody td + td{
+  border-left:1px solid var(--line);
+}
+
+.pt-table tbody td + td{
+  border-left-color:#e6edf5;
+}
+
+/* Lebar beberapa kolom */
+.pt-table .col-no{
+  width:44px;
+  text-align:center;
+}
+
+.pt-table .col-img{
+  width:92px;
+}
+
+/* Kolom tertentu rata tengah (gambar, terjual, persen) */
+.pt-table tbody td:nth-child(2),
+.pt-table tbody td:nth-child(4),
+.pt-table tbody td:nth-child(6){
+  text-align:center;
+  vertical-align:middle;
+}
+
+/* pill "Gambar" */
+.img-pill{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:64px;
+  height:24px;
+  padding:0 8px;
+  border-radius:999px;
+  border:1px solid var(--line);
+  background:#f2f6fb;
+  font-size:11px;
+  color:#66768f;
+}
+
+/* Pie di kanan tabel */
+.pie-wrap{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:14px;
+  max-width:420px;
+  width:100%;
+  min-width:320px;
+}
+
+.pie-box{
+  position:relative;
+}
+
+.pie-center{
+  position:absolute;
+  inset:0;
+  display:grid;
+  place-items:center;
+  pointer-events:none;
+}
+
+.pie-center .pc-top{
+  font-weight:800;
+  font-size:18px;
+  line-height:1;
+  color:#2b3a57;
+  text-align:center;
+}
+
+.pie-center .pc-sub{
+  font-weight:700;
+  font-size:11px;
+  color:#6b7a90;
+  letter-spacing:.3px;
+  text-align:center;
+  margin-top:2px;
+}
+
+.pie-pct{
+  font-size:12px;
+  font-weight:800;
+  fill:#2b3a57;
+  paint-order:stroke;
+  stroke:#fff;
+  stroke-width:3px;
+}
+
+/* legend dua kolom (5 + 5) */
+.pie-legend2c{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px 28px;
+}
+
+.pie-legend2c ul{
+  list-style:none;
+  margin:0;
+  padding:0;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.pie-legend2c li{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-size:12.5px;
+  color:#2b3a57;
+}
+
+.pie-legend2c .dot{
+  width:12px;
+  height:12px;
+  border-radius:999px;
+  box-shadow:0 0 0 2px #fff,0 0 0 3px rgba(0,0,0,.04);
+  flex:0 0 auto;
+}
+
+.pie-legend2c .name{
+  font-weight:600;
+}
+
+/* Responsif Produk Terlaris */
+@media (max-width:1200px){
+  .pt-grid{
+    grid-template-columns:1fr;
+    row-gap:16px;
+  }
+  .pt-right{
+    justify-content:flex-start;
+  }
+}
+
+/* === OVERRIDE AKHIR: Produk Terlaris (tabel kiri, pie kanan) === */
+
+/* Grid dua kolom: kiri tabel, kanan pie.
+   Lebar kiri kita buat agak lebih kecil supaya muat di layar sempit. */
+.pt-grid{
+  display: grid !important;
+  grid-template-columns: minmax(320px, 1.1fr) minmax(260px, 0.9fr) !important;
+  gap: 20px !important;
+  align-items: flex-start !important;
+}
+
+/* Tabel jangan maksa lebar, biar fleksibel */
+.pt-left{
+  min-width: 0 !important;
+}
+
+.pt-right{
+  min-width: 0 !important;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;   /* sekarang di tengah */
+  padding: 8px 0;
+}
+
+.pie-wrap{
+  width: 100%;
+  max-width: 320px;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+/* === KECILKAN SEDIKIT TABEL PRODUK TERLARIS SAJA === */
+.pt-table--top {
+  font-size: 11px;          /* font sedikit lebih kecil */
+}
+
+.pt-table--top th,
+.pt-table--top td {
+  padding: 6px 8px;         /* padding lebih rapat */
+}
+
+/* Kolom nomor & gambar lebih sempit */
+.pt-table--top .col-no {
+  width: 32px;
+}
+
+.pt-table--top .col-img {
+  width: 70px;
+}
+
+/* Biar kolom-kolom lebih rapat dan rapi */
+.pt-table--top {
+  table-layout: fixed;
+}
+
+/* === KECILKAN KOLOM TERJUAL / TOTAL / PERSENTASE DI TABEL PRODUK TERLARIS === */
+
+/* khusus tabel Produk Terlaris */
+.pt-table--top {
+  font-size: 11px;
+  table-layout: fixed;
+}
+
+.pt-table--top th,
+.pt-table--top td {
+  padding: 6px 8px;
+}
+
+/* nomor tetap kecil */
+.pt-table--top .col-no {
+  width: 32px;
+}
+
+/* Gambar TIDAK diperkecil */
+.pt-table--top .col-img {
+  width: 90px;   /* atau boleh dihapus aturan width ini kalau mau auto */
+}
+
+/* kolom angka kita kecilkan */
+.pt-table--top .col-terjual {
+  width: 70px;
+  text-align: right;
+}
+
+.pt-table--top .col-total {
+  width: 110px;
+  text-align: right;
+}
+
+.pt-table--top .col-persentase {
+  width: 90px;
+  text-align: right;
+}
+/* === OVERRIDE LEGEND METODE PEMBAYARAN: RAPAT SEPERTI DESAIN === */
+.ds-panels--bottom .ds-panel:first-child .donut-legend{
+  display: flex;
+  flex-direction: column;
+  gap: 3px;         /* jarak antar baris kecil, hampir bedempet */
+  padding: 0;       /* hilangkan padding ekstra */
+  margin-top: 4px;  /* legend naik sedikit mendekati donut */
+}
+
+.ds-panels--bottom .ds-panel:first-child .donut-legend li{
+  padding: 0;       /* hilangkan padding atas/bawah di tiap item */
+  min-height: 0;
+  line-height: 1.2; /* baris teks lebih rapat */
+}
+
+/* pastikan teksnya nggak nambah jarak */
+.ds-panels--bottom .ds-panel:first-child .dl-label,
+.ds-panels--bottom .ds-panel:first-child .dl-sub,
+.ds-panels--bottom .ds-panel:first-child .dl-count{
+  margin: 0;
+}       
+
+/* === OVERRIDE: Pusatkan pie Top 10 di kolom kanan === */
+.pt-right{
+  min-width: 0 !important;
+  display: block !important;   /* tidak pakai flex lagi */
+  padding: 8px 0;
+}
+
+/* blok pie + legend ditaruh tepat di tengah kolom */
+.pie-wrap{
+  width: 100%;
+  max-width: 420px;            /* atau 320px kalau mau lebih kecil */
+  margin: 0 auto;              /* INI yang bikin benar-benar di tengah */
+}
+

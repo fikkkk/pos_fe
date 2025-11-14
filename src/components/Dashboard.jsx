@@ -1,4 +1,3 @@
-// Dashboard.jsx (FINAL)
 import React, { useMemo, useState, useEffect, useRef, useLayoutEffect } from "react";
 import {
   FaBars, FaCalendarAlt, FaTachometerAlt, FaCashRegister,
@@ -22,16 +21,16 @@ const TOTAL_TRANSAKSI = 30000;
 
 /* ========= DATA PRODUK ========= */
 const topProducts = [
-  { no: 1, nama: "Aqua Botol 600ml",            terjual: 1250, total: 6250000, persen: 18, img: "Gambar" },
-  { no: 2, nama: "Indomie Goreng",              terjual: 1000, total: 4500000, persen: 13, img: "Gambar" },
-  { no: 3, nama: "Kopi Kapal Api Special 65g",  terjual:  850, total: 3400000, persen: 10, img: "Gambar" },
-  { no: 4, nama: "SilverQueen Chunky Bar 65g",  terjual:  700, total: 4200000, persen: 12, img: "Gambar" },
-  { no: 5, nama: "Roti Sari Roti Coklat",       terjual:  680, total: 3400000, persen: 10, img: "Gambar" },
-  { no: 6, nama: "Teh Pucuk Harum 350ml",       terjual:  640, total: 3200000, persen:  9, img: "Gambar" },
-  { no: 7, nama: "Beng-Beng Wafer",             terjual:  620, total: 2480000, persen:  7, img: "Gambar" },
-  { no: 8, nama: "Tisu Paseo 250 Sheets",       terjual:  400, total: 3200000, persen:  9, img: "Gambar" },
-  { no: 9, nama: "Pepsodent 190g",              terjual:  320, total: 2880000, persen:  8, img: "Gambar" },
-  { no:10, nama: "Lifebuoy Sabun Cair 250ml",   terjual:  280, total: 2240000, persen:  6, img: "Gambar" },
+  { no: 1, nama: "Aqua Botol 600ml",            terjual: 1250, total: 6250000, persen: 18, img: "Gambar", color:"#1E88E5" },
+  { no: 2, nama: "Indomie Goreng",              terjual: 1000, total: 4500000, persen: 13, img: "Gambar", color:"#29B6F6" },
+  { no: 3, nama: "Kopi Kapal Api Special 65g",  terjual:  850, total: 3400000, persen: 10, img: "Gambar", color:"#43A047" },
+  { no: 4, nama: "SilverQueen Chunky Bar 65g",  terjual:  700, total: 4200000, persen: 12, img: "Gambar", color:"#81C784" },
+  { no: 5, nama: "Roti Sari Roti Coklat",       terjual:  680, total: 3400000, persen: 10, img: "Gambar", color:"#FDD835" },
+  { no: 6, nama: "Teh Pucuk Harum 350ml",       terjual:  640, total: 3200000, persen:  9, img: "Gambar", color:"#FB8C00" },
+  { no: 7, nama: "Beng-Beng Wafer",             terjual:  620, total: 2480000, persen:  7, img: "Gambar", color:"#E53935" },
+  { no: 8, nama: "Tisu Paseo 250 Sheets",       terjual:  400, total: 3200000, persen:  9, img: "Gambar", color:"#F06292" },
+  { no: 9, nama: "Pepsodent 190g",              terjual:  320, total: 2880000, persen:  8, img: "Gambar", color:"#8E24AA" },
+  { no:10, nama: "Lifebuoy Sabun Cair 250ml",   terjual:  280, total: 2240000, persen:  6, img: "Gambar", color:"#B0BEC5" },
 ];
 
 const produkTerbaruRows = Array.from({length:10}, (_,i)=>({ no:i+1, img:"Gambar", nama:"Nama Barang", stok:"Stok" }));
@@ -255,9 +254,9 @@ function SalesChartYearly(){
 
 /* ===== Donut Metode Pembayaran ===== */
 function PaymentDonut(){
-  const size=210, stroke=22, pad=24;
+  const size=240, stroke=26, pad=24;
   const r=(size-stroke)/2, W=size+pad*2, H=size+pad*2, cx=pad+size/2, cy=pad+size/2;
-  const C=2*Math.PI*r, gapArc=2, totalPct=payments.reduce((a,b)=>a+b.val,0);
+  const C=2*Math.PI*r, gapArc=4, totalPct=payments.reduce((a,b)=>a+b.val,0);
   let accPct=0; const pctLabels=[];
   const rings=payments.map((p)=>{
     const frac=p.val/totalPct, dash=Math.max(0,(frac*C)-gapArc), offset=(C*0.25)-(accPct*C)-(gapArc/2);
@@ -265,7 +264,7 @@ function PaymentDonut(){
     const tx=cx+txtR*Math.cos(mid), ty=cy+txtR*Math.sin(mid)+4;
     pctLabels.push({x:tx,y:ty,text:`${p.val}%`}); accPct+=frac;
     return <circle key={p.label} cx={cx} cy={cy} r={r} fill="none" stroke={p.color} strokeWidth={stroke}
-      strokeLinecap="round" strokeDasharray={`${dash} ${C-dash}`} strokeDashoffset={offset}/>;
+      strokeLinecap="butt" strokeDasharray={`${dash} ${C-dash}`} strokeDashoffset={offset}/>;
   });
   return (
     <div className="donut-wrap">
@@ -381,23 +380,18 @@ function TransactionsTable(){
 
 /* ===== Pie Chart Top 10 Produk Terlaris (di SAMPING tabel) ===== */
 function TopProductsPie(){
-  const data = [
-    { label:"Aqua Botol 600Ml",             color:"#1E88E5", val:18 },
-    { label:"Indomie Goreng",               color:"#29B6F6", val:13 },
-    { label:"Kopi Kapal Api Special 65g",   color:"#43A047", val:10 },
-    { label:"Silverqueen Chunky Bar 65g",   color:"#81C784", val:12 },
-    { label:"Roti Sari Roti Coklat",        color:"#FDD835", val:10 },
-    { label:"Teh Pucuk Harum 350Ml",        color:"#FB8C00", val: 9 },
-    { label:"Beng-Beng Wafer",              color:"#E53935", val: 7 },
-    { label:"Tisue Paseo 250 Sheets",       color:"#F06292", val: 9 },
-    { label:"Pepsodent 190g",               color:"#8E24AA", val: 8 },
-    { label:"Lifebouy Sabun Cair 250Ml",    color:"#B0BEC5", val: 6 },
-  ];
+  // pakai data yang sama dengan tabel, supaya tidak dobel
+  const data = topProducts.map(p => ({
+    label: p.nama,
+    color: p.color,
+    val: p.persen,
+  }));
+
   const total = data.reduce((a,b)=>a+b.val,0);
-  const size = 280, stroke = 60, pad = 8;
+  const size = 260, stroke = 65, pad = 8;
   const r = (size - stroke)/2, W = size + pad*2, H = size + pad*2;
   const cx = pad + size/2, cy = pad + size/2;
-  const C = 2*Math.PI*r, gapArc = 6;
+  const C = 2*Math.PI*r, gapArc = 0;
 
   let acc = 0;
   const rings = data.map(d=>{
@@ -412,8 +406,8 @@ function TopProductsPie(){
     return (
       <g key={d.label}>
         <circle cx={cx} cy={cy} r={r} fill="none"
-          stroke={d.color} strokeWidth={stroke} strokeLinecap="round"
-          strokeDasharray={`${dash} ${C-dash}`} strokeDashoffset={offset}/>
+  stroke={d.color} strokeWidth={stroke} strokeLinecap="butt"
+  strokeDasharray={`${dash} ${C-dash}`} strokeDashoffset={offset}/>
         <text x={tx} y={ty} className="pie-pct" textAnchor="middle">{d.val}%</text>
       </g>
     );
@@ -429,7 +423,7 @@ function TopProductsPie(){
           <circle cx={cx} cy={cy} r={r} fill="none" stroke="#e9eef5" strokeWidth={stroke}/>
           {rings}
         </svg>
-        <div className="pie-center" style={{ inset:`${pad}px` }}>
+        <div className="pie-center" style={{ inset: "24px" }}>
           <div>
             <div className="pc-top">Top 10</div>
             <div className="pc-sub">Produk Terlaris</div>
@@ -606,64 +600,66 @@ export default function Dashboard(){
           </div>
 
           {/* ===== Produk Terlaris (tabel kiri, PIE kanan) ===== */}
-<div className="panel-single">
-  <div className="panel-header panel-header--chart">
-    <div className="ph-leftwrap"><div className="ph-title">Produk Terlaris</div></div>
-  </div>
+          <div className="panel-single">
+            <div className="panel-header panel-header--chart">
+              <div className="ph-leftwrap"><div className="ph-title">Produk Terlaris</div></div>
+            </div>
 
-  <div className="ps-body">
-    {/* GRID 2 KOLOM: kiri tabel ~620px, kanan slot pie 420px */}
-    <div
-      className="pt-grid"
-      style={{
-        display: "grid",
-        gridTemplateColumns: "minmax(620px,1fr) 420px",
-        gap: "24px",
-        alignItems: "start"
-      }}
-    >
-      {/* KIRI: TABEL */}
-      <div className="pt-left">
-        <div className="pt-toolbar">
-          <button className="btn btn-gray">Copy</button>
-          <button className="btn btn-gray">Excel</button>
-        </div>
+            <div className="ps-body">
+              {/* GRID 2 KOLOM: kiri tabel ~620px, kanan slot pie 420px */}
+              <div
+                className="pt-grid"
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "minmax(620px,1fr) 420px",
+                  gap: "24px",
+                  alignItems: "start"
+                }}
+              >
+                {/* KIRI: TABEL */}
+                <div className="pt-left">
+                  <div className="pt-toolbar">
+                    <button className="btn btn-gray">Copy</button>
+                    <button className="btn btn-gray">Excel</button>
+                  </div>
 
-        <div className="table-wrap">
-          <table className="pt-table">
-            <thead>
-              <tr>
-                <th className="col-no">No</th>
-                <th className="col-img">Gambar</th>
-                <th>Nama Barang</th>
-                <th>Terjual</th>
-                <th>Total (Rp)</th>
-                <th>Persentase Penjualan</th>
-              </tr>
-            </thead>
-            <tbody>
-              {topProducts.map(p => (
-                <tr key={p.no}>
-                  <td className="col-no">{p.no}</td>
-                  <td className="col-img"><div className="img-pill">{p.img}</div></td>
-                  <td>{p.nama}</td>
-                  <td>{formatNumber(p.terjual)}</td>
-                  <td>{formatRp(p.total)}</td>
-                  <td>{p.persen}%</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+                  <div className="table-wrap">
+                    <table className="pt-table pt-table--top">
+  <thead>
+    <tr>
+      <th className="col-no">No</th>
+      <th className="col-img">Gambar</th>
+      <th>Nama Barang</th>
+      <th className="col-terjual">Terjual</th>
+      <th className="col-total">Total (Rp)</th>
+      <th className="col-persentase">Persentase Penjualan</th>
+    </tr>
+  </thead>
 
-      {/* KANAN: PIE — dipaksa nempel kanan */}
-      <div className="pt-right" style={{ justifySelf: "end" }}>
-        <TopProductsPie/>
-      </div>
-    </div>
-  </div>
-</div>
+                      <tbody>
+  {topProducts.map(p => (
+    <tr key={p.no}>
+      <td className="col-no">{p.no}</td>
+      <td className="col-img"><div className="img-pill">{p.img}</div></td>
+      <td>{p.nama}</td>
+      <td className="col-terjual">{formatNumber(p.terjual)}</td>
+      <td className="col-total">{formatRp(p.total)}</td>
+      <td className="col-persentase">{p.persen}%</td>
+    </tr>
+  ))}
+</tbody>
+
+                    </table>
+                  </div>
+                </div>
+
+                {/* KANAN: PIE — dipaksa nempel kanan */}
+                <div className="pt-right" style={{ justifySelf: "end" }}>
+                  <TopProductsPie/>
+                </div>
+              </div>
+            </div>
+          </div>
 
           {/* ===== Produk Terbaru (kiri) + Semua Data Produk (kanan) ===== */}
           <div className="panel-single">
