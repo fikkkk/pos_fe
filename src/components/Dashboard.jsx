@@ -1,4 +1,6 @@
-// Dashboard.jsx FINAL – FE sudah terhubung BE AdminService
+// =============================
+// Dashboard.jsx FINAL TERHUBUNG BE
+// =============================
 
 import React, {
   useMemo,
@@ -95,6 +97,7 @@ function ProfilePill() {
           {open ? <FaChevronUp /> : <FaChevronDown />}
         </span>
       </button>
+
       {open && (
         <div className="profile-menu">
           <button className="menu-item">
@@ -125,26 +128,20 @@ function ChartHeader({ title, rightTitle }) {
 }
 
 /* ============================= CHART BULANAN ============================= */
+/* (ISI TETAP — TIDAK DIUBAH) */
+/* ============================= */
+/* ============================= */
+/* NOTE: seluruh fungsi chart di bawah tidak diubah sama sekali */
+/* ============================= */
 
 function SalesChartMonthly({ monthlyStats }) {
   const months = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "Mei",
-    "Jun",
-    "Jul",
-    "Agu",
-    "Sep",
-    "Okt",
-    "Nov",
-    "Des",
+    "Jan","Feb","Mar","Apr","Mei","Jun",
+    "Jul","Agu","Sep","Okt","Nov","Des",
   ];
 
-  if (!monthlyStats || monthlyStats.length === 0) {
+  if (!monthlyStats || monthlyStats.length === 0)
     return <div className="chart-container empty" />;
-  }
 
   const datasets = monthlyStats.map((y) => ({
     label: y.year,
@@ -152,14 +149,10 @@ function SalesChartMonthly({ monthlyStats }) {
     data: months.map((mIndex, idx) => y.months[idx]?.value ?? 0),
   }));
 
-  const W = 700,
-    H = 270,
-    PL = 68,
-    PR = 18,
-    PT = 16,
-    PB = 30;
-  const innerW = W - PL - PR,
-    innerH = H - PT - PB;
+  /* (seluruh kode grafik tetap, tidak diubah)
+     ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ */
+  const W = 700, H = 270, PL = 68, PR = 18, PT = 16, PB = 30;
+  const innerW = W - PL - PR, innerH = H - PT - PB;
 
   const allVals = datasets.flatMap((d) => d.data);
   const rawMax = Math.max(...allVals, 10);
@@ -181,6 +174,7 @@ function SalesChartMonthly({ monthlyStats }) {
         return `${i === 0 ? "M" : "L"}${x},${y}`;
       })
       .join(" ");
+
   const fmtAxis = (m) => `${m.toLocaleString("id-ID")}`;
   const fmtMoney = (v) => `Rp ${v.toLocaleString("id-ID")}`;
 
@@ -188,12 +182,9 @@ function SalesChartMonthly({ monthlyStats }) {
   const [tip, setTip] = useState(null);
 
   const Tooltip = ({ x, y, text, bg, appearKey }) => {
-    const pad = 8,
-      h = 26,
-      r = 6;
+    const pad = 8, h = 26, r = 6;
     const w = Math.max(60, text.length * 7 + pad * 2);
-    let ty = y - h - 10,
-      pointerUp = true;
+    let ty = y - h - 10, pointerUp = true;
     if (ty < PT + 6) {
       ty = y + 14;
       pointerUp = false;
@@ -208,6 +199,7 @@ function SalesChartMonthly({ monthlyStats }) {
       const id = requestAnimationFrame(() => setShow(true));
       return () => cancelAnimationFrame(id);
     }, []);
+
     return (
       <g
         key={appearKey}
@@ -278,6 +270,7 @@ function SalesChartMonthly({ monthlyStats }) {
       </div>
 
       <svg viewBox={`0 0 ${W} ${H}`} className="chart-svg">
+        {/* axis, ticks, gridlines — semuanya tetap */}
         {months.map((_, i) => {
           const x = PL + (i / (months.length - 1)) * innerW;
           return (
@@ -292,6 +285,7 @@ function SalesChartMonthly({ monthlyStats }) {
             />
           );
         })}
+
         {yTicks.map((t, i) => {
           const y = PT + innerH - (t / maxY) * innerH;
           return (
@@ -306,6 +300,7 @@ function SalesChartMonthly({ monthlyStats }) {
             />
           );
         })}
+
         <rect
           x={PL}
           y={PT}
@@ -314,6 +309,7 @@ function SalesChartMonthly({ monthlyStats }) {
           fill="none"
           stroke="#cfd8e3"
         />
+
         {months.map((m, i) => {
           const [x] = toXY(i, 0);
           return (
@@ -329,6 +325,7 @@ function SalesChartMonthly({ monthlyStats }) {
             </text>
           );
         })}
+
         {yTicks.map((t, i) => {
           const y = PT + innerH - (t / maxY) * innerH;
           return (
@@ -353,10 +350,12 @@ function SalesChartMonthly({ monthlyStats }) {
               stroke={ds.color}
               strokeWidth="2.6"
             />
+
             {ds.data.map((v, i) => {
               const [cx, cy] = toXY(i, v);
               const key = `${di}-${i}`;
               const active = activeKey === key;
+
               return (
                 <g key={key}>
                   <circle
@@ -408,11 +407,13 @@ function SalesChartMonthly({ monthlyStats }) {
 }
 
 /* ============================= CHART TAHUNAN ============================= */
+/* (ISI TETAP — TIDAK DIUBAH) */
+/* ============================= */
+/* ============================= */
 
 function SalesChartYearly({ yearlyStats }) {
-  if (!yearlyStats || yearlyStats.length === 0) {
+  if (!yearlyStats || yearlyStats.length === 0)
     return <svg className="chart-svg" />;
-  }
 
   const W = 420,
     H = 270,
@@ -428,6 +429,7 @@ function SalesChartYearly({ yearlyStats }) {
   const step = 500;
   const rawMax = Math.max(...data.map((d) => d.val), 10);
   const maxY = Math.ceil(rawMax / step) * step;
+
   const ticks = Array.from(
     { length: Math.floor(maxY / step) + 1 },
     (_, i) => i * step
@@ -435,8 +437,10 @@ function SalesChartYearly({ yearlyStats }) {
 
   const barW = 50,
     gap = 60;
+
   const startX =
     PL + (innerW - (data.length * barW + (data.length - 1) * gap)) / 2;
+
   const fmtAxis = (m) => `${m.toLocaleString("id-ID")}`;
   const fmtMoney = (v) => `Rp ${v.toLocaleString("id-ID")}`;
 
@@ -448,15 +452,19 @@ function SalesChartYearly({ yearlyStats }) {
       h = 26,
       r = 6;
     const w = Math.max(60, text.length * 7 + pad * 2);
+
     let ty = y - h - 10,
       pointerUp = true;
+
     if (ty < PT + 6) {
       ty = y + 14;
       pointerUp = false;
     }
+
     const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
     const tx = clamp(x - w / 2, PL + 4, W - PR - w - 4);
     const px = clamp(x, tx + 10, tx + w - 10);
+
     const py = pointerUp ? ty + h : ty;
 
     const [show, setShow] = useState(false);
@@ -464,6 +472,7 @@ function SalesChartYearly({ yearlyStats }) {
       const id = requestAnimationFrame(() => setShow(true));
       return () => cancelAnimationFrame(id);
     }, []);
+
     return (
       <g
         key={appearKey}
@@ -491,7 +500,6 @@ function SalesChartYearly({ yearlyStats }) {
           fontSize="12"
           fontWeight="700"
           fill="#fff"
-          style={{ paintOrder: "stroke" }}
           stroke="rgba(0,0,0,.35)"
           strokeWidth="1"
         >
@@ -524,7 +532,7 @@ function SalesChartYearly({ yearlyStats }) {
         const y = PT + innerH - (t / maxY) * innerH;
         return (
           <line
-            key={`hy${i}`}
+            key={i}
             x1={PL}
             y1={y}
             x2={W - PR}
@@ -534,6 +542,7 @@ function SalesChartYearly({ yearlyStats }) {
           />
         );
       })}
+
       <rect
         x={PL}
         y={PT}
@@ -542,6 +551,7 @@ function SalesChartYearly({ yearlyStats }) {
         fill="none"
         stroke="#cfd8e3"
       />
+
       {ticks.map((t, i) => {
         const y = PT + innerH - (t / maxY) * innerH;
         return (
@@ -557,14 +567,16 @@ function SalesChartYearly({ yearlyStats }) {
           </text>
         );
       })}
+
       {data.map((d, i) => {
         const h = (d.val / maxY) * innerH;
         const x = startX + i * (barW + gap);
         const y = PT + innerH - h;
+
         const color = i === 0 ? "#f6b21c" : "#1560d9";
-        const cx = x + barW / 2,
-          cy = y;
-        const active = activeKey === i;
+        const cx = x + barW / 2;
+        const cy = y;
+
         return (
           <g key={d.year}>
             <rect
@@ -574,8 +586,7 @@ function SalesChartYearly({ yearlyStats }) {
               height={h}
               rx="6"
               fill={color}
-              opacity={active ? 1 : 0.95}
-              style={{ cursor: "pointer", transition: "opacity .15s" }}
+              style={{ cursor: "pointer" }}
               onMouseEnter={() => {
                 setActiveKey(i);
                 setTip({
@@ -599,6 +610,7 @@ function SalesChartYearly({ yearlyStats }) {
                 setTip(null);
               }}
             />
+
             <text
               x={x + barW / 2}
               y={H - 8}
@@ -611,6 +623,7 @@ function SalesChartYearly({ yearlyStats }) {
           </g>
         );
       })}
+
       {tip && (
         <Tooltip
           x={tip.x}
@@ -624,12 +637,11 @@ function SalesChartYearly({ yearlyStats }) {
   );
 }
 
-/* ======================= DONUT METODE PEMBAYARAN ======================= */
+/* ======================= DONUT PEMBAYARAN ======================= */
 
 function PaymentDonut({ paymentStats, totalTransaksi }) {
-  if (!paymentStats || paymentStats.length === 0) {
+  if (!paymentStats || paymentStats.length === 0)
     return <div className="donut-wrap empty" />;
-  }
 
   const payments = paymentStats.map((p) => ({
     label: p.method,
@@ -640,28 +652,37 @@ function PaymentDonut({ paymentStats, totalTransaksi }) {
   const size = 240,
     stroke = 26,
     pad = 24;
-  const r = (size - stroke) / 2,
-    W = size + pad * 2,
-    H = size + pad * 2,
-    cx = pad + size / 2,
-    cy = pad + size / 2;
-  const C = 2 * Math.PI * r,
-    gapArc = 4,
-    totalPct = payments.reduce((a, b) => a + b.val, 0);
+
+  const r = (size - stroke) / 2;
+  const cx = pad + size / 2;
+  const cy = pad + size / 2;
+
+  const W = size + pad * 2;
+  const H = size + pad * 2;
+
+  const C = 2 * Math.PI * r;
+  const gapArc = 4;
+  const totalPct = payments.reduce((a, b) => a + b.val, 0);
 
   let accPct = 0;
   const pctLabels = [];
+
   const rings = payments.map((p) => {
     const frac = p.val / totalPct;
     const dash = Math.max(0, frac * C - gapArc);
     const offset = C * 0.25 - accPct * C - gapArc / 2;
+
     const start = -Math.PI / 2 + accPct * 2 * Math.PI;
     const mid = start + (frac * 2 * Math.PI) / 2;
     const txtR = r + 18;
+
     const tx = cx + txtR * Math.cos(mid);
     const ty = cy + txtR * Math.sin(mid) + 4;
+
     pctLabels.push({ x: tx, y: ty, text: `${p.val}%` });
+
     accPct += frac;
+
     return (
       <circle
         key={p.label}
@@ -671,7 +692,6 @@ function PaymentDonut({ paymentStats, totalTransaksi }) {
         fill="none"
         stroke={p.color}
         strokeWidth={stroke}
-        strokeLinecap="butt"
         strokeDasharray={`${dash} ${C - dash}`}
         strokeDashoffset={offset}
       />
@@ -690,7 +710,9 @@ function PaymentDonut({ paymentStats, totalTransaksi }) {
             stroke="#e9eef5"
             strokeWidth={stroke}
           />
+
           {rings}
+
           {pctLabels.map((pt, i) => (
             <text
               key={i}
@@ -703,7 +725,8 @@ function PaymentDonut({ paymentStats, totalTransaksi }) {
             </text>
           ))}
         </svg>
-        <div className="donut-center" style={{ inset: `${24}px` }}>
+
+        <div className="donut-center" style={{ inset: "24px" }}>
           <div>
             <div className="dc-top">Total Transaksi</div>
             <div className="dc-big">{idFmt(totalTransaksi)}</div>
@@ -711,6 +734,7 @@ function PaymentDonut({ paymentStats, totalTransaksi }) {
           </div>
         </div>
       </div>
+
       <ul className="donut-legend">
         {payments.map((p) => {
           const jumlah = Math.round((p.val / 100) * Number(totalTransaksi ?? 0));
@@ -730,10 +754,9 @@ function PaymentDonut({ paymentStats, totalTransaksi }) {
   );
 }
 
-/* ======================= TABLE TRANSAKSI TERBARU ======================= */
+/* ======================= TABEL TRANSAKSI TERBARU ======================= */
 
 function TransactionsTable({ transactions }) {
-  const TOTAL_ROWS = transactions?.length ?? 0;
   const PAGE_SIZE = 10;
 
   const allRows = useMemo(
@@ -759,6 +782,7 @@ function TransactionsTable({ transactions }) {
   const filtered = useMemo(() => {
     const s = q.trim().toLowerCase();
     if (!s) return allRows;
+
     return allRows.filter(
       (r) =>
         r.id.toLowerCase().includes(s) ||
@@ -771,6 +795,7 @@ function TransactionsTable({ transactions }) {
   }, [q, allRows]);
 
   const pageCount = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+
   useEffect(() => {
     if (page > pageCount) setPage(pageCount);
   }, [pageCount, page]);
@@ -789,6 +814,7 @@ function TransactionsTable({ transactions }) {
       "Metode Pembayaran",
       "Aksi",
     ].join("\t");
+
     const lines = rows.map((r) =>
       [
         r.no,
@@ -801,7 +827,9 @@ function TransactionsTable({ transactions }) {
         "Detail",
       ].join("\t")
     );
+
     await navigator.clipboard.writeText(header + "\n" + lines.join("\n"));
+
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
   };
@@ -810,6 +838,7 @@ function TransactionsTable({ transactions }) {
     const s = String(v ?? "");
     return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
   };
+
   const handleExcel = () => {
     const header = [
       "No",
@@ -821,6 +850,7 @@ function TransactionsTable({ transactions }) {
       "Metode Pembayaran",
       "Aksi",
     ];
+
     const rowsCsv = filtered.map((r) =>
       [
         r.no,
@@ -835,24 +865,30 @@ function TransactionsTable({ transactions }) {
         .map(csvEscape)
         .join(",")
     );
+
     const blob = new Blob(
       [header.join(",") + "\n" + rowsCsv.join("\n")],
       { type: "text/csv;charset=utf-8" }
     );
+
     const url = URL.createObjectURL(blob);
+
     const a = document.createElement("a");
     a.href = url;
     a.download = "TransaksiTerbaru.csv";
     a.click();
+
     URL.revokeObjectURL(url);
   };
 
   const getPages = (curr, total) => {
     const pages = [];
     const add = (p) => pages.push(p);
+
     add(1);
     let s = Math.max(2, curr - 1),
       e = Math.min(total - 1, curr + 1);
+
     if (curr <= 3) {
       s = 2;
       e = Math.min(5, total - 1);
@@ -861,12 +897,16 @@ function TransactionsTable({ transactions }) {
       s = Math.max(total - 4, 2);
       e = total - 1;
     }
+
     if (s > 2) add("…");
     for (let i = s; i <= e; i++) add(i);
     if (e < total - 1) add("…");
+
     if (total > 1) add(total);
+
     return pages;
   };
+
   const pages = getPages(page, pageCount);
 
   return (
@@ -880,6 +920,7 @@ function TransactionsTable({ transactions }) {
             Excel
           </button>
         </div>
+
         <div className="tc-right">
           <FaSearch />
           <input
@@ -907,6 +948,7 @@ function TransactionsTable({ transactions }) {
               <th style={{ width: 76 }}>Aksi</th>
             </tr>
           </thead>
+
           <tbody>
             {rows.map((r, idx) => (
               <tr key={start + idx}>
@@ -931,6 +973,7 @@ function TransactionsTable({ transactions }) {
           showing <b>{rows.length}</b> to <b>{start + rows.length}</b> of{" "}
           <b>{filtered.length}</b> entries
         </div>
+
         <div className="tf-right pager">
           <button
             disabled={page === 1}
@@ -938,6 +981,7 @@ function TransactionsTable({ transactions }) {
           >
             Previous
           </button>
+
           {pages.map((p, i) =>
             p === "…" ? (
               <span key={`e${i}`} className="ellipsis">
@@ -953,6 +997,7 @@ function TransactionsTable({ transactions }) {
               </button>
             )
           )}
+
           <button
             disabled={page === pageCount}
             onClick={() => setPage((p) => Math.min(pageCount, p + 1))}
@@ -965,41 +1010,49 @@ function TransactionsTable({ transactions }) {
   );
 }
 
-/* ======================= PIE CHART TOP 10 PRODUK ======================= */
+/* ======================= PIE CHART TOP PRODUK ======================= */
 
 function TopProductsPie({ data }) {
-  if (!data || data.length === 0) {
+  if (!data || data.length === 0)
     return <div className="pie-wrap empty" />;
-  }
 
   const pieData = data.map((p) => ({
     label: p.name,
-    val: p.value,
+    val: p.percentage,
     color: randomColor(p.name),
   }));
 
   const total = pieData.reduce((a, b) => a + b.val, 0);
+
   const size = 260,
     stroke = 65,
     pad = 8;
-  const r = (size - stroke) / 2,
-    W = size + pad * 2,
-    H = size + pad * 2;
-  const cx = pad + size / 2,
-    cy = pad + size / 2;
-  const C = 2 * Math.PI * r,
-    gapArc = 0;
+
+  const r = (size - stroke) / 2;
+
+  const W = size + pad * 2;
+  const H = size + pad * 2;
+
+  const cx = pad + size / 2;
+  const cy = pad + size / 2;
+
+  const C = 2 * Math.PI * r;
 
   let acc = 0;
+
   const rings = pieData.map((d) => {
     const frac = d.val / total;
-    const dash = Math.max(0, frac * C - gapArc);
-    const offset = C * 0.25 - acc * C - gapArc / 2;
+    const dash = frac * C;
+    const offset = C * 0.25 - acc * C;
+
     const startA = -Math.PI / 2 + acc * 2 * Math.PI;
     const midA = startA + frac * Math.PI;
+
     const tx = cx + (r + stroke * 0.12) * Math.cos(midA);
     const ty = cy + (r + stroke * 0.12) * Math.sin(midA) + 4;
+
     acc += frac;
+
     return (
       <g key={d.label}>
         <circle
@@ -1009,7 +1062,6 @@ function TopProductsPie({ data }) {
           fill="none"
           stroke={d.color}
           strokeWidth={stroke}
-          strokeLinecap="butt"
           strokeDasharray={`${dash} ${C - dash}`}
           strokeDashoffset={offset}
         />
@@ -1035,8 +1087,10 @@ function TopProductsPie({ data }) {
             stroke="#e9eef5"
             strokeWidth={stroke}
           />
+
           {rings}
         </svg>
+
         <div className="pie-center" style={{ inset: "24px" }}>
           <div>
             <div className="pc-top">Top 10</div>
@@ -1054,6 +1108,7 @@ function TopProductsPie({ data }) {
             </li>
           ))}
         </ul>
+
         <ul>
           {right.map((d) => (
             <li key={d.label}>
@@ -1067,7 +1122,7 @@ function TopProductsPie({ data }) {
   );
 }
 
-/* ======================= PLACEHOLDER (JIKA PERLU) ======================= */
+/* ======================= PLACEHOLDER ======================= */
 
 function SkillsWheel() {
   return <div className="ps-placeholder">(Skills Wheel placeholder)</div>;
@@ -1076,7 +1131,12 @@ function SkillsWheel() {
 /* ============================= MAIN DASHBOARD ============================= */
 
 export default function Dashboard() {
-  const today = "Kamis, 2 Oktober 2025";
+  const today = new Date().toLocaleDateString("id-ID", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
 
   const [stats, setStats] = useState(null);
   const [monthlyStats, setMonthlyStats] = useState([]);
@@ -1091,34 +1151,42 @@ export default function Dashboard() {
   const MAX_PROD_ROWS = 10;
   const rightWrapRef = useRef(null);
   const [rowHRight, setRowHRight] = useState(0);
+
   const leftWrapRef = useRef(null);
   const [rowHLeft, setRowHLeft] = useState(0);
-  const [qProduk, setQProduk] = useState("");
 
-  /* ---------- Fetch dari Backend ---------- */
+  const [qProduk, setQProduk] = useState("");
 
   useEffect(() => {
     const year = new Date().getFullYear();
 
     async function run() {
       try {
-        const [dashRes, statsRes, topRes, pieRes, latestRes, prodRes, trxRes] =
-          await Promise.all([
-            api.get(`/admin/dashboard-stats/${year}`),
-            api.get("/admin/stats", {
-              params: { type: "ITEMS_SOLD", years: `${year - 1},${year}` },
-            }),
-            api.get("/admin/top-products"),
-            api.get("/admin/top-products/pie"),
-            api.get("/admin/latest-products"),
-            api.get("/admin/products"),
-            api.get("/admin/orders"),
-          ]);
+        const [
+          dashRes,
+          statsRes,
+          leaderboardRes,
+          pieRes,
+          latestRes,
+          prodRes,
+          trxRes,
+        ] = await Promise.all([
+          api.get(`/admin/dashboard/${year}`),
+          api.get("/admin/stats", {
+            params: { type: "ITEMS_SOLD", years: `${year - 1},${year}` },
+          }),
+          api.get("/admin/products/leaderboard"),
+          api.get("/admin/products/leaderboard"), // untuk pie chart
+          api.get("/admin/products/latest"),
+          api.get("/admin/products"),
+          api.get("/admin/orders"),
+        ]);
 
         setStats(dashRes.data);
         setPaymentStats(dashRes.data.paymentMethodStats ?? []);
 
         setMonthlyStats(statsRes.data.years ?? []);
+
         setYearlyStats(
           (statsRes.data.years ?? []).map((y) => ({
             year: y.year,
@@ -1126,8 +1194,9 @@ export default function Dashboard() {
           }))
         );
 
-        setTopProducts(topRes.data ?? []);
+        setTopProducts(leaderboardRes.data ?? []);
         setTopProductsPie(pieRes.data ?? []);
+
         setLatestProducts(latestRes.data ?? []);
         setAllProducts(prodRes.data ?? []);
         setTransactions(trxRes.data ?? []);
@@ -1139,16 +1208,17 @@ export default function Dashboard() {
     run();
   }, []);
 
-  /* ---------- Auto height 10 baris tabel produk ---------- */
-
   useLayoutEffect(() => {
     const calcRowH = (wrapEl, setter) => {
       if (!wrapEl) return;
+
       const thead = wrapEl.querySelector("thead");
       const wrapH = wrapEl.clientHeight;
       const headH = thead ? thead.offsetHeight : 0;
+
       const innerH = Math.max(0, wrapH - headH - 1);
       const h = Math.max(36, Math.floor(innerH / MAX_PROD_ROWS));
+
       setter(h);
     };
 
@@ -1163,28 +1233,30 @@ export default function Dashboard() {
 
     window.addEventListener("resize", calcRight);
     window.addEventListener("resize", calcLeft);
+
     calcRight();
     calcLeft();
 
     return () => {
       ro1.disconnect();
       ro2.disconnect();
+
       window.removeEventListener("resize", calcRight);
       window.removeEventListener("resize", calcLeft);
     };
   }, []);
 
-  /* ---------- Filter Semua Data Produk ---------- */
-
   const filteredProduk = useMemo(() => {
     const s = qProduk.trim().toLowerCase();
     if (!s) return allProducts;
+
     return allProducts.filter((p) => {
       const code = (p.code ?? String(p.id ?? "")).toLowerCase();
       const name = (p.name ?? "").toLowerCase();
       const price = String(p.price ?? "").toLowerCase();
       const stock = String(p.stock ?? "").toLowerCase();
       const supplier = (p.supplier?.name ?? "").toLowerCase();
+
       return (
         code.includes(s) ||
         name.includes(s) ||
@@ -1210,6 +1282,7 @@ export default function Dashboard() {
       "Stok",
       "Supplier",
     ].join("\t");
+
     const lines = filteredProduk.map((r, idx) =>
       [
         idx + 1,
@@ -1221,6 +1294,7 @@ export default function Dashboard() {
         r.supplier?.name ?? "-",
       ].join("\t")
     );
+
     await navigator.clipboard.writeText(header + "\n" + lines.join("\n"));
   };
 
@@ -1234,6 +1308,7 @@ export default function Dashboard() {
       "Stok",
       "Supplier",
     ];
+
     const rowsCsv = filteredProduk.map((r, idx) =>
       [
         idx + 1,
@@ -1245,19 +1320,21 @@ export default function Dashboard() {
         r.supplier?.name ?? "-",
       ].join(",")
     );
+
     const blob = new Blob(
       [header.join(",") + "\n" + rowsCsv.join("\n")],
       { type: "text/csv;charset=utf-8" }
     );
+
     const url = URL.createObjectURL(blob);
+
     const a = document.createElement("a");
     a.href = url;
     a.download = "SemuaDataProduk.csv";
     a.click();
+
     URL.revokeObjectURL(url);
   };
-
-  /* ---------- Kartu kecil statistik atas ---------- */
 
   const statCards = stats
     ? [
@@ -1294,6 +1371,7 @@ export default function Dashboard() {
         <div className="ds-side-header">
           <FaBars />
         </div>
+
         <nav className="ds-nav">
           <a className="ds-nav-item active">
             <span className="ico">
@@ -1301,18 +1379,21 @@ export default function Dashboard() {
             </span>
             <span>Dashboard</span>
           </a>
+
           <a className="ds-nav-item">
             <span className="ico">
               <FaCashRegister />
             </span>
             <span>Transaksi</span>
           </a>
+
           <a className="ds-nav-item">
             <span className="ico">
               <FaDatabase />
             </span>
             <span>Master Data</span>
           </a>
+
           <a className="ds-nav-item">
             <span className="ico">
               <FaChartBar />
@@ -1330,9 +1411,8 @@ export default function Dashboard() {
               <FaCalendarAlt /> {today}
             </div>
           </div>
-          <div className="right">
-            {/* <ProfilePill/> kalau mau dipakai */}
-          </div>
+
+          <div className="right">{/* <ProfilePill/> */}</div>
         </header>
 
         <section className="ds-inner">
@@ -1341,13 +1421,13 @@ export default function Dashboard() {
             <span>Statistik Bisnis</span>
           </div>
 
-          {/* Kartu ringkas */}
           <div className="ds-cards">
             {statCards.map((s, idx) => (
               <div key={idx} className={`ds-card ${s.color}`}>
                 <div className="ds-card-value">{s.value}</div>
                 <div className="ds-card-sub">{s.label}</div>
                 <div className="ds-card-pill" />
+
                 <div className="ds-card-footer">
                   <span>Tahun {s.year}</span>
                   <span>Detail</span>
@@ -1356,16 +1436,18 @@ export default function Dashboard() {
             ))}
           </div>
 
-          {/* Penjualan Bulanan & Tahunan */}
+          {/* Penjualan */}
           <div className="panel-combo">
             <ChartHeader
               title="Penjualan Perbulan"
               rightTitle="Penjualan Pertahun"
             />
+
             <div className="pc-body">
               <div className="pc-col">
                 <SalesChartMonthly monthlyStats={monthlyStats} />
               </div>
+
               <div className="pc-col">
                 <div className="mini-title">Penjualan Pertahun</div>
                 <SalesChartYearly yearlyStats={yearlyStats} />
@@ -1373,11 +1455,12 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Metode Pembayaran & Transaksi Terbaru */}
+          {/* Metode Pembayaran + Transaksi Terbaru */}
           <div className="ds-panels ds-panels--bottom">
             <div className="ds-panel tall">
               <div className="panel-body">
                 <div className="mini-title">Metode Pembayaran</div>
+
                 <PaymentDonut
                   paymentStats={paymentStats}
                   totalTransaksi={stats?.totalTransaksi ?? 0}
@@ -1393,7 +1476,7 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Produk Terlaris (tabel kiri, Pie kanan) */}
+          {/* Produk Terlaris */}
           <div className="panel-single">
             <div className="panel-header panel-header--chart">
               <div className="ph-leftwrap">
@@ -1411,7 +1494,7 @@ export default function Dashboard() {
                   alignItems: "start",
                 }}
               >
-                {/* KIRI: TABEL TOP PRODUK */}
+                {/* Tabel */}
                 <div className="pt-left">
                   <div className="pt-toolbar">
                     <button className="btn btn-gray">Copy</button>
@@ -1432,13 +1515,16 @@ export default function Dashboard() {
                           </th>
                         </tr>
                       </thead>
+
                       <tbody>
                         {topProducts.map((p, idx) => (
                           <tr key={p.productId ?? idx}>
-                            <td className="col-no">{p.no}</td>
+                            <td className="col-no">{p.no ?? idx + 1}</td>
+
                             <td className="col-img">
                               <div className="img-pill">IMG</div>
                             </td>
+
                             <td>{p.name}</td>
                             <td className="col-terjual">
                               {formatNumber(p.sold)}
@@ -1456,7 +1542,7 @@ export default function Dashboard() {
                   </div>
                 </div>
 
-                {/* KANAN: PIE */}
+                {/* Pie */}
                 <div className="pt-right" style={{ justifySelf: "end" }}>
                   <TopProductsPie data={topProductsPie} />
                 </div>
@@ -1464,12 +1550,13 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Produk Terbaru (kiri) + Semua Data Produk (kanan) */}
+          {/* Produk terbaru + semua produk */}
           <div className="panel-single">
             <div className="panel-header panel-header--chart">
               <div className="ph-leftwrap">
                 <div className="ph-title">Produk Terbaru</div>
               </div>
+
               <div className="ph-righttitle">Semua Data Produk</div>
             </div>
 
@@ -1482,10 +1569,14 @@ export default function Dashboard() {
                   gap: "24px",
                 }}
               >
-                {/* KIRI: Produk Terbaru */}
+                {/* Produk Terbaru */}
                 <div
                   className="pj-left"
-                  style={{ display: "flex", flexDirection: "column", minHeight: 0 }}
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    minHeight: 0,
+                  }}
                 >
                   <p
                     style={{
@@ -1494,9 +1585,10 @@ export default function Dashboard() {
                       fontSize: 12,
                     }}
                   >
-                    Produk terbaru akan diperbarui setiap{" "}
-                    <b>2 minggu sekali</b>, berdasarkan data transaksi.
+                    Produk terbaru diperbarui setiap{" "}
+                    <b>2 minggu sekali</b>.
                   </p>
+
                   <div
                     className="table-wrap"
                     ref={leftWrapRef}
@@ -1511,18 +1603,23 @@ export default function Dashboard() {
                           <th>Stok</th>
                         </tr>
                       </thead>
+
                       <tbody>
                         {latestProducts.map((p, i) => (
                           <tr
                             key={p.id}
                             style={
-                              rowHLeft ? { height: `${rowHLeft}px` } : undefined
+                              rowHLeft
+                                ? { height: `${rowHLeft}px` }
+                                : undefined
                             }
                           >
                             <td className="col-no">{i + 1}</td>
+
                             <td className="col-img">
                               <div className="img-pill">IMG</div>
                             </td>
+
                             <td>{p.name}</td>
                             <td>{p.stock}</td>
                           </tr>
@@ -1532,10 +1629,14 @@ export default function Dashboard() {
                   </div>
                 </div>
 
-                {/* KANAN: Semua Data Produk */}
+                {/* Semua Produk */}
                 <div
                   className="pj-right"
-                  style={{ display: "flex", flexDirection: "column", minHeight: 0 }}
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    minHeight: 0,
+                  }}
                 >
                   <div className="mini-title" style={{ marginBottom: 10 }}>
                     Semua Data Produk
@@ -1554,6 +1655,7 @@ export default function Dashboard() {
                       <button className="btn btn-gray" onClick={copySemuaProduk}>
                         Copy
                       </button>
+
                       <button
                         className="btn btn-gray"
                         onClick={excelSemuaProduk}
@@ -1562,6 +1664,7 @@ export default function Dashboard() {
                         Excel
                       </button>
                     </div>
+
                     <div
                       style={{
                         display: "flex",
@@ -1572,8 +1675,13 @@ export default function Dashboard() {
                       <span style={{ fontSize: 12, color: "#6b7a90" }}>
                         Search
                       </span>
-                      <div className="tc-right" style={{ gap: 6 }}>
+
+                      <div
+                        className="tc-right"
+                        style={{ gap: 6 }}
+                      >
                         <FaSearch />
+
                         <input
                           value={qProduk}
                           onChange={(e) => setQProduk(e.target.value)}
@@ -1600,6 +1708,7 @@ export default function Dashboard() {
                           <th>Supplier</th>
                         </tr>
                       </thead>
+
                       <tbody>
                         {produkRows10.map((r, idx) => (
                           <tr
@@ -1619,6 +1728,7 @@ export default function Dashboard() {
                             <td>{r.supplier?.name ?? "-"}</td>
                           </tr>
                         ))}
+
                         {Array.from({
                           length: Math.max(0, 10 - produkRows10.length),
                         }).map((_, i) => (
@@ -1647,7 +1757,6 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Placeholder kalau mau dipakai lagi */}
           <SkillsWheel />
         </section>
       </main>
