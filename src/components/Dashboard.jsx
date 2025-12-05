@@ -10,19 +10,25 @@ import React, {
   useLayoutEffect,
 } from "react";
 import {
-  FaBars,
   FaCalendarAlt,
-  FaTachometerAlt,
-  FaCashRegister,
-  FaDatabase,
   FaChartBar,
   FaUserCircle,
   FaChevronDown,
   FaChevronUp,
   FaSearch,
+  FaShoppingCart,
+  FaThLarge,
+  FaPaperPlane,
+  FaFileAlt,
+  FaUsers,
 } from "react-icons/fa";
 import "./Dashboard.css";
 import { api } from "../api";
+import Sidebar from "./Sidebar";
+import WhiteBar from "./Whitebar";
+import Transaksi from "./Transaksi";
+import Datamaster from "./Datamaster";
+
 
 /* ============================= HELPERS ============================= */
 
@@ -66,6 +72,47 @@ function randomColor(key) {
   ];
   return colors[(key?.length ?? 0) % colors.length];
 }
+
+function buildMonthlyYearlyFromTransactions(transactions) {
+  const byYear = new Map(); // year -> { year, months[12], totalYear }
+
+  for (const t of transactions ?? []) {
+    if (!t.createdAt) continue;
+
+    const d = new Date(t.createdAt);
+    if (isNaN(d)) continue;
+
+    const year = d.getFullYear();
+    const monthIndex = d.getMonth(); // 0-11
+    const totalItem = Number(t.totalItem ?? 0);
+
+    if (!byYear.has(year)) {
+      byYear.set(year, {
+        year,
+        months: Array.from({ length: 12 }, (_, idx) => ({
+          month: idx + 1,
+          value: 0,
+        })),
+        totalYear: 0,
+      });
+    }
+
+    const entry = byYear.get(year);
+    entry.months[monthIndex].value += totalItem;
+    entry.totalYear += totalItem;
+  }
+
+  const yearsArr = Array.from(byYear.values()).sort((a, b) => a.year - b.year);
+
+  return {
+    monthly: yearsArr,                          // dipakai SalesChartMonthly
+    yearly: yearsArr.map((y) => ({              // dipakai SalesChartYearly
+      year: y.year,
+      total: y.totalYear,
+    })),
+  };
+}
+
 
 /* ====================== COMMON SMALL COMPONENTS ===================== */
 
@@ -143,11 +190,15 @@ function SalesChartMonthly({ monthlyStats }) {
   if (!monthlyStats || monthlyStats.length === 0)
     return <div className="chart-container empty" />;
 
-  const datasets = monthlyStats.map((y) => ({
-    label: y.year,
-    color: y.year === 2024 ? "#f6b21c" : "#1560d9",
-    data: months.map((mIndex, idx) => y.months[idx]?.value ?? 0),
-  }));
+const yearsAvailable = monthlyStats.map((y) => y.year);
+const newestYear = Math.max(...yearsAvailable);
+
+const datasets = monthlyStats.map((y) => ({
+  label: y.year,
+  // 🔥 Tahun TERBARU = kuning, lainnya biru
+  color: y.year === newestYear ? "#f6b21c" : "#1560d9",
+  data: months.map((mIndex, idx) => y.months[idx]?.value ?? 0),
+}));
 
   /* (seluruh kode grafik tetap, tidak diubah)
      ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ */
@@ -1131,8 +1182,9 @@ function SkillsWheel() {
 /* ============================= MAIN DASHBOARD ============================= */
 
 export default function Dashboard() {
+  // 🔹 MENU AKTIF: "dashboard" atau "transaksi"
+  const [activeMenu, setActiveMenu] = useState("dashboard");
   const today = new Date().toLocaleDateString("id-ID", {
-    weekday: "long",
     day: "numeric",
     month: "long",
     year: "numeric",
@@ -1164,7 +1216,6 @@ export default function Dashboard() {
       try {
         const [
           dashRes,
-          statsRes,
           leaderboardRes,
           pieRes,
           latestRes,
@@ -1172,34 +1223,38 @@ export default function Dashboard() {
           trxRes,
         ] = await Promise.all([
           api.get(`/admin/dashboard/${year}`),
-          api.get("/admin/stats", {
-            params: { type: "ITEMS_SOLD", years: `${year - 1},${year}` },
-          }),
+
+          // top produk & pie chart
           api.get("/admin/products/leaderboard"),
           api.get("/admin/products/leaderboard"), // untuk pie chart
+
+          // produk terbaru & semua produk
           api.get("/admin/products/latest"),
           api.get("/admin/products"),
+
+          // 🔥 sumber data utama untuk grafik bulanan & tahunan
           api.get("/admin/orders"),
         ]);
 
+        // ===== kartu statistik atas =====
         setStats(dashRes.data);
         setPaymentStats(dashRes.data.paymentMethodStats ?? []);
 
-        setMonthlyStats(statsRes.data.years ?? []);
-
-        setYearlyStats(
-          (statsRes.data.years ?? []).map((y) => ({
-            year: y.year,
-            total: y.totalYear,
-          }))
-        );
-
+        // ===== data produk & transaksi =====
         setTopProducts(leaderboardRes.data ?? []);
         setTopProductsPie(pieRes.data ?? []);
 
         setLatestProducts(latestRes.data ?? []);
         setAllProducts(prodRes.data ?? []);
-        setTransactions(trxRes.data ?? []);
+
+        const trxData = trxRes.data ?? [];
+        setTransactions(trxData);
+
+        // 🔥 bangun data grafik dari transaksi yang sudah pasti ada
+        const { monthly, yearly } =
+          buildMonthlyYearlyFromTransactions(trxData);
+        setMonthlyStats(monthly);
+        setYearlyStats(yearly);
       } catch (err) {
         console.error("Error fetch dashboard:", err);
       }
@@ -1365,399 +1420,386 @@ export default function Dashboard() {
       ]
     : [];
 
-  return (
-    <div className="dashboard">
-      <aside className="ds-sidebar">
-        <div className="ds-side-header">
-          <FaBars />
-        </div>
-
-        <nav className="ds-nav">
-          <a className="ds-nav-item active">
-            <span className="ico">
-              <FaTachometerAlt />
-            </span>
-            <span>Dashboard</span>
-          </a>
-
-          <a className="ds-nav-item">
-            <span className="ico">
-              <FaCashRegister />
-            </span>
-            <span>Transaksi</span>
-          </a>
-
-          <a className="ds-nav-item">
-            <span className="ico">
-              <FaDatabase />
-            </span>
-            <span>Master Data</span>
-          </a>
-
-          <a className="ds-nav-item">
-            <span className="ico">
-              <FaChartBar />
-            </span>
-            <span>Laporan Manajemen</span>
-          </a>
-        </nav>
-      </aside>
+return (
+  <div className="dashboard">
+          <Sidebar activeMenu={activeMenu} setActiveMenu={setActiveMenu} />
 
       <main className="ds-main">
-        <header className="ds-topbar">
-          <div className="left">
-            <div className="brand">POS NUKA</div>
-            <div className="date">
-              <FaCalendarAlt /> {today}
-            </div>
-          </div>
+          <WhiteBar today={today} />
 
-          <div className="right">{/* <ProfilePill/> */}</div>
-        </header>
 
         <section className="ds-inner">
-          <div className="ds-section-title">
-            <FaChartBar />
-            <span>Statistik Bisnis</span>
-          </div>
-
-          <div className="ds-cards">
-            {statCards.map((s, idx) => (
-              <div key={idx} className={`ds-card ${s.color}`}>
-                <div className="ds-card-value">{s.value}</div>
-                <div className="ds-card-sub">{s.label}</div>
-                <div className="ds-card-pill" />
-
-                <div className="ds-card-footer">
-                  <span>Tahun {s.year}</span>
-                  <span>Detail</span>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Penjualan */}
-          <div className="panel-combo">
-            <ChartHeader
-              title="Penjualan Perbulan"
-              rightTitle="Penjualan Pertahun"
-            />
-
-            <div className="pc-body">
-              <div className="pc-col">
-                <SalesChartMonthly monthlyStats={monthlyStats} />
+          {/* ================= HALAMAN DASHBOARD ================= */}
+          {activeMenu === "dashboard" && (
+            <>
+              <div className="ds-section-title">
+                <FaChartBar />
+                <span>Statistik Bisnis</span>
               </div>
 
-              <div className="pc-col">
-                <div className="mini-title">Penjualan Pertahun</div>
-                <SalesChartYearly yearlyStats={yearlyStats} />
+              <div className="ds-cards">
+                {statCards.map((s, idx) => (
+                  <div key={idx} className={`ds-card ${s.color}`}>
+                    <div className="ds-card-value">{s.value}</div>
+                    <div className="ds-card-sub">{s.label}</div>
+                    <div className="ds-card-pill" />
+
+                    <div className="ds-card-footer">
+                      <span>Tahun {s.year}</span>
+                      <span>Detail</span>
+                    </div>
+                  </div>
+                ))}
               </div>
-            </div>
-          </div>
 
-          {/* Metode Pembayaran + Transaksi Terbaru */}
-          <div className="ds-panels ds-panels--bottom">
-            <div className="ds-panel tall">
-              <div className="panel-body">
-                <div className="mini-title">Metode Pembayaran</div>
-
-                <PaymentDonut
-                  paymentStats={paymentStats}
-                  totalTransaksi={stats?.totalTransaksi ?? 0}
+              {/* Penjualan */}
+              <div className="panel-combo">
+                <ChartHeader
+                  title="Penjualan Perbulan"
+                  rightTitle="Penjualan Pertahun"
                 />
-              </div>
-            </div>
 
-            <div className="ds-panel tall">
-              <div className="panel-body">
-                <div className="mini-title">Transaksi Terbaru</div>
-                <TransactionsTable transactions={transactions} />
-              </div>
-            </div>
-          </div>
-
-          {/* Produk Terlaris */}
-          <div className="panel-single">
-            <div className="panel-header panel-header--chart">
-              <div className="ph-leftwrap">
-                <div className="ph-title">Produk Terlaris</div>
-              </div>
-            </div>
-
-            <div className="ps-body">
-              <div
-                className="pt-grid"
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "minmax(620px,1fr) 420px",
-                  gap: "24px",
-                  alignItems: "start",
-                }}
-              >
-                {/* Tabel */}
-                <div className="pt-left">
-                  <div className="pt-toolbar">
-                    <button className="btn btn-gray">Copy</button>
-                    <button className="btn btn-gray">Excel</button>
+                <div className="pc-body">
+                  <div className="pc-col">
+                    <SalesChartMonthly monthlyStats={monthlyStats} />
                   </div>
 
-                  <div className="table-wrap">
-                    <table className="pt-table pt-table--top">
-                      <thead>
-                        <tr>
-                          <th className="col-no">No</th>
-                          <th className="col-img">Gambar</th>
-                          <th>Nama Barang</th>
-                          <th className="col-terjual">Terjual</th>
-                          <th className="col-total">Total (Rp)</th>
-                          <th className="col-persentase">
-                            Persentase Penjualan
-                          </th>
-                        </tr>
-                      </thead>
+                  <div className="pc-col">
+                    <div className="mini-title">Penjualan Pertahun</div>
+                    <SalesChartYearly yearlyStats={yearlyStats} />
+                  </div>
+                </div>
+              </div>
 
-                      <tbody>
-                        {topProducts.map((p, idx) => (
-                          <tr key={p.productId ?? idx}>
-                            <td className="col-no">{p.no ?? idx + 1}</td>
+              {/* Metode Pembayaran + Transaksi Terbaru */}
+              <div className="ds-panels ds-panels--bottom">
+                <div className="ds-panel tall">
+                  <div className="panel-body">
+                    <div className="mini-title">Metode Pembayaran</div>
 
-                            <td className="col-img">
-                              <div className="img-pill">IMG</div>
-                            </td>
-
-                            <td>{p.name}</td>
-                            <td className="col-terjual">
-                              {formatNumber(p.sold)}
-                            </td>
-                            <td className="col-total">
-                              {formatRp(p.totalPrice)}
-                            </td>
-                            <td className="col-persentase">
-                              {p.percentage}%
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                    <PaymentDonut
+                      paymentStats={paymentStats}
+                      totalTransaksi={stats?.totalTransaksi ?? 0}
+                    />
                   </div>
                 </div>
 
-                {/* Pie */}
-                <div className="pt-right" style={{ justifySelf: "end" }}>
-                  <TopProductsPie data={topProductsPie} />
+                <div className="ds-panel tall">
+                  <div className="panel-body">
+                    <div className="mini-title">Transaksi Terbaru</div>
+                    <TransactionsTable transactions={transactions} />
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
 
-          {/* Produk terbaru + semua produk */}
-          <div className="panel-single">
-            <div className="panel-header panel-header--chart">
-              <div className="ph-leftwrap">
-                <div className="ph-title">Produk Terbaru</div>
-              </div>
+              {/* Produk Terlaris */}
+              <div className="panel-single">
+                <div className="panel-header panel-header--chart">
+                  <div className="ph-leftwrap">
+                    <div className="ph-title">Produk Terlaris</div>
+                  </div>
+                </div>
 
-              <div className="ph-righttitle">Semua Data Produk</div>
-            </div>
-
-            <div className="ps-body">
-              <div
-                className="pj-grid"
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "minmax(420px,480px) 1fr",
-                  gap: "24px",
-                }}
-              >
-                {/* Produk Terbaru */}
-                <div
-                  className="pj-left"
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    minHeight: 0,
-                  }}
-                >
-                  <p
+                <div className="ps-body">
+                  <div
+                    className="pt-grid"
                     style={{
-                      margin: "0 0 10px 0",
-                      color: "#6b7a90",
-                      fontSize: 12,
+                      display: "grid",
+                      gridTemplateColumns: "minmax(620px,1fr) 420px",
+                      gap: "24px",
+                      alignItems: "start",
                     }}
                   >
-                    Produk terbaru diperbarui setiap{" "}
-                    <b>2 minggu sekali</b>.
-                  </p>
+                    {/* Tabel */}
+                    <div className="pt-left">
+                      <div className="pt-toolbar">
+                        <button className="btn btn-gray">Copy</button>
+                        <button className="btn btn-gray">Excel</button>
+                      </div>
 
-                  <div
-                    className="table-wrap"
-                    ref={leftWrapRef}
-                    style={{ flex: 1, minHeight: 0 }}
-                  >
-                    <table className="pt-table">
-                      <thead>
-                        <tr>
-                          <th className="col-no">No</th>
-                          <th className="col-img">Gambar</th>
-                          <th>Nama Barang</th>
-                          <th>Stok</th>
-                        </tr>
-                      </thead>
+                      <div className="table-wrap">
+                        <table className="pt-table pt-table--top">
+                          <thead>
+                            <tr>
+                              <th className="col-no">No</th>
+                              <th className="col-img">Gambar</th>
+                              <th>Nama Barang</th>
+                              <th className="col-terjual">Terjual</th>
+                              <th className="col-total">Total (Rp)</th>
+                              <th className="col-persentase">
+                                Persentase Penjualan
+                              </th>
+                            </tr>
+                          </thead>
 
-                      <tbody>
-                        {latestProducts.map((p, i) => (
-                          <tr
-                            key={p.id}
-                            style={
-                              rowHLeft
-                                ? { height: `${rowHLeft}px` }
-                                : undefined
-                            }
-                          >
-                            <td className="col-no">{i + 1}</td>
+                          <tbody>
+                            {topProducts.map((p, idx) => (
+                              <tr key={p.productId ?? idx}>
+                                <td className="col-no">
+                                  {p.no ?? idx + 1}
+                                </td>
 
-                            <td className="col-img">
-                              <div className="img-pill">IMG</div>
-                            </td>
+                                <td className="col-img">
+                                  <div className="img-pill">IMG</div>
+                                </td>
 
-                            <td>{p.name}</td>
-                            <td>{p.stock}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-
-                {/* Semua Produk */}
-                <div
-                  className="pj-right"
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    minHeight: 0,
-                  }}
-                >
-                  <div className="mini-title" style={{ marginBottom: 10 }}>
-                    Semua Data Produk
-                  </div>
-
-                  <div
-                    className="pt-toolbar"
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      marginBottom: 10,
-                    }}
-                  >
-                    <div>
-                      <button className="btn btn-gray" onClick={copySemuaProduk}>
-                        Copy
-                      </button>
-
-                      <button
-                        className="btn btn-gray"
-                        onClick={excelSemuaProduk}
-                        style={{ marginLeft: 8 }}
-                      >
-                        Excel
-                      </button>
+                                <td>{p.name}</td>
+                                <td className="col-terjual">
+                                  {formatNumber(p.sold)}
+                                </td>
+                                <td className="col-total">
+                                  {formatRp(p.totalPrice)}
+                                </td>
+                                <td className="col-persentase">
+                                  {p.percentage}%
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
 
+                    {/* Pie */}
                     <div
+                      className="pt-right"
+                      style={{ justifySelf: "end" }}
+                    >
+                      <TopProductsPie data={topProductsPie} />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Produk terbaru + semua produk */}
+              <div className="panel-single">
+                <div className="panel-header panel-header--chart">
+                  <div className="ph-leftwrap">
+                    <div className="ph-title">Produk Terbaru</div>
+                  </div>
+
+                  <div className="ph-righttitle">Semua Data Produk</div>
+                </div>
+
+                <div className="ps-body">
+                  <div
+                    className="pj-grid"
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "minmax(420px,480px) 1fr",
+                      gap: "24px",
+                    }}
+                  >
+                    {/* Produk Terbaru */}
+                    <div
+                      className="pj-left"
                       style={{
                         display: "flex",
-                        alignItems: "center",
-                        gap: 10,
+                        flexDirection: "column",
+                        minHeight: 0,
                       }}
                     >
-                      <span style={{ fontSize: 12, color: "#6b7a90" }}>
-                        Search
-                      </span>
+                      <p
+                        style={{
+                          margin: "0 0 10px 0",
+                          color: "#6b7a90",
+                          fontSize: 12,
+                        }}
+                      >
+                        Produk terbaru diperbarui setiap{" "}
+                        <b>2 minggu sekali</b>.
+                      </p>
 
                       <div
-                        className="tc-right"
-                        style={{ gap: 6 }}
+                        className="table-wrap"
+                        ref={leftWrapRef}
+                        style={{ flex: 1, minHeight: 0 }}
                       >
-                        <FaSearch />
+                        <table className="pt-table">
+                          <thead>
+                            <tr>
+                              <th className="col-no">No</th>
+                              <th className="col-img">Gambar</th>
+                              <th>Nama Barang</th>
+                              <th>Stok</th>
+                            </tr>
+                          </thead>
 
-                        <input
-                          value={qProduk}
-                          onChange={(e) => setQProduk(e.target.value)}
-                          placeholder="Cari Produk"
-                        />
+                          <tbody>
+                            {latestProducts.map((p, i) => (
+                              <tr
+                                key={p.id}
+                                style={
+                                  rowHLeft
+                                    ? { height: `${rowHLeft}px` }
+                                    : undefined
+                                }
+                              >
+                                <td className="col-no">{i + 1}</td>
+
+                                <td className="col-img">
+                                  <div className="img-pill">IMG</div>
+                                </td>
+
+                                <td>{p.name}</td>
+                                <td>{p.stock}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+
+                    {/* Semua Produk */}
+                    <div
+                      className="pj-right"
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        minHeight: 0,
+                      }}
+                    >
+                      <div
+                        className="mini-title"
+                        style={{ marginBottom: 10 }}
+                      >
+                        Semua Data Produk
+                      </div>
+
+                      <div
+                        className="pt-toolbar"
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                          marginBottom: 10,
+                        }}
+                      >
+                        <div>
+                          <button
+                            className="btn btn-gray"
+                            onClick={copySemuaProduk}
+                          >
+                            Copy
+                          </button>
+
+                          <button
+                            className="btn btn-gray"
+                            onClick={excelSemuaProduk}
+                            style={{ marginLeft: 8 }}
+                          >
+                            Excel
+                          </button>
+                        </div>
+
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 10,
+                          }}
+                        >
+                          <span
+                            style={{ fontSize: 12, color: "#6b7a90" }}
+                          >
+                            Search
+                          </span>
+
+                          <div
+                            className="tc-right"
+                            style={{ gap: 6 }}
+                          >
+                            <FaSearch />
+
+                            <input
+                              value={qProduk}
+                              onChange={(e) =>
+                                setQProduk(e.target.value)
+                              }
+                              placeholder="Cari Produk"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div
+                        className="table-wrap"
+                        ref={rightWrapRef}
+                        style={{ flex: 1, minHeight: 0 }}
+                      >
+                        <table className="pt-table">
+                          <thead>
+                            <tr>
+                              <th className="col-no">No</th>
+                              <th>Kode Produk</th>
+                              <th>Nama Produk</th>
+                              <th>Harga Satuan</th>
+                              <th>Satuan</th>
+                              <th>Stok</th>
+                              <th>Supplier</th>
+                            </tr>
+                          </thead>
+
+                          <tbody>
+                            {produkRows10.map((r, idx) => (
+                              <tr
+                                key={r.id ?? idx}
+                                style={
+                                  rowHRight
+                                    ? { height: `${rowHRight}px` }
+                                    : undefined
+                                }
+                              >
+                                <td className="col-no">{idx + 1}</td>
+                                <td>{r.code ?? r.id}</td>
+                                <td>{r.name}</td>
+                                <td>{formatRp(r.price)}</td>
+                                <td>{r.unit ?? "-"}</td>
+                                <td>{r.stock}</td>
+                                <td>{r.supplier?.name ?? "-"}</td>
+                              </tr>
+                            ))}
+
+                            {Array.from({
+                              length: Math.max(
+                                0,
+                                10 - produkRows10.length
+                              ),
+                            }).map((_, i) => (
+                              <tr
+                                key={`empty-${i}`}
+                                style={
+                                  rowHRight
+                                    ? { height: `${rowHRight}px` }
+                                    : undefined
+                                }
+                              >
+                                <td className="col-no">&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
                       </div>
                     </div>
                   </div>
-
-                  <div
-                    className="table-wrap"
-                    ref={rightWrapRef}
-                    style={{ flex: 1, minHeight: 0 }}
-                  >
-                    <table className="pt-table">
-                      <thead>
-                        <tr>
-                          <th className="col-no">No</th>
-                          <th>Kode Produk</th>
-                          <th>Nama Produk</th>
-                          <th>Harga Satuan</th>
-                          <th>Satuan</th>
-                          <th>Stok</th>
-                          <th>Supplier</th>
-                        </tr>
-                      </thead>
-
-                      <tbody>
-                        {produkRows10.map((r, idx) => (
-                          <tr
-                            key={r.id ?? idx}
-                            style={
-                              rowHRight
-                                ? { height: `${rowHRight}px` }
-                                : undefined
-                            }
-                          >
-                            <td className="col-no">{idx + 1}</td>
-                            <td>{r.code ?? r.id}</td>
-                            <td>{r.name}</td>
-                            <td>{formatRp(r.price)}</td>
-                            <td>{r.unit ?? "-"}</td>
-                            <td>{r.stock}</td>
-                            <td>{r.supplier?.name ?? "-"}</td>
-                          </tr>
-                        ))}
-
-                        {Array.from({
-                          length: Math.max(0, 10 - produkRows10.length),
-                        }).map((_, i) => (
-                          <tr
-                            key={`empty-${i}`}
-                            style={
-                              rowHRight
-                                ? { height: `${rowHRight}px` }
-                                : undefined
-                            }
-                          >
-                            <td className="col-no">&nbsp;</td>
-                            <td>&nbsp;</td>
-                            <td>&nbsp;</td>
-                            <td>&nbsp;</td>
-                            <td>&nbsp;</td>
-                            <td>&nbsp;</td>
-                            <td>&nbsp;</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
                 </div>
               </div>
-            </div>
-          </div>
 
-          <SkillsWheel />
+              <SkillsWheel />
+            </>
+          )}
+
+          {/* ================= HALAMAN TRANSAKSI ================= */}
+          {activeMenu === "transaksi" && <Transaksi />}
+
+          {/* ================= HALAMAN DATA-MASTER ================= */}
+          {activeMenu === "datamaster" && <Datamaster />}
         </section>
       </main>
     </div>

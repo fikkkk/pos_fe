@@ -1,26 +1,251 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+
 :root{
   --bg:#e9f1f6; --line:#d7e0e7; --brand:#32446B; --side:#e7a21a; --side-active:#ffd46b;
   --blue:#1560d9; --green:#2ba84a; --orange:#f19f00; --red:#de4f4f;
 }
 
 /* ===== Global ===== */
-html,body{height:100%;margin:0;overflow:hidden;}
-.dashboard{display:grid;grid-template-columns:176px 1fr;height:100vh;min-height:0;width:100%;background:var(--bg);color:var(--brand);font-family:"Poppins",system-ui,Arial,sans-serif;}
+html,body{
+  height:100%;
+  margin:0;
+  overflow:hidden;
+  font-family: "Poppins", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
 
-/* ===== Sidebar ===== */
-.ds-sidebar{background:var(--side);display:flex;flex-direction:column;border-right:1px solid rgba(0,0,0,.08);}
-.ds-side-header{height:64px;display:grid;place-items:center;color:#2b2b2b;font-size:18px;border-bottom:1px solid rgba(0,0,0,.08);}
-.ds-nav{padding:10px 8px;display:grid;gap:6px;}
-.ds-nav-item{display:grid;grid-template-columns:24px 1fr;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;color:#1f2937;font-weight:600;cursor:pointer;transition:background .2s ease;}
-.ds-nav-item .ico{display:grid;place-items:center;font-size:14px;}
-.ds-nav-item:hover{background:rgba(255,255,255,.25);}
-.ds-nav-item.active{background:var(--side-active);}
+
+/* ===== Sidebar (NEW STYLE) ===== */
+.ds-sidebar{
+  background:#ffffff;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  border-right:1px solid var(--line);
+  position:relative;
+  z-index:5;
+
+  /* shadow tipis di sisi kanan */
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.06);
+
+  /* ⬇️ TURUNKAN sidebar supaya mulai di bawah white bar */
+  margin-top: 80px;                 /* sama dengan tinggi ds-topbar */
+  height: calc(100vh - 80px);       /* sisa tinggi sampai bawah layar */
+}
+
+
+/* header user di atas */
+.ds-side-header{
+  position:relative;
+  height:80px;
+  width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.ds-side-header::after{
+  content:"";
+  position:absolute;
+  bottom:0;
+  left:18px;
+  right:18px;
+  height:1px;
+  background:#e2e6ee;
+}
+
+.side-user{
+  width:46px;
+  height:46px;
+  border-radius:16px;
+  background:#ffffff;
+
+  /* ⭐ Samakan shadow dengan icon nav bar */
+  box-shadow:0 4px 12px rgba(0,0,0,.08);
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#FF983D;
+  font-size:22px;
+  position: relative;
+  transition: background .18s ease, color .18s ease,
+              box-shadow .18s ease, transform .18s ease;
+}
+
+.side-user:hover{
+  transform: translateX(2px);
+  box-shadow:0 8px 20px rgba(0,0,0,.16);   /* ⭐ Hover sama seperti nav item */
+}
+
+/* ✅ bubble teks "Profil" */
+.side-user::after{
+  content: "Profil";
+  position: absolute;
+  left: 68px;
+  top: 50%;
+  transform: translateY(-50%) translateX(-8px);
+  padding: 8px 14px;
+  background: #ffffff;
+  border-radius: 999px;
+  box-shadow: 0 10px 24px rgba(0,0,0,.16);
+  font-size: 12px;
+  font-weight: 600;
+  color: #5b6a86;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .18s ease, transform .18s ease;
+}
+
+.side-user:hover::after{
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+}
+
+
+.side-user:hover{
+  transform: translateX(2px);                 /* geser dikit ke kanan */
+  box-shadow: 0 8px 20px rgba(0,0,0,.16);     /* shadow sama seperti .ds-nav-item:hover .ico */
+}
+
+
+/* kolom icon */
+.ds-nav{
+  padding:20px 0 12px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:18px;
+}
+
+/* item menu: hanya icon */
+.ds-nav-item{
+  position:relative;
+  width:56px;
+  height:56px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  background:transparent;
+}
+
+.ds-nav-item:hover{
+  background:transparent; /* override style lama */
+}
+
+.ds-nav-item .ico{
+  width:44px;
+  height:44px;
+  border-radius:16px;
+  background:#ffffff;
+  box-shadow:0 4px 12px rgba(0,0,0,.08);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:20px;
+  color:#FF983D;  /* warna icon sidebar */
+  transition:
+    background .18s ease,
+    color .18s ease,
+    box-shadow .18s ease,
+    transform .18s ease;
+}
+
+.ds-nav-item:hover .ico{
+  transform:translateX(2px);
+  box-shadow:0 8px 20px rgba(0,0,0,.16);
+}
+
+/* state aktif: icon jadi orange solid + bar vertikal */
+.ds-nav-item.active .ico{
+  background:#FF983D;
+  color:#ffffff;
+}
+
+.ds-nav-item.active::before{
+  content:"";
+  position:absolute;
+  right:-3px;
+  width:3px;
+  height:32px;
+  border-radius:999px;
+  background:#FF983D;
+}
+
+/* bubble teks saat hover / focus */
+.ds-nav-item::after{
+  content:attr(data-label);
+  position:absolute;
+  left:68px;
+  padding:8px 14px;
+  background:#ffffff;
+  border-radius:999px;
+  box-shadow:0 10px 24px rgba(0,0,0,.16);
+  font-size:12px;
+  font-weight:600;
+  color:#5b6a86;
+  white-space:nowrap;
+  pointer-events:none;
+  opacity:0;
+  transform:translateX(-8px);
+  transition:opacity .18s ease, transform .18s ease;
+}
+
+.ds-nav-item:hover::after,
+.ds-nav-item:focus-visible::after{
+  opacity:1;
+  transform:translateX(0);
+}
 
 /* ===== Main ===== */
-.ds-main{display:grid;grid-template-rows:72px minmax(0,1fr);min-height:0;}
-.ds-topbar{background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 24px;}
+.ds-main{
+  display:grid;
+  grid-template-rows:72px minmax(0,1fr);
+  min-height:0;
+  transition: transform .25s ease;   /* ⬅️ tambahkan baris ini */
+}
+
+.ds-topbar{
+  position: relative;
+  height: 80px;
+  display:flex;
+  align-items:flex-start; 
+  justify-content:space-between;
+  padding:8px 28px 0;
+  background: var(--bg);
+  border-bottom:1px solid var(--line);
+
+  z-index: 20;              /* headernya sendiri cukup tinggi */
+}
+
 .ds-topbar .left .brand{font-weight:700;font-size:28px;letter-spacing:.5px;}
 .ds-topbar .left .date{display:flex;align-items:center;gap:8px;color:#6b7a8e;font-size:12px;margin-top:2px;}
+.ds-topbar .left{
+  display:flex;
+  align-items:flex-start; 
+  gap:25px;
+
+  /* ⬇️ pindahkan logo + judul ke area di atas sidebar (lingkaran hijau) */
+  position: relative;
+  margin-left: -75px;   /* kalau terlalu kiri/kanan boleh ubah  -150 / -170 */
+}
+
+
+.ds-topbar .logo-cart{
+  font-size:60px;      /* ⬅️ perbesar di sini */
+  color:var(--orange);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.ds-topbar .brand-block{
+  display:flex;
+  flex-direction:column;
+}
+
 
 /* ===== Isi yang scroll ===== */
 .ds-inner{padding:18px 22px 24px;overflow-y:auto;min-height:0;-webkit-overflow-scrolling:touch;scrollbar-width:none;scroll-behavior:smooth;}
@@ -123,8 +348,7 @@ html,body{height:100%;margin:0;overflow:hidden;}
   .ds-panels--bottom{grid-template-columns:1fr;gap:18px;margin-top:18px;padding:0;}
 }
 @media (max-width:768px){
-  .dashboard{grid-template-columns:72px 1fr;}
-  .ds-nav-item span:nth-child(2){display:none;}
+  .dashboard{grid-template-columns:10px 1fr;}
 }
 
 /* === OVERRIDE: hilangkan garis abu-abu pembatas header di kartu
@@ -2105,3 +2329,153 @@ html,body{height:100%;margin:0;overflow:hidden;}
   margin: 0 auto;              /* INI yang bikin benar-benar di tengah */
 }
 
+/* MODE BESAR (default) */
+.dashboard {
+  display: grid;
+  grid-template-columns: 60px 1fr;
+  transition: grid-template-columns .25s ease;
+  background: var(--bg);          /* abu-abu */
+
+  /* font global untuk seluruh dashboard */
+  font-family: "Poppins", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-weight: 600;               /* versi bold */
+
+  /* ✅ penting supaya area konten punya tinggi tetap */
+  height: 100vh;
+  min-height: 0;
+}
+
+/* === Sidebar collapse: hanya icon saat diperkecil === */
+.dashboard.collapsed .ds-nav-item{
+  grid-template-columns: 1fr;
+  justify-content: center;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.dashboard.collapsed .ds-nav-item span:nth-child(2){
+  display: none; /* sembunyikan teks menu: Dashboard, Transaksi, dll */
+}
+
+.dashboard.collapsed .ds-nav-item .ico{
+  justify-self: center; /* icon di tengah */
+}
+
+.ds-topbar{
+  position: relative;
+  z-index: 20;   /* lebih tinggi dari sidebar (5), jadi bar putih gradasi selalu di atas */
+}
+
+.ds-topbar::before{
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -210px;
+  height: 100%;
+
+    right: auto;
+    width: 630px !important;
+
+  background: linear-gradient(
+    to right,
+    rgba(255,255,255,1) 0%,
+    rgba(255,255,255,1) 85%,
+    rgba(255,255,255,0) 100%
+  );
+
+  pointer-events: none;
+  z-index: -1;
+}
+
+.ds-topbar::after{
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: -210px;
+
+  /* ❗ Panjang shadow hanya sampai produk kiri */
+  width: 420px;  /* nanti akan aku hitungkan akurat setelah lihat crop dekat */
+
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    rgba(0,0,0,0.12),
+    rgba(0,0,0,0.05),
+    rgba(0,0,0,0)
+  );
+  pointer-events: none;
+}
+
+/* ===== OVERRIDE: hilangkan garis abu-abu di bawah bar putih & kanan bar orange ===== */
+
+/* Hilangkan border bawah topbar (garis di bawah bar putih) */
+.ds-topbar{
+  border-bottom: none !important;
+}
+
+/* ===== OVERRIDE: turunkan navigasi di sidebar agar tidak menimpa title POS Kasir ===== */
+.ds-nav{
+  margin-top: 16px !important;   /* coba 32–48px sampai pas di layar kamu */
+}
+
+/* ===== OVERRIDE: perbesar icon di sidebar ===== */
+.ds-nav-item .ico{
+  font-size: 18px !important;  /* tadinya 14px, sekarang sedikit lebih besar */
+}
+
+/* ===== OVERRIDE: perbesar icon sidebar ===== */
+.ds-nav-item .ico{
+  font-size: 20px !important;   /* kalau mau lebih besar: 22px */
+}
+
+/* ===== OVERRIDE: saat sidebar diperkecil, jarak icon ditambah ===== */
+
+/* tambah gap antar item menu */
+.dashboard.collapsed .ds-nav{
+  gap: 10px !important;         /* default-nya 6px, sekarang lebih renggang */
+}
+
+/* tambah padding vertikal tiap icon */
+.dashboard.collapsed .ds-nav-item{
+  padding-top: 10px !important;
+  padding-bottom: 10px !important;
+}
+
+/* Sidebar selalu paling atas */
+.ds-sidebar {
+  position: relative;
+  z-index: 20000 !important;
+}
+
+/* Bubble hover di atas semua */
+.ds-nav-item::after {
+  z-index: 20001 !important;
+}
+
+
+.ds-side-bottom{
+  margin-top: auto;        /* tetap dorong ke bawah */
+  display: flex;           /* biar sama seperti .ds-nav */
+  flex-direction: column;
+  align-items: center;     /* ⬅️ ini yang bikin icon sejajar dengan yang atas */
+  padding-bottom: 22px;    /* sedikit jarak dari bawah (boleh kamu kecil/besarkan) */
+  position: relative;
+}
+
+
+/* ✅ garis abu-abu pemisah, mirip line di header profil */
+.ds-side-bottom::before{
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 18px;
+  right: 18px;
+  height: 1px;
+  background: #e2e6ee;
+}
+
+.ds-inner, 
+.transaksi-wrapper,
+.trx-container {
+  overflow: visible !important;
+}
