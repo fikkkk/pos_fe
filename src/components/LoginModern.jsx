@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { FaEnvelope, FaKey, FaEye, FaEyeSlash } from "react-icons/fa";
+import {
+  FaEnvelope,
+  FaKey,
+  FaEye,
+  FaEyeSlash,
+  FaMoon,
+  FaSun,
+} from "react-icons/fa";
 import "./LoginModern.css";
 import { api } from "../api";
 import Dashboard from "./Dashboard";
@@ -7,25 +14,27 @@ import Dashboard from "./Dashboard";
 export default function LoginModern() {
   const [showPassword, setShowPassword] = useState(false);
   const [isAuthed, setIsAuthed] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
 
   if (isAuthed) return <Dashboard />;
 
   return (
-    <div className="lp-page">
+    <div className={`lp-page ${darkMode ? "lp-dark" : ""}`}>
       <div className="lp-card">
         {/* ============ LEFT ============ */}
         <div className="lp-left">
           <div className="lp-illustration">
             {/* ganti src ilustrasi sesuai aset kamu */}
-            <img src="/img/login-illustration.png" alt="Travel illustration" />
+            <img src="banner_login1.jpg" alt="POS NUKA Illustration" />
           </div>
 
           <div className="lp-left-text">
-            <h3>Starting planning your</h3>
-            <h2>Journey</h2>
+            <h3>POS NUKA · Nusantara Kasir</h3>
+            <h2>Bantu UMKM Naik Kelas</h2>
             <p>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. A enim,
-              est ut eu est dapibus tristique sit tristique risus.
+              Catat transaksi, pantau stok, dan lihat laporan harian dalam satu
+              layar. POS Nuka dirancang khusus untuk UMKM Indonesia supaya
+              jualan lebih rapi, cepat, dan terkontrol.
             </p>
 
             <div className="lp-dots">
@@ -38,9 +47,32 @@ export default function LoginModern() {
 
         {/* ============ RIGHT ============ */}
         <div className="lp-right">
-          <h1 className="lp-title">Welcome Back</h1>
+          {/* BAR ATAS: badge + toggle dark mode */}
+          <div className="lp-top-bar">
+            <span className="lp-badge">POS NUKA</span>
+
+            <button
+              type="button"
+              className="lp-dark-toggle"
+              onClick={() => setDarkMode((v) => !v)}
+            >
+              {darkMode ? (
+                <>
+                  <FaSun />
+                  <span>Mode terang</span>
+                </>
+              ) : (
+                <>
+                  <FaMoon />
+                  <span>Mode gelap</span>
+                </>
+              )}
+            </button>
+          </div>
+
+          <h1 className="lp-title">Masuk ke POS Nuka</h1>
           <p className="lp-subtitle">
-            Welcome Back! Please enter your details.
+            Login untuk mengelola kasir, stok produk, dan laporan tokomu.
           </p>
 
           <form
@@ -58,20 +90,20 @@ export default function LoginModern() {
                 localStorage.setItem("token", res.data.access_token);
                 setIsAuthed(true);
               } catch (err) {
-                alert("Login gagal, cek email & password");
+                alert("Login gagal, cek email / kata sandi kamu.");
               }
             }}
           >
-            {/* EMAIL */}
+            {/* EMAIL / USERNAME */}
             <div className="lp-field">
-              <label htmlFor="email">Email*</label>
+              <label htmlFor="email">Email / Username*</label>
               <div className="lp-field-input">
                 <FaEnvelope className="lp-icon" />
                 <input
                   id="email"
                   type="email"
                   name="email"
-                  placeholder="Enter your email"
+                  placeholder="Masukkan email atau username"
                   required
                 />
               </div>
@@ -79,14 +111,14 @@ export default function LoginModern() {
 
             {/* PASSWORD */}
             <div className="lp-field">
-              <label htmlFor="password">Password*</label>
+              <label htmlFor="password">Kata Sandi*</label>
               <div className="lp-field-input">
                 <FaKey className="lp-icon" />
                 <input
                   id="password"
                   type={showPassword ? "text" : "password"}
                   name="password"
-                  placeholder="Enter your password"
+                  placeholder="Masukkan kata sandi"
                   required
                 />
                 <button
@@ -103,44 +135,44 @@ export default function LoginModern() {
             <div className="lp-remember-row">
               <label className="lp-remember">
                 <input type="checkbox" defaultChecked />
-                <span>Remember Me</span>
+                <span>Ingat saya</span>
               </label>
 
               <button
                 type="button"
                 className="lp-forgot"
                 onClick={() =>
-                  alert("Hubungkan ke flow Forgot Password punyamu")
+                  alert("Hubungkan ke flow Lupa Kata Sandi versi kamu.")
                 }
               >
-                Forgot Password?
+                Lupa kata sandi?
               </button>
             </div>
 
             {/* BUTTON LOGIN */}
             <button type="submit" className="lp-btn-primary">
-              Login
+              Masuk ke Dashboard
             </button>
 
             {/* BUTTON GOOGLE */}
             <button
               type="button"
               className="lp-btn-google"
-              onClick={() => alert("Hubungkan ke login Google")}
+              onClick={() => alert("Hubungkan ke login Google POS Nuka.")}
             >
               <span className="lp-google-circle">G</span>
-              <span>Sign in With Google</span>
+              <span>Masuk dengan Google</span>
             </button>
           </form>
 
           <p className="lp-bottom-text">
-            Don’t have an account yet?{" "}
+            Belum punya akun POS Nuka?{" "}
             <button
               type="button"
               className="lp-signup-link"
-              onClick={() => alert("Arahkan ke halaman Sign Up")}
+              onClick={() => alert("Arahkan ke halaman daftar POS Nuka.")}
             >
-              Sign up
+              Daftar sekarang
             </button>
           </p>
         </div>

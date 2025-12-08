@@ -1,14 +1,17 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
 
 :root {
-  --lp-bg: #e8f0ff;
-  --lp-card-bg: #ffffff;
-  --lp-left-bg: #f4f7ff;
+  /* 🎨 Tema terang POS NUKA */
+  --lp-bg: #ffffff;
+  --lp-card-bg: #ffffff;   /* ⬅ card agak peach/oranye lembut */
+  --lp-left-bg: #fff9f2;
   --lp-text-main: #1f2233;
   --lp-text-muted: #8f96b2;
-  --lp-primary: #3b5bfd;
-  --lp-primary-dark: #2744f1;
+  --lp-primary: #ff983d;
+  --lp-primary-dark: #e57920;
 }
+
+
 
 /* PAGE WRAPPER */
 .lp-page {
@@ -29,8 +32,14 @@
   border-radius: 32px;
   display: flex;
   overflow: hidden;
-  box-shadow: 0 24px 60px rgba(31, 52, 129, 0.18);
+
+ 
+
+  /* 🔳 shadow hitam netral untuk mode terang */
+  box-shadow: 0 24px 60px rgba(97, 125, 192, 0.12);
 }
+
+
 
 /* LEFT SIDE */
 .lp-left {
@@ -41,7 +50,7 @@
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  border-right: 1px solid rgba(220, 228, 255, 0.9);
+  border-right: 1px solid rgba(255, 199, 143, 0.7);
 }
 
 .lp-illustration img {
@@ -90,7 +99,7 @@
   width: 8px;
   height: 8px;
   border-radius: 99px;
-  background: #c5ccf0;
+  background: #ffd7b6; /* oranye muda */
 }
 
 .lp-dots .dot.active {
@@ -137,9 +146,9 @@
 .lp-field-input {
   display: flex;
   align-items: center;
-  background: #f9fbff;
+  background: #ffffff;
   border-radius: 12px;
-  border: 1px solid #eef1f8;
+  border: 1px solid #ffe1c7;
   padding: 0 14px;
   height: 50px;
 }
@@ -154,13 +163,13 @@
 }
 
 .lp-field-input input::placeholder {
-  color: #c2c6da;
+  color: #d9bda4;
 }
 
 .lp-icon {
   font-size: 14px;
   margin-right: 8px;
-  color: #9ba3c4;
+  color: #f1a968;
 }
 
 .lp-eye-btn {
@@ -169,7 +178,7 @@
   background: transparent;
   cursor: pointer;
   font-size: 14px;
-  color: #9ba3c4;
+  color: #f1a968;
 }
 
 /* REMEMBER + FORGOT */
@@ -216,7 +225,7 @@
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 18px 32px rgba(59, 91, 253, 0.45);
+  box-shadow: 0 18px 32px rgba(255, 152, 61, 0.45);
   transition: transform 0.15s ease, box-shadow 0.15s ease,
     background 0.15s ease;
 }
@@ -224,7 +233,7 @@
 .lp-btn-primary:hover {
   background: var(--lp-primary-dark);
   transform: translateY(-1px);
-  box-shadow: 0 20px 40px rgba(59, 91, 253, 0.5);
+  box-shadow: 0 20px 40px rgba(255, 152, 61, 0.55);
 }
 
 /* GOOGLE BUTTON */
@@ -233,7 +242,7 @@
   width: 100%;
   height: 48px;
   border-radius: 14px;
-  border: 1px solid #e1e4f3;
+  border: 1px solid #ffe1c7;
   background: #ffffff;
   cursor: pointer;
   display: flex;
@@ -247,15 +256,15 @@
 }
 
 .lp-btn-google:hover {
-  background: #f7f8ff;
-  box-shadow: 0 10px 22px rgba(20, 32, 95, 0.08);
+  background: #fff7ef;
+  box-shadow: 0 10px 22px rgba(255, 152, 61, 0.18);
 }
 
 .lp-google-circle {
   width: 20px;
   height: 20px;
   border-radius: 999px;
-  border: 1px solid #dadce8;
+  border: 1px solid #ffd0aa;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -268,7 +277,7 @@
   margin-top: auto;
   text-align: center;
   font-size: 11px;
-  color: #a1a7c4;
+  color: #b29c8c;
   padding-top: 22px;
 }
 
@@ -293,10 +302,277 @@
 
   .lp-left {
     border-right: none;
-    border-bottom: 1px solid rgba(220, 228, 255, 0.9);
+    border-bottom: 1px solid rgba(255, 199, 143, 0.7);
   }
 
   .lp-right {
     padding: 32px 28px 24px;
   }
+}
+
+
+
+/* ========= MODE GELAP: override variable ========= */
+.lp-page.lp-dark {
+  --lp-bg: #111827;
+  --lp-card-bg: #111827;
+  --lp-left-bg: #1f2937;
+  --lp-text-main: #f9fafb;
+  --lp-text-muted: #9ca3c7;
+}
+
+/* PAGE WRAPPER */
+.lp-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--lp-bg);
+  font-family: "Poppins", system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
+}
+
+/* MAIN CARD */
+.lp-card {
+  width: 980px;
+  max-width: 100%;
+  background: var(--lp-card-bg);
+  border-radius: 32px;
+  display: flex;
+  overflow: hidden;
+  box-shadow: 0 24px 60px rgba(255, 152, 61, 0.18);
+}
+
+/* LEFT SIDE */
+.lp-left {
+  flex: 1;
+  background: var(--lp-left-bg);
+  padding: 40px 40px 32px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  border-right: 1px solid rgba(255, 199, 143, 0.7);
+}
+
+/* ... (bagian lain BIARKAN seperti versi oranye tadi) ... */
+
+/* ===== TOP BAR & DARK TOGGLE ===== */
+.lp-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.lp-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(255, 152, 61, 0.1);
+  color: var(--lp-primary-dark);
+}
+
+.lp-dark-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.5);
+  padding: 4px 10px;
+  background: transparent;
+  font-size: 11px;
+  color: #6b7280;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.lp-dark-toggle svg {
+  font-size: 12px;
+}
+
+.lp-dark-toggle:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+/* versi dark-nya */
+.lp-page.lp-dark .lp-card {
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+}
+
+.lp-page.lp-dark .lp-left {
+  border-right-color: rgba(55, 65, 81, 0.9);
+}
+
+.lp-page.lp-dark .lp-field-input {
+  background: #111827;
+  border-color: #374151;
+}
+
+.lp-page.lp-dark .lp-field-input input {
+  color: #f9fafb;
+}
+
+.lp-page.lp-dark .lp-field-input input::placeholder {
+  color: #6b7280;
+}
+
+.lp-page.lp-dark .lp-field label {
+  color: #e5e7f5;
+}
+
+.lp-page.lp-dark .lp-icon,
+.lp-page.lp-dark .lp-eye-btn {
+  color: #f6b47c;
+}
+
+.lp-page.lp-dark .lp-btn-google {
+  border-color: #374151;
+  background: #111827;
+  color: #e5e7eb;
+}
+
+.lp-page.lp-dark .lp-btn-google:hover {
+  background: #020617;
+}
+
+.lp-page.lp-dark .lp-google-circle {
+  border-color: #4b5563;
+}
+
+.lp-page.lp-dark .lp-bottom-text {
+  color: #9ca3c7;
+}
+
+.lp-page.lp-dark .lp-dark-toggle {
+  border-color: #4b5563;
+  color: #e5e7eb;
+  background: #111827;
+}
+
+.lp-page.lp-dark .lp-dark-toggle:hover {
+  background: #020617;
+}
+
+
+
+
+
+
+
+
+/* =========================
+   LEFT FULL IMAGE + DARK OVERLAY
+   ========================== */
+
+/* Panel kiri: full image, teks di bawah */
+.lp-left {
+  position: relative;
+  flex: 1;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;  /* teks nempel di bawah */
+  align-items: stretch;
+  background: #020617;        /* fallback kalau gambar belum kebaca */
+  border-right: 1px solid rgba(255, 199, 143, 0.7);
+  overflow: hidden;
+}
+
+/* Gambar jadi background full */
+.lp-illustration {
+  position: absolute;
+  inset: 0;      /* top:0; right:0; bottom:0; left:0 */
+}
+
+.lp-illustration img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;  /* full, rapi walau agak ke-crop */
+  display: block;
+}
+
+/* Overlay gelap di atas gambar (gradient opacity kuat) */
+.lp-left::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+
+  /* 🔽 bawah sangat gelap, ke atas makin transparan */
+  background: linear-gradient(
+    to top,
+    rgba(3, 7, 18, 0.98) 0%,   /* tepat di bawah teks: hampir hitam */
+    rgba(3, 7, 18, 0.96) 25%,  /* area teks masih gelap */
+    rgba(3, 7, 18, 0.80) 45%,
+    rgba(3, 7, 18, 0.50) 70%,
+    rgba(3, 7, 18, 0.20) 90%,
+    rgba(3, 7, 18, 0.00) 100%  /* atas full transparan */
+  );
+}
+
+
+
+/* Area teks di bawah */
+.lp-left-text {
+  position: relative;
+  z-index: 1;
+  margin-top: 0;
+  text-align: left;
+  background: transparent;
+  padding: 28px 32px 24px;
+}
+
+/* Badge kecil (h3) */
+.lp-left-text h3 {
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 14px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.7);
+  background: rgba(15, 23, 42, 0.9);
+  color: #e5e7f5;
+}
+
+/* Judul utama */
+.lp-left-text h2 {
+  margin: 14px 0 6px;
+  font-size: 24px;
+  font-weight: 700;
+  color: #f9fafb;
+}
+
+/* Deskripsi */
+.lp-left-text p {
+  font-size: 13px;
+  line-height: 1.7;
+  color: #cbd5f5;
+  max-width: 340px;
+}
+
+/* Dots di bawah */
+.lp-dots {
+  margin-top: 18px;
+  display: flex;
+  gap: 6px;
+}
+
+.lp-dots .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.6);
+}
+
+.lp-dots .dot.active {
+  width: 18px;
+  background: var(--lp-primary);
 }
