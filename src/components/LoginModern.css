@@ -1,0 +1,144 @@
+/* WRAPPER */
+.sso-wrapper {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    background: #e5e7eb;
+    font-family: "Poppins", sans-serif;
+}
+
+/* LEFT */
+.sso-left {
+    width: 38%;
+    background: white;
+    padding: 60px 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.left-logo img {
+    width: 60px;
+    margin-bottom: 10px;
+}
+
+.left-logo h2 {
+    font-size: 20px;
+    color: #1a2a6c;
+}
+
+.left-text {
+    margin-top: 80px;
+}
+
+.left-text h1 {
+    font-size: 32px;
+    color: #1a2a6c;
+    font-weight: 700;
+}
+
+.left-text p {
+    color: #6b7280;
+    font-size: 18px;
+    margin-top: 10px;
+}
+
+/* RIGHT */
+.sso-right {
+    width: 62%;
+    background: linear-gradient(135deg, #0f4fd7, #2f78ff);
+    padding: 70px 60px;
+    position: relative;
+    color: white;
+}
+
+.right-header h1 {
+    font-size: 36px;
+    margin-bottom: 5px;
+    letter-spacing: 1px;
+}
+
+.right-header p {
+    font-size: 16px;
+    opacity: 0.8;
+    margin-bottom: 40px;
+}
+
+/* FORM */
+.sso-form {
+    width: 75%;
+    background: white;
+    padding: 40px 30px;
+    border-radius: 20px;
+    color: #1a1a1a;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+}
+
+.input-wrap {
+    width: 100%;
+    background: #ffffff;
+    padding: 12px 16px;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+}
+
+.input-wrap input {
+    flex: 1;
+    border: none;
+    outline: none;
+    padding-left: 10px;
+    font-size: 14px;
+}
+
+.ico {
+    color: #555;
+}
+
+.eye-btn {
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    color: #555;
+}
+
+/* BUTTON */
+.btn-login-sso {
+    width: 100%;
+    padding: 12px;
+    background: #25d366;
+    border: none;
+    color: white;
+    border-radius: 50px;
+    font-size: 17px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: 0.3s;
+}
+
+.btn-login-sso:hover {
+    background: #1abb57;
+}
+
+/* FORGOT */
+.forgot-link {
+    background: none;
+    border: none;
+    margin-top: 15px;
+    color: white;
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+/* COPYRIGHT */
+.copy {
+    position: absolute;
+    bottom: 20px;
+    right: 30px;
+    font-size: 13px;
+    opacity: 0.7;
+}
