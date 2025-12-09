@@ -11,7 +11,7 @@ import {
 import "./LoginModern.css";
 import { api } from "../api";
 import Dashboard from "./Dashboard";
-import RegisterModern from "./RegisterModern"; // ⬅️ import
+import RegisterModern from "./RegisterModern";
 
 export default function LoginModern() {
   const [showPassword, setShowPassword] = useState(false);
@@ -19,9 +19,10 @@ export default function LoginModern() {
   const [darkMode, setDarkMode] = useState(false);
   const [screen, setScreen] = useState("login"); // "login" | "register"
 
+  // kalau sudah login, langsung ke dashboard
   if (isAuthed) return <Dashboard />;
 
-  // ⬅️ kalau lagi di mode REGISTER, render RegisterModern
+  // kalau lagi di screen register, render RegisterModern
   if (screen === "register") {
     return (
       <RegisterModern
@@ -61,6 +62,7 @@ export default function LoginModern() {
 
         {/* ============ RIGHT ============ */}
         <div className="lp-right">
+          {/* TOP BAR */}
           <div className="lp-top-bar">
             <span className="lp-badge">POS NUKA</span>
 
@@ -76,14 +78,14 @@ export default function LoginModern() {
                 </>
               ) : (
                 <>
-                  <FaMoon />x
+                  <FaMoon />
                   <span>Mode gelap</span>
                 </>
               )}
             </button>
           </div>
 
-          {/* 🔹 ini yang baru: lp-right-main */}
+          {/* ISI UTAMA */}
           <div className="lp-right-main">
             <h1 className="lp-title">Masuk ke POS Nuka</h1>
             <p className="lp-subtitle">
@@ -136,7 +138,12 @@ export default function LoginModern() {
                     placeholder="Masukkan kata sandi"
                     required
                   />
-                  <button>
+                  {/* tombol eye yang sudah bener */}
+                  <button
+                    type="button"
+                    className="lp-eye-btn"
+                    onClick={() => setShowPassword((v) => !v)}
+                  >
                     {showPassword ? <FaEyeSlash /> : <FaEye />}
                   </button>
                 </div>
@@ -177,19 +184,18 @@ export default function LoginModern() {
             </form>
           </div>
 
-          {/* teks bawah DIPISAH, tetap nempel bawah card */}
+          {/* teks bawah */}
           <p className="lp-bottom-text">
             Belum punya akun POS Nuka?{" "}
             <button
               type="button"
               className="lp-signup-link"
-              onClick={() => setIsRegister(true)}
+              onClick={() => setScreen("register")} // ⬅️ pindah ke RegisterModern
             >
               Daftar sekarang
             </button>
           </p>
         </div>
-
       </div>
     </div>
   );

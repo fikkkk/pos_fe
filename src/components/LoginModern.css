@@ -602,3 +602,35 @@
   color: #e11d48; /* merah */
 }
 
+
+/* ===== OTP BOX ===== */
+.lp-otp-box {
+  width: 48px;
+  height: 56px;
+  border-radius: 14px;
+  font-size: 20px;
+  text-align: center;
+  border: 1px solid #ffe1c7;
+  background: white;
+  outline: none;
+  color: #1f2233;
+  font-weight: 600;
+  transition: all 0.15s ease;
+}
+
+.lp-otp-box:focus {
+  border-color: var(--lp-primary);
+  box-shadow: 0 0 0 2px rgba(255, 152, 61, 0.25);
+}
+
+.lp-dark .lp-otp-box {
+  background: #111827;
+  border-color: #374151;
+  color: #f9fafb;
+}
+
+.lp-dark .lp-otp-box:focus {
+  border-color: #f6b47c;
+  box-shadow: 0 0 0 2px rgba(246, 180, 124, 0.35);
+}
+

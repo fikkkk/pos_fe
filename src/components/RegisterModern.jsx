@@ -12,17 +12,22 @@ import {
 import "./LoginModern.css";
 import { api } from "../api";
 
-export default function RegisterModern({ darkMode, setDarkMode, goBackToLogin }) {
+export default function RegisterModern({
+  darkMode,
+  setDarkMode,
+  goBackToLogin,
+  goToOtp,
+}) {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [error, setError] = useState("");
+  const [email, setEmail] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
     const fullName = e.target.fullName.value.trim();
-    const email = e.target.email.value.trim();
     const password = e.target.password.value;
     const confirm = e.target.confirmPassword.value;
 
@@ -42,14 +47,15 @@ export default function RegisterModern({ darkMode, setDarkMode, goBackToLogin })
     }
 
     try {
-      await api.post("/auth/register", {
+      await api.post("/auth", {
         name: fullName,
         email,
         password,
       });
 
-      alert("Registrasi berhasil! Silakan login.");
-      goBackToLogin();  // ⬅️ balik ke tampilan login, TANPA reload
+      // Di sini bisa juga simpan info lain kalau perlu
+      // alert("Registrasi berhasil! Silakan verifikasi OTP.");
+      goToOtp(email); // ⬅️ lanjut ke halaman OTP
     } catch (err) {
       console.error(err);
       const msg =
@@ -61,7 +67,7 @@ export default function RegisterModern({ darkMode, setDarkMode, goBackToLogin })
 
   return (
     <div className={`lp-page ${darkMode ? "lp-dark" : ""}`}>
-      <div className="lp-card ">
+      <div className="lp-card">
         {/* ============ LEFT ============ */}
         <div className="lp-left">
           <div className="lp-illustration">
@@ -77,8 +83,8 @@ export default function RegisterModern({ darkMode, setDarkMode, goBackToLogin })
             </p>
 
             <div className="lp-dots">
-              <span className="dot active" />
               <span className="dot" />
+              <span className="dot active" />
               <span className="dot" />
             </div>
           </div>
@@ -86,130 +92,133 @@ export default function RegisterModern({ darkMode, setDarkMode, goBackToLogin })
 
         {/* ============ RIGHT ============ */}
         <div className="lp-right">
-        <div className="lp-top-bar">
+          <div className="lp-top-bar">
             <span className="lp-badge">Buat Akun</span>
 
             <button
-            type="button"
-            className="lp-dark-toggle"
-            onClick={() => setDarkMode((v) => !v)}
+              type="button"
+              className="lp-dark-toggle"
+              onClick={() => setDarkMode((v) => !v)}
             >
-            {darkMode ? (
+              {darkMode ? (
                 <>
-                <FaSun />
-                <span>Mode terang</span>
+                  <FaSun />
+                  <span>Mode terang</span>
                 </>
-            ) : (
+              ) : (
                 <>
-                <FaMoon />
-                <span>Mode gelap</span>
+                  <FaMoon />
+                  <span>Mode gelap</span>
                 </>
-            )}
+              )}
             </button>
-        </div>
+          </div>
 
-        {/* 🔹 ini juga pakai lp-right-main */}
-        <div className="lp-right-main">
+          {/* ISI KANAN */}
+          <div className="lp-right-main">
             <h1 className="lp-title">Registrasi POS Nuka</h1>
             <p className="lp-subtitle">
-            Isi data di bawah untuk membuat akun POS Nuka.
+              Isi data di bawah untuk membuat akun POS Nuka.
             </p>
 
             {error && <p className="lp-error">{error}</p>}
 
             <form className="lp-form" onSubmit={handleSubmit}>
-            {/* NAMA LENGKAP */}
-            <div className="lp-field">
+              {/* NAMA LENGKAP */}
+              <div className="lp-field">
                 <label htmlFor="fullName">Nama Lengkap*</label>
                 <div className="lp-field-input">
-                <FaUser className="lp-icon" />
-                <input
+                  <FaUser className="lp-icon" />
+                  <input
                     id="fullName"
                     type="text"
                     name="fullName"
                     placeholder="Masukkan nama lengkap kamu"
                     required
-                />
+                  />
                 </div>
-            </div>
+              </div>
 
-            {/* EMAIL */}
-            <div className="lp-field">
+              {/* EMAIL */}
+              <div className="lp-field">
                 <label htmlFor="email">Email*</label>
                 <div className="lp-field-input">
-                <FaEnvelope className="lp-icon" />
-                <input
+                  <FaEnvelope className="lp-icon" />
+                  <input
                     id="email"
                     type="email"
                     name="email"
                     placeholder="Masukkan email aktif"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     required
-                />
+                  />
                 </div>
-            </div>
+              </div>
 
-            {/* PASSWORD */}
-            <div className="lp-field">
+              {/* PASSWORD */}
+              <div className="lp-field">
                 <label htmlFor="password">Kata Sandi*</label>
                 <div className="lp-field-input">
-                <FaLock className="lp-icon" />
-                <input
+                  <FaLock className="lp-icon" />
+                  <input
                     id="password"
                     type={showPassword ? "text" : "password"}
                     name="password"
                     placeholder="Minimal 8 karakter"
                     required
-                />
-                <button
+                  />
+                  <button
                     type="button"
                     className="lp-eye-btn"
                     onClick={() => setShowPassword((v) => !v)}
-                >
+                  >
                     {showPassword ? <FaEyeSlash /> : <FaEye />}
-                </button>
+                  </button>
                 </div>
-            </div>
+              </div>
 
-            {/* ULANGI PASSWORD */}
-            <div className="lp-field">
+              {/* ULANGI PASSWORD */}
+              <div className="lp-field">
                 <label htmlFor="confirmPassword">Ulangi Kata Sandi*</label>
                 <div className="lp-field-input">
-                <FaLock className="lp-icon" />
-                <input
+                  <FaLock className="lp-icon" />
+                  <input
                     id="confirmPassword"
                     type={showConfirm ? "text" : "password"}
                     name="confirmPassword"
                     placeholder="Ketik ulang kata sandi"
                     required
-                />
-                <button
+                  />
+                  <button
                     type="button"
                     className="lp-eye-btn"
                     onClick={() => setShowConfirm((v) => !v)}
-                >
+                  >
                     {showConfirm ? <FaEyeSlash /> : <FaEye />}
-                </button>
+                  </button>
                 </div>
-            </div>
+              </div>
 
-            <button type="submit" className="lp-btn-primary">
+              {/* BUTTON REGISTER */}
+              <button type="submit" className="lp-btn-primary">
                 Daftar & Mulai
-            </button>
+              </button>
             </form>
-        </div>
+          </div>
 
-        <p className="lp-bottom-text">
+          {/* BOTTOM TEXT */}
+          <p className="lp-bottom-text">
             Sudah punya akun POS Nuka?{" "}
             <button
-            type="button"
-            className="lp-signup-link"
-            onClick={goBackToLogin}
+              type="button"
+              className="lp-signup-link"
+              onClick={goBackToLogin}
             >
-            Masuk di sini
+              Masuk di sini
             </button>
-        </p>
+          </p>
         </div>
-
       </div>
     </div>
   );
