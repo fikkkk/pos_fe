@@ -76,7 +76,7 @@ export default function LoginModern() {
                 </>
               ) : (
                 <>
-                  <FaMoon />
+                  <FaMoon />x
                   <span>Mode gelap</span>
                 </>
               )}
@@ -136,11 +136,7 @@ export default function LoginModern() {
                     placeholder="Masukkan kata sandi"
                     required
                   />
-                  <button
-                    type="button"
-                    className="lp-eye-btn"
-                    onClick={() => setShowPassword((v) => !v)}
-                  >
+                  <button>
                     {showPassword ? <FaEyeSlash /> : <FaEye />}
                   </button>
                 </div>

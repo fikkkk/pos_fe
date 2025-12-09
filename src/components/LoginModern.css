@@ -24,20 +24,6 @@
     "Segoe UI", sans-serif;
 }
 
-/* MAIN CARD */
-.lp-card {
-  width: 980px;
-  max-width: 100%;
-  background: var(--lp-card-bg);
-  border-radius: 32px;
-  display: flex;
-  overflow: hidden;
-
- 
-
-  /* 🔳 shadow hitam netral untuk mode terang */
-  box-shadow: 0 24px 60px rgba(97, 125, 192, 0.12);
-}
 
 
 
@@ -107,13 +93,6 @@
   background: var(--lp-primary);
 }
 
-/* RIGHT SIDE */
-.lp-right {
-  flex: 1;
-  padding: 56px 72px 40px;
-  display: flex;
-  flex-direction: column;
-}
 
 .lp-title {
   font-size: 26px;
@@ -225,7 +204,6 @@
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 18px 32px rgba(255, 152, 61, 0.45);
   transition: transform 0.15s ease, box-shadow 0.15s ease,
     background 0.15s ease;
 }
@@ -233,7 +211,6 @@
 .lp-btn-primary:hover {
   background: var(--lp-primary-dark);
   transform: translateY(-1px);
-  box-shadow: 0 20px 40px rgba(255, 152, 61, 0.55);
 }
 
 /* GOOGLE BUTTON */
@@ -257,7 +234,7 @@
 
 .lp-btn-google:hover {
   background: #fff7ef;
-  box-shadow: 0 10px 22px rgba(255, 152, 61, 0.18);
+
 }
 
 .lp-google-circle {
@@ -297,7 +274,7 @@
   .lp-card {
     flex-direction: column;
     border-radius: 24px;
-    margin: 20px;
+    margin: auto;
   }
 
   .lp-left {
@@ -344,7 +321,7 @@
   /* 🔒 tinggi fix supaya login & register sama */
   height: 560px;
 
-  box-shadow: 0 24px 60px rgba(97, 125, 192, 0.12);
+  box-shadow: 0 24px 60px 20px rgba(97, 125, 192, 0.12);
 }
 
 /* PANEL KANAN – layout kolom, isi bisa scroll */
@@ -364,6 +341,7 @@
   flex-direction: column;
   overflow-y: auto;      /* 🔽 di sini yang scroll */
   padding-right: 10px;    /* sedikit space biar scrollbar nggak nempel */
+  
 }
 
 /* Scrollbar tipis biar rapi (opsional) */

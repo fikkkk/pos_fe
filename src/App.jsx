@@ -1,5 +1,5 @@
 import React from "react";
-import LoginModern from "./components/loginmodern";
+import LoginModern from "./components/LoginModern";
 
 import "./App.css";
 
