@@ -1,49 +1,78 @@
-// OtpVerify.jsx
+// src/components/OtpVerify.jsx
 import React, { useState, useRef } from "react";
 import "./LoginModern.css";
 import { FaArrowLeft, FaMoon, FaSun } from "react-icons/fa";
+import { api } from "../api";
 
 export default function OtpVerify({
   email,
   darkMode,
   setDarkMode,
   goBackToRegister,
+  goBackToLogin,
 }) {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const inputs = useRef([]);
 
-  // ========================
-  // OTP LOGIC
-  // ========================
   const handleChange = (value, index) => {
-    if (!/^[0-9]?$/.test(value)) return; // hanya angka
+    if (!/^[0-9]?$/.test(value)) return;
 
     const newOtp = [...otp];
     newOtp[index] = value;
     setOtp(newOtp);
 
     if (value && index < 5) {
-      inputs.current[index + 1].focus();
+      inputs.current[index + 1]?.focus();
     }
   };
 
   const handleKeyDown = (e, index) => {
     if (e.key === "Backspace" && !otp[index] && index > 0) {
-      inputs.current[index - 1].focus();
+      inputs.current[index - 1]?.focus();
     }
   };
 
-  const submitOtp = () => {
+  const submitOtp = async () => {
+    setError("");
     const code = otp.join("");
-    if (code.length !== 6) return alert("Kode OTP harus 6 digit!");
-    alert("OTP diverifikasi! Sambungkan ke backend.");
+
+    if (code.length !== 6) {
+      setError("Kode OTP harus 6 digit!");
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      // ⬇️ SAMBUNG KE BACKEND TANPA DIUBAH:
+      // AuthController.verifyOtp(@Body() body: { email, otp })
+      await api.post("/auth/verify-otp", {
+        email,
+        otp: code,
+      });
+
+      alert("OTP berhasil diverifikasi. Silakan login.");
+      goBackToLogin();
+    } catch (err) {
+      console.error(err);
+      const raw = err?.response?.data?.message;
+      let msg = "";
+
+      if (Array.isArray(raw)) msg = raw.join(" ");
+      else msg = raw || "OTP tidak valid atau sudah kadaluarsa.";
+
+      setError(msg);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className={`lp-page ${darkMode ? "lp-dark" : ""}`}>
       <div className="lp-card">
-        
-        {/* ================= LEFT SIDE ================ */}
+        {/* LEFT */}
         <div className="lp-left">
           <div className="lp-illustration">
             <img src="banner_login1.jpg" alt="OTP" />
@@ -66,10 +95,8 @@ export default function OtpVerify({
           </div>
         </div>
 
-        {/* ================= RIGHT SIDE ================ */}
+        {/* RIGHT */}
         <div className="lp-right">
-
-          {/* TOP BAR */}
           <div className="lp-top-bar">
             <span className="lp-badge">OTP</span>
 
@@ -90,10 +117,7 @@ export default function OtpVerify({
             </button>
           </div>
 
-          {/* MAIN CONTENT */}
           <div className="lp-right-main">
-
-            {/* BUTTON BACK */}
             <button
               type="button"
               onClick={goBackToRegister}
@@ -109,7 +133,7 @@ export default function OtpVerify({
                 fontSize: "13px",
               }}
             >
-              <FaArrowLeft /> Kembali
+              <FaArrowLeft /> Kembali ke Registrasi
             </button>
 
             <h1 className="lp-title">Verifikasi OTP</h1>
@@ -117,7 +141,8 @@ export default function OtpVerify({
               Masukkan 6 digit kode yang dikirim ke email kamu.
             </p>
 
-            {/* OTP BOXES */}
+            {error && <p className="lp-error">{error}</p>}
+
             <div style={{ display: "flex", gap: "12px", marginTop: "24px" }}>
               {otp.map((v, i) => (
                 <input
@@ -132,27 +157,27 @@ export default function OtpVerify({
               ))}
             </div>
 
-            {/* SUBMIT BUTTON */}
             <button
               className="lp-btn-primary"
-              style={{ marginTop: "28px" }}
+              style={{ marginTop: "28px", opacity: loading ? 0.7 : 1 }}
               onClick={submitOtp}
+              disabled={loading}
             >
-              Verifikasi
+              {loading ? "Memverifikasi..." : "Verifikasi"}
             </button>
 
-            {/* RESEND */}
             <p className="lp-bottom-text" style={{ marginTop: "20px" }}>
-              Tidak menerima kode?
+              Tidak menerima kode?{" "}
               <button
                 type="button"
                 className="lp-signup-link"
-                onClick={() => alert("Kirim ulang OTP (hubungkan backend)")}
+                onClick={() =>
+                  alert("Tinggal sambungkan ke endpoint resend OTP di backend.")
+                }
               >
                 Kirim ulang
               </button>
             </p>
-
           </div>
         </div>
       </div>

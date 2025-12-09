@@ -1,4 +1,4 @@
-// RegisterModern.jsx
+// src/components/RegisterModern.jsx
 import React, { useState } from "react";
 import {
   FaUser,
@@ -11,16 +11,17 @@ import {
 } from "react-icons/fa";
 import "./LoginModern.css";
 import { api } from "../api";
+import OtpVerify from "./OtpVerify";
 
 export default function RegisterModern({
   darkMode,
   setDarkMode,
   goBackToLogin,
-  goToOtp,
 }) {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [error, setError] = useState("");
+  const [step, setStep] = useState("form"); // "form" | "otp"
   const [email, setEmail] = useState("");
 
   const handleSubmit = async (e) => {
@@ -28,10 +29,11 @@ export default function RegisterModern({
     setError("");
 
     const fullName = e.target.fullName.value.trim();
+    const emailValue = e.target.email.value.trim();
     const password = e.target.password.value;
     const confirm = e.target.confirmPassword.value;
 
-    if (!fullName || !email || !password || !confirm) {
+    if (!fullName || !emailValue || !password || !confirm) {
       setError("Lengkapi semua data terlebih dahulu.");
       return;
     }
@@ -46,29 +48,79 @@ export default function RegisterModern({
       return;
     }
 
+    // simpan email supaya bisa dipakai di layar OTP
+    setEmail(emailValue);
+
     try {
+      // ⬇️ SAMBUNG KE BACKEND TANPA DIUBAH:
+      // RegisterDto butuh: email, username, password
       await api.post("/auth", {
-        name: fullName,
-        email,
+        email: emailValue,
+        username: fullName, // sementara pakai nama lengkap sebagai username
         password,
       });
 
-      // Di sini bisa juga simpan info lain kalau perlu
-      // alert("Registrasi berhasil! Silakan verifikasi OTP.");
-      goToOtp(email); // ⬅️ lanjut ke halaman OTP
+      // kalau sukses, langsung ke layar OTP
+      setStep("otp");
     } catch (err) {
       console.error(err);
-      const msg =
-        err?.response?.data?.message ||
-        "Pendaftaran gagal, coba lagi atau hubungi admin.";
+
+      const raw = err?.response?.data?.message;
+      let msg = "";
+      if (Array.isArray(raw)) msg = raw.join(" ");
+      else msg = raw || "Pendaftaran gagal, coba lagi atau hubungi admin.";
+
+      const lower = msg.toLowerCase();
+
+      // 1️⃣ KASUS: backend kirim pesan "OTP sudah dikirim, silakan verifikasi email"
+      if (
+        lower.includes("otp") &&
+        lower.includes("sudah") &&
+        (lower.includes("dikirim") || lower.includes("dikirm"))
+      ) {
+        setError("");
+        setStep("otp");
+        return;
+      }
+
+      // 2️⃣ KASUS: email sudah terdaftar
+      if (
+        lower.includes("email") &&
+        (lower.includes("terdaftar") ||
+          lower.includes("sudah digunakan") ||
+          lower.includes("sudah dipakai") ||
+          lower.includes("already exists") ||
+          lower.includes("already registered"))
+      ) {
+        setError(
+          "Email sudah terdaftar. Silakan gunakan email lain atau masuk lewat halaman login."
+        );
+        return;
+      }
+
+      // 3️⃣ ERROR LAIN
       setError(msg);
     }
   };
 
+  // ===== STEP: OTP SCREEN =====
+  if (step === "otp") {
+    return (
+      <OtpVerify
+        email={email}
+        darkMode={darkMode}
+        setDarkMode={setDarkMode}
+        goBackToRegister={() => setStep("form")}
+        goBackToLogin={goBackToLogin}
+      />
+    );
+  }
+
+  // ===== STEP: FORM REGISTER =====
   return (
     <div className={`lp-page ${darkMode ? "lp-dark" : ""}`}>
-      <div className="lp-card">
-        {/* ============ LEFT ============ */}
+      <div className="lp-card ">
+        {/* LEFT */}
         <div className="lp-left">
           <div className="lp-illustration">
             <img src="banner_login1.jpg" alt="POS NUKA Register" />
@@ -90,7 +142,7 @@ export default function RegisterModern({
           </div>
         </div>
 
-        {/* ============ RIGHT ============ */}
+        {/* RIGHT */}
         <div className="lp-right">
           <div className="lp-top-bar">
             <span className="lp-badge">Buat Akun</span>
@@ -114,7 +166,6 @@ export default function RegisterModern({
             </button>
           </div>
 
-          {/* ISI KANAN */}
           <div className="lp-right-main">
             <h1 className="lp-title">Registrasi POS Nuka</h1>
             <p className="lp-subtitle">
@@ -200,14 +251,12 @@ export default function RegisterModern({
                 </div>
               </div>
 
-              {/* BUTTON REGISTER */}
               <button type="submit" className="lp-btn-primary">
-                Daftar & Mulai
+                Daftar &amp; Mulai
               </button>
             </form>
           </div>
 
-          {/* BOTTOM TEXT */}
           <p className="lp-bottom-text">
             Sudah punya akun POS Nuka?{" "}
             <button

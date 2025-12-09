@@ -1,4 +1,4 @@
-// LoginModern.jsx
+// src/components/LoginModern.jsx
 import React, { useState } from "react";
 import {
   FaEnvelope,
@@ -12,17 +12,32 @@ import "./LoginModern.css";
 import { api } from "../api";
 import Dashboard from "./Dashboard";
 import RegisterModern from "./RegisterModern";
+import ForgotPassword from "./ForgotPassword";
+import PosAlert from "./PosAlert";
 
 export default function LoginModern() {
   const [showPassword, setShowPassword] = useState(false);
   const [isAuthed, setIsAuthed] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
-  const [screen, setScreen] = useState("login"); // "login" | "register"
+  const [screen, setScreen] = useState("login"); // "login" | "register" | "forgot"
+  const [loading, setLoading] = useState(false); // loading overlay
+  const [alertConfig, setAlertConfig] = useState(null); // modern alert
 
-  // kalau sudah login, langsung ke dashboard
+  // kalau sudah login → ke Dashboard
   if (isAuthed) return <Dashboard />;
 
-  // kalau lagi di screen register, render RegisterModern
+  // ===== SCREEN Forgot Password =====
+  if (screen === "forgot") {
+    return (
+      <ForgotPassword
+        darkMode={darkMode}
+        setDarkMode={setDarkMode}
+        goBackToLogin={() => setScreen("login")}
+      />
+    );
+  }
+
+  // ===== SCREEN REGISTER =====
   if (screen === "register") {
     return (
       <RegisterModern
@@ -33,11 +48,36 @@ export default function LoginModern() {
     );
   }
 
-  // ============== TAMPILAN LOGIN ==============
+  // ===== SCREEN LOGIN =====
   return (
     <div className={`lp-page ${darkMode ? "lp-dark" : ""}`}>
+      {/* 🔥 Loading overlay */}
+      {loading && (
+        <div className="lp-loading-overlay">
+          <div className="lp-loading-box">
+            <div className="lp-loader">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+            <p className="lp-loading-text">Sedang memeriksa akunmu...</p>
+          </div>
+        </div>
+      )}
+
+      {/* 🌈 Modern alert */}
+      {alertConfig && (
+        <PosAlert
+          open={!!alertConfig}
+          type={alertConfig.type}
+          title={alertConfig.title}
+          message={alertConfig.message}
+          onClose={() => setAlertConfig(null)}
+        />
+      )}
+
       <div className="lp-card">
-        {/* ============ LEFT ============ */}
+        {/* LEFT */}
         <div className="lp-left">
           <div className="lp-illustration">
             <img src="banner_login1.jpg" alt="POS NUKA Illustration" />
@@ -60,9 +100,8 @@ export default function LoginModern() {
           </div>
         </div>
 
-        {/* ============ RIGHT ============ */}
+        {/* RIGHT */}
         <div className="lp-right">
-          {/* TOP BAR */}
           <div className="lp-top-bar">
             <span className="lp-badge">POS NUKA</span>
 
@@ -85,7 +124,6 @@ export default function LoginModern() {
             </button>
           </div>
 
-          {/* ISI UTAMA */}
           <div className="lp-right-main">
             <h1 className="lp-title">Masuk ke POS Nuka</h1>
             <p className="lp-subtitle">
@@ -96,32 +134,52 @@ export default function LoginModern() {
               className="lp-form"
               onSubmit={async (e) => {
                 e.preventDefault();
-                const email = e.target.email.value;
+                const identifier = e.target.email.value;
                 const password = e.target.password.value;
 
                 try {
+                  setLoading(true);
+
                   const res = await api.post("/auth/login", {
-                    identifier: email,
+                    identifier, // email / username
                     password,
                   });
+
                   localStorage.setItem("token", res.data.access_token);
                   setIsAuthed(true);
                 } catch (err) {
-                  alert("Login gagal, cek email / kata sandi kamu.");
+                  console.error(err);
+
+                  // ambil pesan dari backend kalau ada
+                  const raw = err?.response?.data?.message;
+                  let msg = "";
+                  if (Array.isArray(raw)) msg = raw.join(" ");
+                  else msg =
+                    raw ||
+                    "Email atau kata sandi kamu belum cocok. Coba cek lagi, ya.";
+
+                  setAlertConfig({
+                    type: "error",
+                    title: "Login gagal",
+                    message: msg,
+                  });
+                } finally {
+                  setLoading(false);
                 }
               }}
             >
-              {/* EMAIL */}
+              {/* EMAIL / USERNAME */}
               <div className="lp-field">
                 <label htmlFor="email">Email / Username*</label>
                 <div className="lp-field-input">
                   <FaEnvelope className="lp-icon" />
                   <input
                     id="email"
-                    type="email"
+                    type="text"
                     name="email"
                     placeholder="Masukkan email atau username"
                     required
+                    disabled={loading}
                   />
                 </div>
               </div>
@@ -137,12 +195,13 @@ export default function LoginModern() {
                     name="password"
                     placeholder="Masukkan kata sandi"
                     required
+                    disabled={loading}
                   />
-                  {/* tombol eye yang sudah bener */}
                   <button
                     type="button"
                     className="lp-eye-btn"
                     onClick={() => setShowPassword((v) => !v)}
+                    disabled={loading}
                   >
                     {showPassword ? <FaEyeSlash /> : <FaEye />}
                   </button>
@@ -152,31 +211,40 @@ export default function LoginModern() {
               {/* REMEMBER + FORGOT */}
               <div className="lp-remember-row">
                 <label className="lp-remember">
-                  <input type="checkbox" defaultChecked />
+                  <input
+                    type="checkbox"
+                    defaultChecked
+                    disabled={loading}
+                  />
                   <span>Ingat saya</span>
                 </label>
 
                 <button
                   type="button"
                   className="lp-forgot"
-                  onClick={() =>
-                    alert("Hubungkan ke flow Lupa Kata Sandi versi kamu.")
-                  }
+                  onClick={() => !loading && setScreen("forgot")}
+                  disabled={loading}
                 >
                   Lupa kata sandi?
                 </button>
               </div>
 
-              {/* BUTTON LOGIN */}
-              <button type="submit" className="lp-btn-primary">
-                Masuk ke Dashboard
+              <button
+                type="submit"
+                className="lp-btn-primary"
+                disabled={loading}
+                style={{ opacity: loading ? 0.8 : 1 }}
+              >
+                {loading ? "Masuk..." : "Masuk ke Dashboard"}
               </button>
 
-              {/* BUTTON GOOGLE */}
               <button
                 type="button"
                 className="lp-btn-google"
-                onClick={() => alert("Hubungkan ke login Google POS Nuka.")}
+                onClick={() =>
+                  !loading && alert("Hubungkan ke login Google POS Nuka.")
+                }
+                disabled={loading}
               >
                 <span className="lp-google-circle">G</span>
                 <span>Masuk dengan Google</span>
@@ -184,13 +252,13 @@ export default function LoginModern() {
             </form>
           </div>
 
-          {/* teks bawah */}
           <p className="lp-bottom-text">
             Belum punya akun POS Nuka?{" "}
             <button
               type="button"
               className="lp-signup-link"
-              onClick={() => setScreen("register")} // ⬅️ pindah ke RegisterModern
+              onClick={() => !loading && setScreen("register")}
+              disabled={loading}
             >
               Daftar sekarang
             </button>
