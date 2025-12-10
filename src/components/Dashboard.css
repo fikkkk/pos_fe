@@ -2479,3 +2479,667 @@ html,body{
 .trx-container {
   overflow: visible !important;
 }
+/* Wrapper utama dashboard: background gelap + card besar konten */
+.dashboard {
+  /* layout: sidebar lebar 280px + konten */
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  height: 100vh;
+  min-height: 0;
+
+  padding: 24px;
+  box-sizing: border-box;
+
+  background: radial-gradient(circle at top left, #2f326b 0%, #050816 55%, #020010 100%);
+}
+
+/* Card konten utama */
+.ds-main {
+  display: grid;
+  grid-template-rows: 80px minmax(0, 1fr);
+  min-height: 0;
+
+  background: rgba(15, 23, 42, 0.96);
+  border-radius: 32px;
+  padding: 24px 28px;
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(22px);
+}
+
+/* Isi di dalam main scrollable */
+.ds-inner {
+  padding-top: 16px;
+  padding-bottom: 10px;
+  overflow: auto;
+}
+
+/* ======================== TOPBAR DARK ======================== */
+
+.ds-topbar {
+  position: relative;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 4px 0;
+  background: transparent;
+  border-bottom: none;
+  color: #e5e7eb;
+}
+
+/* Matikan gradasi putih lama di topbar */
+.ds-topbar::before,
+.ds-topbar::after {
+  content: none !important;
+}
+
+/* Semua teks di topbar jadi terang */
+.ds-topbar,
+.ds-topbar * {
+  color: #e5e7eb;
+}
+
+/* ======================== SIDEBAR DARK ======================== */
+
+.ds-sidebar.ds-sidebar-dark {
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+
+  border-radius: 32px;
+  padding: 22px 18px 18px;
+
+  background: radial-gradient(circle at top left, #32346f 0%, #1b1f3d 45%, #0b0f23 100%);
+  box-shadow: 0 26px 70px rgba(0, 0, 0, 0.85);
+
+  color: #e5e7eb;
+
+  /* hilangkan margin-top & height lama */
+  margin-top: 0;
+  height: 100%;
+  border-right: none;
+}
+
+/* Brand kecil di atas */
+.ds-side-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.ds-brand-logo {
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 18px;
+
+  background: linear-gradient(135deg, #fb923c, #f97316, #facc15);
+  color: #fff;
+  box-shadow: 0 12px 30px rgba(248, 181, 82, 0.55);
+}
+
+.ds-brand-text .brand-name {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.ds-brand-text .brand-sub {
+  font-size: 11px;
+  font-weight: 500;
+  color: rgba(209, 213, 219, 0.8);
+}
+
+/* Kartu profil user */
+.ds-side-user-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 12px 12px;
+  border-radius: 20px;
+
+  background: linear-gradient(
+    135deg,
+    rgba(96, 165, 250, 0.22),
+    rgba(129, 140, 248, 0.08)
+  );
+  border: 1px solid rgba(148, 163, 184, 0.45);
+}
+
+.ds-user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: linear-gradient(135deg, #f97316, #fb7185);
+  color: #fff;
+  font-weight: 700;
+}
+
+.ds-user-meta .user-name {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.ds-user-meta .user-role {
+  font-size: 11px;
+  color: rgba(209, 213, 219, 0.8);
+}
+
+/* ======================== NAV UTAMA ======================== */
+
+.ds-nav-dark {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ds-nav-caption {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(148, 163, 184, 0.9);
+  margin-bottom: 4px;
+}
+
+/* item menu */
+.ds-nav-item-dark {
+  border: none;
+  outline: none;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  padding: 10px 12px;
+  border-radius: 18px;
+
+  font-size: 13px;
+  color: #9ca3af;
+
+  cursor: pointer;
+  transition:
+    background 0.18s ease,
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    color 0.18s ease;
+}
+
+.ds-nav-item-dark .nav-ico {
+  width: 32px;
+  height: 32px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: rgba(15, 23, 42, 0.85);
+  color: #e5e7eb;
+  font-size: 16px;
+}
+
+.ds-nav-item-dark .nav-label {
+  white-space: nowrap;
+}
+
+/* hover */
+.ds-nav-item-dark:hover {
+  background: rgba(148, 163, 184, 0.16);
+  transform: translateX(3px);
+}
+
+/* active */
+.ds-nav-item-dark.active {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: #ffffff;
+  box-shadow: 0 16px 40px rgba(79, 70, 229, 0.85);
+}
+
+.ds-nav-item-dark.active .nav-ico {
+  background: rgba(15, 23, 42, 0.5);
+}
+
+/* ======================== BAGIAN BAWAH SIDEBAR ======================== */
+
+.ds-side-bottom-dark {
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid rgba(148, 163, 184, 0.4);
+
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* item "ghost" (contoh Pengguna) */
+.ds-nav-item-dark.ghost {
+  background: transparent;
+  color: #9ca3af;
+}
+
+.ds-nav-item-dark.ghost .nav-ico {
+  background: rgba(15, 23, 42, 0.7);
+}
+
+/* tombol logout */
+.ds-logout-btn {
+  border: none;
+  outline: none;
+
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  padding: 10px 12px;
+  border-radius: 18px;
+
+  background: rgba(248, 113, 113, 0.12);
+  color: #fca5a5;
+
+  cursor: pointer;
+  font-size: 13px;
+
+  transition:
+    background 0.18s ease,
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    color 0.18s ease;
+}
+
+.ds-logout-btn .nav-ico {
+  width: 32px;
+  height: 32px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: rgba(127, 29, 29, 0.75);
+  color: #fecaca;
+}
+
+.ds-logout-btn:hover {
+  background: rgba(248, 113, 113, 0.2);
+  transform: translateX(3px);
+  box-shadow: 0 14px 32px rgba(248, 113, 113, 0.5);
+}
+/* ============================================================
+   DARK MODE OVERRIDE – SIDEBAR & LAYOUT DASHBOARD
+   (ditempel di PALING BAWAH Dashboard.css)
+   ============================================================ */
+
+/* Layout utama: sidebar + konten */
+.dashboard {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  gap: 24px;
+  padding: 24px;
+  box-sizing: border-box;
+  height: 100vh;
+  min-height: 0;
+
+  background: radial-gradient(circle at top left, #312e81 0%, #020617 55%, #020012 100%);
+}
+
+/* Card konten utama */
+.ds-main {
+  display: grid;
+  grid-template-rows: 80px minmax(0, 1fr);
+  min-height: 0;
+
+  background: rgba(15, 23, 42, 0.97);
+  border-radius: 32px;
+  padding: 24px 28px;
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.7);
+}
+
+/* Isi di dalam main bisa scroll */
+.ds-inner {
+  padding-top: 12px;
+  padding-bottom: 18px;
+  overflow: auto;
+}
+
+/* TOPBAR: matikan white-bar lama */
+.ds-topbar {
+  background: transparent !important;
+  border-bottom: none !important;
+  color: #e5e7eb;
+}
+
+/* buang bar gradasi putih & oranye lama */
+.ds-topbar::before,
+.ds-topbar::after {
+  content: none !important;
+}
+
+/* ======================= SIDEBAR DARK ======================= */
+
+.ds-sidebar.ds-sidebar-dark {
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+
+  margin-top: 0;              /* override margin-top:80px lama */
+  height: 100%;               /* bukan calc(100vh - 80px) lagi */
+
+  border-right: none;
+  border-radius: 32px;
+  padding: 22px 18px 18px;
+
+  background: radial-gradient(circle at top left, #32346f 0%, #1b1f3d 45%, #0b0f23 100%);
+  box-shadow: 0 26px 70px rgba(0, 0, 0, 0.85);
+  color: #e5e7eb;
+}
+
+/* Brand */
+.ds-side-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.ds-brand-logo {
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 18px;
+
+  background: linear-gradient(135deg, #fb923c, #f97316, #facc15);
+  color: #fff;
+  box-shadow: 0 12px 30px rgba(248, 181, 82, 0.55);
+}
+
+.ds-brand-text .brand-name {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.ds-brand-text .brand-sub {
+  font-size: 11px;
+  font-weight: 500;
+  color: rgba(209, 213, 219, 0.8);
+}
+
+/* User card */
+.ds-side-user-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 12px 12px;
+  border-radius: 20px;
+
+  background: linear-gradient(
+    135deg,
+    rgba(96, 165, 250, 0.22),
+    rgba(129, 140, 248, 0.08)
+  );
+  border: 1px solid rgba(148, 163, 184, 0.45);
+}
+
+.ds-user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: linear-gradient(135deg, #f97316, #fb7185);
+  color: #fff;
+  font-weight: 700;
+}
+
+.ds-user-meta .user-name {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.ds-user-meta .user-role {
+  font-size: 11px;
+  color: rgba(209, 213, 219, 0.8);
+}
+
+/* NAV UTAMA */
+.ds-nav-dark {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ds-nav-caption {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(148, 163, 184, 0.9);
+  margin-bottom: 4px;
+}
+
+/* item menu */
+.ds-nav-item-dark {
+  border: none;
+  outline: none;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  padding: 10px 12px;
+  border-radius: 18px;
+
+  font-size: 13px;
+  color: #9ca3af;
+
+  cursor: pointer;
+  transition:
+    background 0.18s ease,
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    color 0.18s ease;
+}
+
+.ds-nav-item-dark .nav-ico {
+  width: 32px;
+  height: 32px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: rgba(15, 23, 42, 0.85);
+  color: #e5e7eb;
+  font-size: 16px;
+}
+
+.ds-nav-item-dark .nav-label {
+  white-space: nowrap;
+}
+
+/* hover */
+.ds-nav-item-dark:hover {
+  background: rgba(148, 163, 184, 0.16);
+  transform: translateX(3px);
+}
+
+/* active */
+.ds-nav-item-dark.active {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: #ffffff;
+  box-shadow: 0 16px 40px rgba(79, 70, 229, 0.85);
+}
+
+.ds-nav-item-dark.active .nav-ico {
+  background: rgba(15, 23, 42, 0.5);
+}
+
+/* BAGIAN BAWAH SIDEBAR */
+.ds-side-bottom-dark {
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid rgba(148, 163, 184, 0.4);
+
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* item “ghost” (Pengguna) */
+.ds-nav-item-dark.ghost {
+  background: transparent;
+  color: #9ca3af;
+}
+
+.ds-nav-item-dark.ghost .nav-ico {
+  background: rgba(15, 23, 42, 0.7);
+}
+
+/* tombol logout */
+.ds-logout-btn {
+  border: none;
+  outline: none;
+
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  padding: 10px 12px;
+  border-radius: 18px;
+
+  background: rgba(248, 113, 113, 0.12);
+  color: #fca5a5;
+
+  cursor: pointer;
+  font-size: 13px;
+
+  transition:
+    background 0.18s ease,
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    color 0.18s ease;
+}
+
+.ds-logout-btn .nav-ico {
+  width: 32px;
+  height: 32px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: rgba(127, 29, 29, 0.75);
+  color: #fecaca;
+}
+
+.ds-logout-btn:hover {
+  background: rgba(248, 113, 113, 0.2);
+  transform: translateX(3px);
+  box-shadow: 0 14px 32px rgba(248, 113, 113, 0.5);
+}
+/* ======================= TOPBAR DARK MODE BARU ======================= */
+
+.ds-topbar {
+  position: relative;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 6px 0;
+  background: transparent;
+  border-bottom: none;
+  color: #e5e7eb;
+}
+
+/* matikan dekorasi lama kalau ada */
+.ds-topbar::before,
+.ds-topbar::after {
+  content: none !important;
+}
+
+.ds-topbar-left {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ds-topbar-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ds-topbar-title {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.ds-topbar-sub {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+.ds-topbar-sub svg {
+  font-size: 13px;
+}
+
+.ds-topbar-sub .dot-sep {
+  width: 4px;
+  height: 4px;
+  border-radius: 999px;
+  background: #6b7280;
+}
+
+.ds-topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.ds-topbar-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(148, 163, 184, 0.5);
+}
+
+.ds-topbar-pill svg {
+  font-size: 13px;
+  color: #9ca3af;
+}
+
+.ds-topbar-pill input {
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #e5e7eb;
+  font-size: 12px;
+  width: 220px;
+}
+
+.ds-topbar-pill input::placeholder {
+  color: #6b7280;
+}
