@@ -40,9 +40,9 @@ export default function DataMaster() {
     if (activeTab === 'produk') {
       fetchProducts();
     }
-  }, [activeTab, currentPage, itemsPerPage, debouncedSearch]);
+  }, [activeTab, fetchProducts]);
 
-  const fetchProducts = async () => {
+  const fetchProducts = React.useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
@@ -59,7 +59,7 @@ export default function DataMaster() {
       // Simulate slight delay for smooth animation feeling
       setTimeout(() => setLoading(false), 300);
     }
-  };
+  }, [currentPage, itemsPerPage, debouncedSearch]);
 
   const totalPages = Math.max(1, Math.ceil(totalItems / itemsPerPage));
 
@@ -174,6 +174,18 @@ export default function DataMaster() {
               <div className="flex flex-col items-center gap-4">
                 <FaSpinner className="animate-spin text-4xl text-orange-500" />
                 <span className="text-sm font-medium text-orange-200 animate-pulse">Memuat Data...</span>
+              </div>
+            </div>
+          )}
+
+          {error && (
+            <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none">
+              <div className="bg-red-500/10 border border-red-500/20 text-red-400 px-6 py-4 rounded-xl backdrop-blur-md shadow-xl flex items-center gap-3 animate-fade-in pointer-events-auto">
+                <FaTrash className="text-xl" /> {/* Reusing Icon for error visual - would prefer FaExclamationTriangle but it's not imported. Trash is ok-ish or just no icon */}
+                <span>{error}</span>
+                <button onClick={fetchProducts} className="ml-4 px-3 py-1 bg-red-500/20 hover:bg-red-500/30 rounded-lg text-xs font-bold transition-colors">
+                  Try Again
+                </button>
               </div>
             </div>
           )}

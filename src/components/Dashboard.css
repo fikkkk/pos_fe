@@ -37,6 +37,7 @@ body {
 
 .dashboard {
   display: grid;
+<<<<<<< HEAD
   grid-template-columns: 280px 1fr;
   height: 100vh;
   overflow: hidden;
@@ -1071,3 +1072,152 @@ body {
     /* Mobile view logic not fully implemented here */
   }
 }
+=======
+  grid-template-columns: 60px 1fr;
+  transition: grid-template-columns .25s ease;
+  background: var(--bg);          /* abu-abu */
+
+  /* font global untuk seluruh dashboard */
+  font-family: "Poppins", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-weight: 600;               /* versi bold */
+
+  /* ✅ penting supaya area konten punya tinggi tetap */
+  height: 100vh;
+  min-height: 0;
+}
+
+/* === Sidebar collapse: hanya icon saat diperkecil === */
+.dashboard.collapsed .ds-nav-item{
+  grid-template-columns: 1fr;
+  justify-content: center;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.dashboard.collapsed .ds-nav-item span:nth-child(2){
+  display: none; /* sembunyikan teks menu: Dashboard, Transaksi, dll */
+}
+
+.dashboard.collapsed .ds-nav-item .ico{
+  justify-self: center; /* icon di tengah */
+}
+
+.ds-topbar{
+  position: relative;
+  z-index: 20;   /* lebih tinggi dari sidebar (5), jadi bar putih gradasi selalu di atas */
+}
+
+.ds-topbar::before{
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -210px;
+  height: 100%;
+
+    right: auto;
+    width: 630px !important;
+
+  background: linear-gradient(
+    to right,
+    rgba(255,255,255,1) 0%,
+    rgba(255,255,255,1) 85%,
+    rgba(255,255,255,0) 100%
+  );
+
+  pointer-events: none;
+  z-index: -1;
+}
+
+.ds-topbar::after{
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: -210px;
+
+  /* ❗ Panjang shadow hanya sampai produk kiri */
+  width: 420px;  /* nanti akan aku hitungkan akurat setelah lihat crop dekat */
+
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    rgba(0,0,0,0.12),
+    rgba(0,0,0,0.05),
+    rgba(0,0,0,0)
+  );
+  pointer-events: none;
+}
+
+/* ===== OVERRIDE: hilangkan garis abu-abu di bawah bar putih & kanan bar orange ===== */
+
+/* Hilangkan border bawah topbar (garis di bawah bar putih) */
+.ds-topbar{
+  border-bottom: none !important;
+}
+
+/* ===== OVERRIDE: turunkan navigasi di sidebar agar tidak menimpa title POS Kasir ===== */
+.ds-nav{
+  margin-top: 16px !important;   /* coba 32–48px sampai pas di layar kamu */
+}
+
+/* ===== OVERRIDE: perbesar icon di sidebar ===== */
+.ds-nav-item .ico{
+  font-size: 18px !important;  /* tadinya 14px, sekarang sedikit lebih besar */
+}
+
+/* ===== OVERRIDE: perbesar icon sidebar ===== */
+.ds-nav-item .ico{
+  font-size: 20px !important;   /* kalau mau lebih besar: 22px */
+}
+
+/* ===== OVERRIDE: saat sidebar diperkecil, jarak icon ditambah ===== */
+
+/* tambah gap antar item menu */
+.dashboard.collapsed .ds-nav{
+  gap: 10px !important;         /* default-nya 6px, sekarang lebih renggang */
+}
+
+/* tambah padding vertikal tiap icon */
+.dashboard.collapsed .ds-nav-item{
+  padding-top: 10px !important;
+  padding-bottom: 10px !important;
+}
+
+/* Sidebar selalu paling atas */
+.ds-sidebar {
+  position: relative;
+  z-index: 20000 !important;
+}
+
+/* Bubble hover di atas semua */
+.ds-nav-item::after {
+  z-index: 20001 !important;
+}
+
+
+.ds-side-bottom{
+  margin-top: auto;        /* tetap dorong ke bawah */
+  display: flex;           /* biar sama seperti .ds-nav */
+  flex-direction: column;
+  align-items: center;     /* ⬅️ ini yang bikin icon sejajar dengan yang atas */
+  padding-bottom: 22px;    /* sedikit jarak dari bawah (boleh kamu kecil/besarkan) */
+  position: relative;
+}
+
+
+/* ✅ garis abu-abu pemisah, mirip line di header profil */
+.ds-side-bottom::before{
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 18px;
+  right: 18px;
+  height: 1px;
+  background: #e2e6ee;
+}
+
+.ds-inner, 
+.transaksi-wrapper,
+.trx-container {
+  overflow: visible !important;
+}
+>>>>>>> ca29c28cbc26720866715dd304f728895bf715fc
