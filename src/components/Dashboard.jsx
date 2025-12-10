@@ -37,6 +37,7 @@ import SalesChartYearly from "./dashboard/SalesChartYearly";
 import PaymentDonut from "./dashboard/PaymentDonut";
 import TransactionsTable from "./dashboard/TransactionsTable";
 import TopProductsPie from "./dashboard/TopProductsPie";
+import ThemeToggle from "./dashboard/ThemeToggle";
 
 /* ======================= PLACEHOLDER ======================= */
 
@@ -49,16 +50,23 @@ function SkillsWheel() {
 export default function Dashboard() {
   // MENU AKTIF: "dashboard" | "transaksi" | "datamaster"
   const [activeMenu, setActiveMenu] = useState("dashboard");
-  const [showWelcomeToast, setShowWelcomeToast] = useState(false);
+  // Show welcome toast - initialize to true so it shows immediately
+  const [showWelcomeToast, setShowWelcomeToast] = useState(true);
 
-  useEffect(() => {
-    // Show welcome toast ONCE per session
-    const hasShown = sessionStorage.getItem("hasShownWelcome");
-    if (!hasShown) {
-      setShowWelcomeToast(true);
-      sessionStorage.setItem("hasShownWelcome", "true");
-    }
-  }, []);
+  // Theme state - check localStorage for saved preference
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    const saved = localStorage.getItem("theme");
+    return saved ? saved === "dark" : false; // default: light mode
+  });
+
+  // Toggle theme and save to localStorage
+  const toggleTheme = () => {
+    setIsDarkMode((prev) => {
+      const newValue = !prev;
+      localStorage.setItem("theme", newValue ? "dark" : "light");
+      return newValue;
+    });
+  };
 
   const today = new Date().toLocaleDateString("id-ID", {
     day: "numeric",
@@ -282,7 +290,7 @@ export default function Dashboard() {
     : [];
 
   return (
-    <div className="dashboard">
+    <div className={`dashboard ${isDarkMode ? "dark" : "light"}`}>
       <LoginNotification
         show={showWelcomeToast}
         onClose={() => setShowWelcomeToast(false)}
@@ -307,6 +315,7 @@ export default function Dashboard() {
           </div>
 
           <div className="ds-topbar-right">
+            <ThemeToggle isDark={isDarkMode} onToggle={toggleTheme} />
             <div className="ds-topbar-pill">
               <FaSearch />
               <input type="text" placeholder="Cari produk / transaksi" />

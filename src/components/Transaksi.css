@@ -146,8 +146,10 @@
 
   /* ⬇️ inner shadow (di dalam, bukan ke luar) */
   box-shadow:
-    inset 0  6px 8px -6px rgba(0, 0, 0, 0.10),   /* bayangan di bawah garis atas */
-    inset 0 -6px 8px -6px rgba(0, 0, 0, 0.10);   /* bayangan di atas garis bawah */
+    inset 0 6px 8px -6px rgba(0, 0, 0, 0.10),
+    /* bayangan di bawah garis atas */
+    inset 0 -6px 8px -6px rgba(0, 0, 0, 0.10);
+  /* bayangan di atas garis bawah */
 }
 
 .trx-product-card {
@@ -164,7 +166,8 @@
   align-items: flex-start;
   text-align: left;
 
-  min-height: 233px; /* semua kartu sama tinggi */
+  min-height: 233px;
+  /* semua kartu sama tinggi */
 }
 
 .trx-product-card:hover {
@@ -272,10 +275,12 @@
   overflow-x: hidden;
 
   /* ⬇️ kartu kanan dinaikkan & dipanjangkan */
-  height: calc(100% + 70px);  /* boleh ubah 90–120 kalau mau */
+  height: calc(100% + 70px);
+  /* boleh ubah 90–120 kalau mau */
   position: relative;
   z-index: 99 !important;
-  margin-top: -82px;  /* angka ini bisa kamu adjust 1–2px */
+  margin-top: -82px;
+  /* angka ini bisa kamu adjust 1–2px */
   overflow: visible !important;
 }
 
@@ -331,12 +336,14 @@
   margin-bottom: 8px;
 
   display: grid;
-  grid-template-columns: 1fr auto; /* kiri fleksibel, kanan fix */
+  grid-template-columns: 1fr auto;
+  /* kiri fleksibel, kanan fix */
   align-items: flex-start;
   column-gap: 8px;
 
   max-width: 100%;
-  overflow: hidden; /* 👈 WAJIB: agar tidak keluar frame */
+  overflow: hidden;
+  /* 👈 WAJIB: agar tidak keluar frame */
 }
 
 /* kiri: nomor + info barang */
@@ -435,7 +442,8 @@
   align-items: flex-end;
   gap: 6px;
 
-  width: 165px;         /* 👈 Batas kanan — dijamin tidak keluar frame */
+  width: 165px;
+  /* 👈 Batas kanan — dijamin tidak keluar frame */
   min-width: 165px;
   max-width: 165px;
 }
@@ -458,7 +466,8 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  flex-wrap: wrap;     /* 👈 otomatis turun baris, aman */
+  flex-wrap: wrap;
+  /* 👈 otomatis turun baris, aman */
 }
 
 .trx-qty {
@@ -469,7 +478,8 @@
   background: #f9f9f9;
   overflow: hidden;
 
-  margin-top: 30px;   /* ⬅️ turunkan posisi supaya sejajar bar biru */
+  margin-top: 30px;
+  /* ⬅️ turunkan posisi supaya sejajar bar biru */
 }
 
 .trx-qty button {
@@ -508,17 +518,20 @@
   align-items: center;
   justify-content: center;
 
-  flex-shrink: 0;   /* 👈 WAJIB: tidak memaksa layout melebar */
+  flex-shrink: 0;
+  /* 👈 WAJIB: tidak memaksa layout melebar */
 }
 
 .trx-item-total-pill {
   background: #1b7fd8;
   color: #fff;
   padding: 4px 12px;
-  border-radius: 10px;   /* mengikuti desain */
+  border-radius: 10px;
+  /* mengikuti desain */
   font-size: 11px;
   font-weight: 600;
-  white-space: nowrap;   /* tidak pindah baris */
+  white-space: nowrap;
+  /* tidak pindah baris */
 }
 
 /* ==================== SUMMARY & BUTTON ==================== */
@@ -643,4 +656,242 @@
   outline: none;
   border-color: #ff8c1a;
   box-shadow: 0 0 4px rgba(255, 140, 26, 0.4);
+}
+
+/* ================================================
+   TRANSAKSI DARK MODE STYLES
+   ================================================ */
+
+/* Left panel */
+.dashboard.dark .trx-left {
+  background: transparent;
+}
+
+/* Search box */
+.dashboard.dark .trx-search-box {
+  background: #1e293b;
+  border: 1px solid #334155;
+}
+
+.dashboard.dark .trx-search-input {
+  color: #e2e8f0;
+}
+
+.dashboard.dark .trx-search-input::placeholder {
+  color: #64748b;
+}
+
+.dashboard.dark .trx-search-box svg {
+  color: #94a3b8;
+}
+
+/* Category pills */
+.dashboard.dark .trx-cat-pill {
+  background: #1e293b;
+  border-color: #334155;
+  color: #e2e8f0;
+}
+
+.dashboard.dark .trx-cat-pill:hover {
+  background: #334155;
+  border-color: #475569;
+}
+
+.dashboard.dark .trx-cat-active {
+  background: #1e293b;
+  border-color: #f59e0b;
+  box-shadow: 0 3px 8px rgba(245, 158, 11, 0.35);
+}
+
+.dashboard.dark .trx-cat-icon {
+  background: #334155;
+  border-color: #475569;
+}
+
+/* Product grid */
+.dashboard.dark .trx-product-grid {
+  border-color: #334155;
+  box-shadow:
+    inset 0 6px 8px -6px rgba(0, 0, 0, 0.3),
+    inset 0 -6px 8px -6px rgba(0, 0, 0, 0.3);
+}
+
+/* Product cards */
+.dashboard.dark .trx-product-card {
+  background: #1e293b;
+  border-color: #334155;
+}
+
+.dashboard.dark .trx-product-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.dashboard.dark .trx-stock-bar {
+  background: #334155;
+  border-color: #475569;
+  color: #e2e8f0;
+}
+
+.dashboard.dark .trx-stock-text {
+  color: #94a3b8;
+}
+
+.dashboard.dark .trx-product-info {
+  background: #334155;
+}
+
+.dashboard.dark .trx-name {
+  color: #e2e8f0;
+}
+
+/* Right panel (cart) */
+.dashboard.dark .trx-right {
+  background: #1e293b;
+  border-color: #334155;
+}
+
+.dashboard.dark .trx-title {
+  color: #f1f5f9;
+}
+
+.dashboard.dark .trx-subtitle {
+  color: #94a3b8;
+}
+
+.dashboard.dark .trx-empty {
+  color: #64748b;
+}
+
+/* Cart items */
+.dashboard.dark .trx-cart-item {
+  background: #0f172a;
+  border-color: #334155;
+}
+
+.dashboard.dark .trx-cart-name {
+  color: #e2e8f0;
+}
+
+.dashboard.dark .trx-stock-small-text {
+  color: #94a3b8;
+}
+
+.dashboard.dark .trx-unit-select {
+  background: #334155;
+  border-color: #475569;
+  color: #e2e8f0;
+}
+
+.dashboard.dark .trx-qty {
+  background: #334155;
+  border-color: #475569;
+}
+
+.dashboard.dark .trx-qty button {
+  background: #475569;
+  color: #e2e8f0;
+}
+
+.dashboard.dark .trx-qty-input {
+  background: #334155;
+  color: #e2e8f0;
+}
+
+/* Summary */
+.dashboard.dark .trx-summary {
+  border-color: #334155;
+  color: #e2e8f0;
+}
+
+.dashboard.dark .trx-row {
+  color: #94a3b8;
+}
+
+/* Pagination */
+.dashboard.dark .trx-pagination {
+  background: #1e293b;
+  border-color: #334155;
+}
+
+.dashboard.dark .trx-page-info {
+  color: #94a3b8;
+}
+
+.dashboard.dark .trx-page-buttons button {
+  background: #334155;
+  border-color: #475569;
+  color: #e2e8f0;
+}
+
+.dashboard.dark .trx-page-buttons button:hover:not(:disabled) {
+  background: #475569;
+}
+
+.dashboard.dark .trx-page-size {
+  color: #94a3b8;
+}
+
+.dashboard.dark .trx-page-size select {
+  background: #334155;
+  border-color: #f59e0b;
+  color: #e2e8f0;
+}
+
+/* ================================================
+   TRANSAKSI LIGHT MODE STYLES
+   ================================================ */
+
+/* Right panel (cart) - Light Mode */
+.dashboard.light .trx-right {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+.dashboard.light .trx-title {
+  color: #1e293b;
+}
+
+.dashboard.light .trx-subtitle {
+  color: #64748b;
+}
+
+/* Cart items - Light Mode */
+.dashboard.light .trx-cart-item {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+}
+
+.dashboard.light .trx-cart-name {
+  color: #1e293b;
+}
+
+/* Summary - Light Mode */
+.dashboard.light .trx-summary {
+  border-color: #e2e8f0;
+  color: #334155;
+}
+
+.dashboard.light .trx-row {
+  color: #64748b;
+}
+
+/* Pagination - Light Mode */
+.dashboard.light .trx-pagination {
+  background: #ffffff;
+  border-color: #e2e8f0;
+}
+
+.dashboard.light .trx-page-info {
+  color: #64748b;
+}
+
+.dashboard.light .trx-page-buttons button {
+  background: #ffffff;
+  border-color: #e2e8f0;
+  color: #334155;
+}
+
+.dashboard.light .trx-page-buttons button:hover:not(:disabled) {
+  background: #f1f5f9;
 }
