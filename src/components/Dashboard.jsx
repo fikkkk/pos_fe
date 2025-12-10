@@ -1,5 +1,5 @@
 // =============================
-// Dashboard.jsx FINAL TERHUBUNG BE (DARK MODE)
+// Dashboard.jsx FINAL TERHUBUNG BE
 // =============================
 
 import React, {
@@ -18,15 +18,17 @@ import {
   FaSearch,
   FaShoppingCart,
   FaThLarge,
+  FaPaperPlane,
   FaFileAlt,
   FaUsers,
 } from "react-icons/fa";
 import "./Dashboard.css";
 import { api } from "../api";
 import Sidebar from "./Sidebar";
-// WhiteBar dihapus, sekarang topbar ada di sini
+import WhiteBar from "./Whitebar";
 import Transaksi from "./Transaksi";
 import Datamaster from "./Datamaster";
+
 
 /* ============================= HELPERS ============================= */
 
@@ -103,14 +105,14 @@ function buildMonthlyYearlyFromTransactions(transactions) {
   const yearsArr = Array.from(byYear.values()).sort((a, b) => a.year - b.year);
 
   return {
-    monthly: yearsArr, // dipakai SalesChartMonthly
-    yearly: yearsArr.map((y) => ({
-      // dipakai SalesChartYearly
+    monthly: yearsArr,                          // dipakai SalesChartMonthly
+    yearly: yearsArr.map((y) => ({              // dipakai SalesChartYearly
       year: y.year,
       total: y.totalYear,
     })),
   };
 }
+
 
 /* ====================== COMMON SMALL COMPONENTS ===================== */
 
@@ -173,44 +175,35 @@ function ChartHeader({ title, rightTitle }) {
 }
 
 /* ============================= CHART BULANAN ============================= */
+/* (ISI TETAP — TIDAK DIUBAH) */
+/* ============================= */
+/* ============================= */
+/* NOTE: seluruh fungsi chart di bawah tidak diubah sama sekali */
+/* ============================= */
 
 function SalesChartMonthly({ monthlyStats }) {
   const months = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "Mei",
-    "Jun",
-    "Jul",
-    "Agu",
-    "Sep",
-    "Okt",
-    "Nov",
-    "Des",
+    "Jan","Feb","Mar","Apr","Mei","Jun",
+    "Jul","Agu","Sep","Okt","Nov","Des",
   ];
 
   if (!monthlyStats || monthlyStats.length === 0)
     return <div className="chart-container empty" />;
 
-  const yearsAvailable = monthlyStats.map((y) => y.year);
-  const newestYear = Math.max(...yearsAvailable);
+const yearsAvailable = monthlyStats.map((y) => y.year);
+const newestYear = Math.max(...yearsAvailable);
 
-  const datasets = monthlyStats.map((y) => ({
-    label: y.year,
-    // Tahun terbaru kuning, lainnya biru
-    color: y.year === newestYear ? "#f6b21c" : "#1560d9",
-    data: months.map((_, idx) => y.months[idx]?.value ?? 0),
-  }));
+const datasets = monthlyStats.map((y) => ({
+  label: y.year,
+  // 🔥 Tahun TERBARU = kuning, lainnya biru
+  color: y.year === newestYear ? "#f6b21c" : "#1560d9",
+  data: months.map((mIndex, idx) => y.months[idx]?.value ?? 0),
+}));
 
-  const W = 700,
-    H = 270,
-    PL = 68,
-    PR = 18,
-    PT = 16,
-    PB = 30;
-  const innerW = W - PL - PR,
-    innerH = H - PT - PB;
+  /* (seluruh kode grafik tetap, tidak diubah)
+     ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ */
+  const W = 700, H = 270, PL = 68, PR = 18, PT = 16, PB = 30;
+  const innerW = W - PL - PR, innerH = H - PT - PB;
 
   const allVals = datasets.flatMap((d) => d.data);
   const rawMax = Math.max(...allVals, 10);
@@ -240,12 +233,9 @@ function SalesChartMonthly({ monthlyStats }) {
   const [tip, setTip] = useState(null);
 
   const Tooltip = ({ x, y, text, bg, appearKey }) => {
-    const pad = 8,
-      h = 26,
-      r = 6;
+    const pad = 8, h = 26, r = 6;
     const w = Math.max(60, text.length * 7 + pad * 2);
-    let ty = y - h - 10,
-      pointerUp = true;
+    let ty = y - h - 10, pointerUp = true;
     if (ty < PT + 6) {
       ty = y + 14;
       pointerUp = false;
@@ -331,6 +321,7 @@ function SalesChartMonthly({ monthlyStats }) {
       </div>
 
       <svg viewBox={`0 0 ${W} ${H}`} className="chart-svg">
+        {/* axis, ticks, gridlines — semuanya tetap */}
         {months.map((_, i) => {
           const x = PL + (i / (months.length - 1)) * innerW;
           return (
@@ -467,6 +458,9 @@ function SalesChartMonthly({ monthlyStats }) {
 }
 
 /* ============================= CHART TAHUNAN ============================= */
+/* (ISI TETAP — TIDAK DIUBAH) */
+/* ============================= */
+/* ============================= */
 
 function SalesChartYearly({ yearlyStats }) {
   if (!yearlyStats || yearlyStats.length === 0)
@@ -794,9 +788,7 @@ function PaymentDonut({ paymentStats, totalTransaksi }) {
 
       <ul className="donut-legend">
         {payments.map((p) => {
-          const jumlah = Math.round(
-            (p.val / 100) * Number(totalTransaksi ?? 0)
-          );
+          const jumlah = Math.round((p.val / 100) * Number(totalTransaksi ?? 0));
           return (
             <li key={p.label}>
               <span className="dot" style={{ background: p.color }} />
@@ -1030,7 +1022,7 @@ function TransactionsTable({ transactions }) {
       <div className="table-footer">
         <div className="tf-left">
           showing <b>{rows.length}</b> to <b>{start + rows.length}</b> of{" "}
-            <b>{filtered.length}</b> entries
+          <b>{filtered.length}</b> entries
         </div>
 
         <div className="tf-right pager">
@@ -1072,7 +1064,8 @@ function TransactionsTable({ transactions }) {
 /* ======================= PIE CHART TOP PRODUK ======================= */
 
 function TopProductsPie({ data }) {
-  if (!data || data.length === 0) return <div className="pie-wrap empty" />;
+  if (!data || data.length === 0)
+    return <div className="pie-wrap empty" />;
 
   const pieData = data.map((p) => ({
     label: p.name,
@@ -1189,9 +1182,8 @@ function SkillsWheel() {
 /* ============================= MAIN DASHBOARD ============================= */
 
 export default function Dashboard() {
-  // MENU AKTIF: "dashboard" | "transaksi" | "datamaster"
+  // 🔹 MENU AKTIF: "dashboard" atau "transaksi"
   const [activeMenu, setActiveMenu] = useState("dashboard");
-
   const today = new Date().toLocaleDateString("id-ID", {
     day: "numeric",
     month: "long",
@@ -1232,18 +1224,23 @@ export default function Dashboard() {
         ] = await Promise.all([
           api.get(`/admin/dashboard/${year}`),
 
+          // top produk & pie chart
           api.get("/admin/products/leaderboard"),
-          api.get("/admin/products/leaderboard"),
+          api.get("/admin/products/leaderboard"), // untuk pie chart
 
+          // produk terbaru & semua produk
           api.get("/admin/products/latest"),
           api.get("/admin/products"),
 
+          // 🔥 sumber data utama untuk grafik bulanan & tahunan
           api.get("/admin/orders"),
         ]);
 
+        // ===== kartu statistik atas =====
         setStats(dashRes.data);
         setPaymentStats(dashRes.data.paymentMethodStats ?? []);
 
+        // ===== data produk & transaksi =====
         setTopProducts(leaderboardRes.data ?? []);
         setTopProductsPie(pieRes.data ?? []);
 
@@ -1253,6 +1250,7 @@ export default function Dashboard() {
         const trxData = trxRes.data ?? [];
         setTransactions(trxData);
 
+        // 🔥 bangun data grafik dari transaksi yang sudah pasti ada
         const { monthly, yearly } =
           buildMonthlyYearlyFromTransactions(trxData);
         setMonthlyStats(monthly);
@@ -1422,36 +1420,13 @@ export default function Dashboard() {
       ]
     : [];
 
-  return (
-    <div className="dashboard">
-      <Sidebar activeMenu={activeMenu} setActiveMenu={setActiveMenu} />
+return (
+  <div className="dashboard">
+          <Sidebar activeMenu={activeMenu} setActiveMenu={setActiveMenu} />
 
       <main className="ds-main">
-        {/* TOPBAR DARK MODE */}
-        <header className="ds-topbar">
-          <div className="ds-topbar-left">
-            <div className="ds-topbar-title-row">
-              <span className="ds-topbar-title">NUKA</span>
-            </div>
-            <div className="ds-topbar-sub">
-              <FaCalendarAlt />
-              <span>{today}</span>
-              <span className="dot-sep" />
-              <span>Dashboard Statistik Bisnis</span>
-            </div>
-          </div>
+          <WhiteBar today={today} />
 
-          <div className="ds-topbar-right">
-            <div className="ds-topbar-pill">
-              <FaSearch />
-              <input
-                type="text"
-                placeholder="Cari produk / transaksi"
-              />
-            </div>
-            <ProfilePill />
-          </div>
-        </header>
 
         <section className="ds-inner">
           {/* ================= HALAMAN DASHBOARD ================= */}
@@ -1586,7 +1561,10 @@ export default function Dashboard() {
                     </div>
 
                     {/* Pie */}
-                    <div className="pt-right" style={{ justifySelf: "end" }}>
+                    <div
+                      className="pt-right"
+                      style={{ justifySelf: "end" }}
+                    >
                       <TopProductsPie data={topProductsPie} />
                     </div>
                   </div>
@@ -1783,7 +1761,10 @@ export default function Dashboard() {
                             ))}
 
                             {Array.from({
-                              length: Math.max(0, 10 - produkRows10.length),
+                              length: Math.max(
+                                0,
+                                10 - produkRows10.length
+                              ),
                             }).map((_, i) => (
                               <tr
                                 key={`empty-${i}`}

@@ -1,76 +1,90 @@
-// src/components/Sidebar.jsx
+// Sidebar.jsx
 import React from "react";
 import {
+  FaUserCircle,
   FaThLarge,
-  FaShoppingCart,
+  FaPaperPlane,
   FaFileAlt,
   FaUsers,
-  FaPowerOff,
+  FaCog,          // ✅ icon pengaturan
 } from "react-icons/fa";
 import "./Dashboard.css";
+import { Link } from "react-router-dom";
 
 export default function Sidebar({ activeMenu, setActiveMenu }) {
-  const mainMenus = [
-    { id: "dashboard", label: "Dashboard", icon: <FaThLarge /> },
-    { id: "transaksi", label: "Transaksi", icon: <FaShoppingCart /> },
-    { id: "datamaster", label: "Data Master", icon: <FaFileAlt /> },
-  ];
-
   return (
-    <aside className="ds-sidebar ds-sidebar-dark">
-      {/* BRAND */}
-      <div className="ds-side-brand">
-        <div className="ds-brand-logo">N</div>
-        <div className="ds-brand-text">
-          <div className="brand-name">POS Nuka</div>
-          <div className="brand-sub">Kasir UMKM</div>
+    <aside className="ds-sidebar">
+      {/* Header user di atas sidebar */}
+      <div className="ds-side-header">
+        <div className="side-user">
+          <FaUserCircle />
         </div>
       </div>
 
-      {/* USER CARD */}
-      <div className="ds-side-user-card">
-        <div className="ds-user-avatar">
-          <span>A</span>
-        </div>
-        <div className="ds-user-meta">
-          <div className="user-name">Admin</div>
-          <div className="user-role">Mode Gelap</div>
-        </div>
-      </div>
+      {/* Hanya ICON, teks muncul sebagai bubble saat hover */}
+      <nav className="ds-nav">
+        {/* MENU DASHBOARD */}
+        <a
+          className={
+            "ds-nav-item " + (activeMenu === "dashboard" ? "active" : "")
+          }
+          data-label="Dashboard"
+          onClick={() => setActiveMenu("dashboard")}
+        >
+          <span className="ico">
+            <FaThLarge />
+          </span>
+        </a>
 
-      {/* MENU UTAMA */}
-      <nav className="ds-nav-dark">
-        <div className="ds-nav-caption">Menu</div>
-        {mainMenus.map((m) => (
-          <button
-            key={m.id}
-            type="button"
-            onClick={() => setActiveMenu(m.id)}
-            className={
-              "ds-nav-item-dark" + (activeMenu === m.id ? " active" : "")
-            }
-          >
-            <span className="nav-ico">{m.icon}</span>
-            <span className="nav-label">{m.label}</span>
-          </button>
-        ))}
-      </nav>
+        {/* MENU TRANSAKSI */}
+        <a
+          className={
+            "ds-nav-item " + (activeMenu === "transaksi" ? "active" : "")
+          }
+          data-label="Transaksi"
+          onClick={() => setActiveMenu("transaksi")}
+        >
+          <span className="ico">
+            <FaPaperPlane />
+          </span>
+        </a>
 
-      {/* BAGIAN BAWAH */}
-      <div className="ds-side-bottom-dark">
-        <button type="button" className="ds-nav-item-dark ghost">
-          <span className="nav-ico">
+        {/* MENU MASTER DATA */}
+{/* MENU MASTER DATA */}
+<a
+  className={
+    "ds-nav-item " + (activeMenu === "datamaster" ? "active" : "")
+  }
+  data-label="Master Data"
+  onClick={() => setActiveMenu("datamaster")}
+>
+  <span className="ico">
+    <FaFileAlt />
+  </span>
+</a>
+
+
+        {/* MENU LAPORAN */}
+        <a className="ds-nav-item" data-label="Laporan Manajemen">
+          <span className="ico">
             <FaUsers />
           </span>
-          <span className="nav-label">Pengguna</span>
-        </button>
+        </a>
+      </nav>
 
-        <button type="button" className="ds-logout-btn">
-          <span className="nav-ico">
-            <FaPowerOff />
+      {/* ✅ NAV PENGATURAN DI POJOK KIRI BAWAH */}
+      <div className="ds-side-bottom">
+        <a
+          className={
+            "ds-nav-item " + (activeMenu === "pengaturan" ? "active" : "")
+          }
+          data-label="Pengaturan"
+          onClick={() => setActiveMenu && setActiveMenu("pengaturan")}
+        >
+          <span className="ico">
+            <FaCog />
           </span>
-          <span className="nav-label">Logout</span>
-        </button>
+        </a>
       </div>
     </aside>
   );
