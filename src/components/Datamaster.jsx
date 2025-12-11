@@ -1,262 +1,11 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import "./DataMaster.css";
 import { FaSearch, FaPlus, FaTrash } from "react-icons/fa";
-
-// 🔹 DATA DUMMY – mengikuti produk di Transaksi
-const dummyProducts = [
-  {
-    id: 1,
-    imageUrl: "/img/minyak.png",
-    productCode: "PRD-0001",
-    barcode: "1110000000001",
-    name: "Minyak Fortune 2L",
-    category: { name: "Sembako" },
-    discountPercent: 20,
-    price: 32900,
-    stock: 60,
-    supplier: { name: "PT Sembako Jaya" },
-  },
-  {
-    id: 2,
-    imageUrl: "/img/indomie.png",
-    productCode: "PRD-0002",
-    barcode: "1110000000002",
-    name: "Mie Goreng Indomie",
-    category: { name: "Makanan" },
-    discountPercent: 0,
-    price: 3500,
-    stock: 110,
-    supplier: { name: "PT Indofood" },
-  },
-  {
-    id: 3,
-    imageUrl: "/img/beras.png",
-    productCode: "PRD-0003",
-    barcode: "1110000000003",
-    name: "Beras Ramos 5Kg",
-    category: { name: "Sembako" },
-    discountPercent: 10,
-    price: 78000,
-    stock: 30,
-    supplier: { name: "PT Sembako Jaya" },
-  },
-  {
-    id: 4,
-    imageUrl: "/img/sabun.png",
-    productCode: "PRD-0004",
-    barcode: "1110000000004",
-    name: "Sabun Lifebuoy 450ml",
-    category: { name: "Perawatan Tubuh" },
-    discountPercent: 0,
-    price: 20000,
-    stock: 50,
-    supplier: { name: "PT Unilever" },
-  },
-  {
-    id: 5,
-    imageUrl: "/img/aqua.png",
-    productCode: "PRD-0005",
-    barcode: "1110000000005",
-    name: "Aqua Botol 600ml",
-    category: { name: "Minuman" },
-    discountPercent: 0,
-    price: 3500,
-    stock: 200,
-    supplier: { name: "PT Tirta Investama" },
-  },
-  {
-    id: 6,
-    imageUrl: "/img/rinso.png",
-    productCode: "PRD-0006",
-    barcode: "1110000000006",
-    name: "Rinso 900gr",
-    category: { name: "Kebutuhan Rumah Tangga" },
-    discountPercent: 5,
-    price: 24000,
-    stock: 80,
-    supplier: { name: "PT Unilever" },
-  },
-  {
-    id: 7,
-    imageUrl: "/img/gula.png",
-    productCode: "PRD-0007",
-    barcode: "1110000000007",
-    name: "Gula Pasir 1Kg",
-    category: { name: "Sembako" },
-    discountPercent: 0,
-    price: 14000,
-    stock: 40,
-    supplier: { name: "PT Gula Nusantara" },
-  },
-  {
-    id: 8,
-    imageUrl: "/img/telur.png",
-    productCode: "PRD-0008",
-    barcode: "1110000000008",
-    name: "Telur Ayam 1Kg",
-    category: { name: "Sembako" },
-    discountPercent: 0,
-    price: 28000,
-    stock: 50,
-    supplier: { name: "PT Peternakan Jaya" },
-  },
-  {
-    id: 9,
-    imageUrl: "/img/dancow.png",
-    productCode: "PRD-0009",
-    barcode: "1110000000009",
-    name: "Susu Dancow 400gr",
-    category: { name: "Produk Bayi" },
-    discountPercent: 0,
-    price: 52000,
-    stock: 30,
-    supplier: { name: "PT Nestle Indonesia" },
-  },
-  {
-    id: 10,
-    imageUrl: "/img/choki.png",
-    productCode: "PRD-0010",
-    barcode: "1110000000010",
-    name: "Choki-Choki 5pc",
-    category: { name: "Snack" },
-    discountPercent: 0,
-    price: 6000,
-    stock: 100,
-    supplier: { name: "PT Mayora" },
-  },
-  {
-    id: 11,
-    imageUrl: "/img/kecap.png",
-    productCode: "PRD-0011",
-    barcode: "1110000000011",
-    name: "Kecap ABC 600ml",
-    category: { name: "Bumbu Dapur" },
-    discountPercent: 0,
-    price: 18000,
-    stock: 90,
-    supplier: { name: "PT ABC" },
-  },
-  {
-    id: 12,
-    imageUrl: "/img/tepung.png",
-    productCode: "PRD-0012",
-    barcode: "1110000000012",
-    name: "Tepung Segitiga Biru 1Kg",
-    category: { name: "Sembako" },
-    discountPercent: 0,
-    price: 12500,
-    stock: 70,
-    supplier: { name: "PT Bogasari" },
-  },
-  {
-    id: 13,
-    imageUrl: "/img/sprite.png",
-    productCode: "PRD-0013",
-    barcode: "1110000000013",
-    name: "Sprite Botol 390ml",
-    category: { name: "Minuman" },
-    discountPercent: 0,
-    price: 4500,
-    stock: 150,
-    supplier: { name: "PT Coca Cola" },
-  },
-  {
-    id: 14,
-    imageUrl: "/img/sarden.png",
-    productCode: "PRD-0014",
-    barcode: "1110000000014",
-    name: "Sarden ABC 425gr",
-    category: { name: "Makanan" },
-    discountPercent: 0,
-    price: 22000,
-    stock: 45,
-    supplier: { name: "PT ABC" },
-  },
-  {
-    id: 15,
-    imageUrl: "/img/pucuk.png",
-    productCode: "PRD-0015",
-    barcode: "1110000000015",
-    name: "Teh Pucuk 500ml",
-    category: { name: "Minuman" },
-    discountPercent: 0,
-    price: 4000,
-    stock: 160,
-    supplier: { name: "PT Mayora" },
-  },
-  {
-    id: 16,
-    imageUrl: "/img/gas.png",
-    productCode: "PRD-0016",
-    barcode: "1110000000016",
-    name: "Gas Elpiji 3Kg",
-    category: { name: "Kebutuhan Rumah Tangga" },
-    discountPercent: 0,
-    price: 23000,
-    stock: 25,
-    supplier: { name: "Pertamina" },
-  },
-  {
-    id: 17,
-    imageUrl: "/img/roti.png",
-    productCode: "PRD-0017",
-    barcode: "1110000000017",
-    name: "Roti Tawar Sari Roti",
-    category: { name: "Makanan" },
-    discountPercent: 0,
-    price: 16500,
-    stock: 35,
-    supplier: { name: "PT Nippon Indosari" },
-  },
-  {
-    id: 18,
-    imageUrl: "/img/ultramilk.png",
-    productCode: "PRD-0018",
-    barcode: "1110000000018",
-    name: "Susu Ultramilk 1L",
-    category: { name: "Minuman" },
-    discountPercent: 0,
-    price: 19500,
-    stock: 45,
-    supplier: { name: "PT Ultrajaya" },
-  },
-  {
-    id: 19,
-    imageUrl: "/img/silverqueen.png",
-    productCode: "PRD-0019",
-    barcode: "1110000000019",
-    name: "SilverQueen 65gr",
-    category: { name: "Snack" },
-    discountPercent: 0,
-    price: 14500,
-    stock: 60,
-    supplier: { name: "PT Petra" },
-  },
-  {
-    id: 20,
-    imageUrl: "/img/downy.png",
-    productCode: "PRD-0020",
-    barcode: "1110000000020",
-    name: "Downy 650ml",
-    category: { name: "Perawatan Kain" },
-    discountPercent: 0,
-    price: 21000,
-    stock: 40,
-    supplier: { name: "PT P&G" },
-  },
-  {
-    id: 21,
-    imageUrl: "/img/japotamadu.png",
-    productCode: "PRD-0021",
-    barcode: "1110000000021",
-    name: "Japota Honey Butter",
-    category: { name: "Snack" },
-    discountPercent: 0,
-    price: 23000,
-    stock: 25,
-    supplier: { name: "PT Calbee" },
-  },
-];
+import { api } from "../api";
+import AddProductModal from "./AddProductModal";
+import EditProductModal from "./EditProductModal";
+import AddUserModal from "./AddUserModal";
+import EditUserModal from "./EditUserModal";
 
 export default function DataMaster() {
   const [activeTab, setActiveTab] = useState("produk");
@@ -264,27 +13,458 @@ export default function DataMaster() {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
-  const products = dummyProducts;
-  const totalProduk = products.length;
+  // 🔹 STATE untuk data dari API
+  const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [productUnits, setProductUnits] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  // 🔍 filter pencarian (nama, kode produk, barcode)
-  const filteredProducts = useMemo(() => {
-    const s = search.trim().toLowerCase();
-    if (!s) return products;
+  // 🔹 STATE untuk modal
+  const [showAddProductModal, setShowAddProductModal] = useState(false);
+  const [showEditProductModal, setShowEditProductModal] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
 
-    return products.filter((p) => {
-      const name = (p.name ?? "").toLowerCase();
-      const code = (p.productCode ?? "").toLowerCase();
-      const barcode = (p.barcode ?? "").toLowerCase();
-      return name.includes(s) || code.includes(s) || barcode.includes(s);
-    });
-  }, [search, products]);
+  // 🔹 STATE untuk modal user
+  const [showAddUserModal, setShowAddUserModal] = useState(false);
+  const [showEditUserModal, setShowEditUserModal] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
 
-  // PAGINATION (mengikuti Transaksi)
+  // 🔹 FETCH DATA berdasarkan tab aktif
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      if (activeTab === "produk") {
+        const searchQuery = search.trim();
+        const endpoint = searchQuery
+          ? `/admin/products/search?q=${encodeURIComponent(searchQuery)}`
+          : "/admin/products";
+        const res = await api.get(endpoint);
+        setProducts(res.data);
+      } else if (activeTab === "kategori") {
+        const searchQuery = search.trim();
+        const endpoint = searchQuery
+          ? `/admin/categories/search?q=${encodeURIComponent(searchQuery)}`
+          : "/admin/categories";
+        const res = await api.get(endpoint);
+        setCategories(res.data);
+      } else if (activeTab === "user") {
+        const searchQuery = search.trim();
+        const endpoint = searchQuery
+          ? `/admin/Users/search?q=${encodeURIComponent(searchQuery)}`
+          : "/admin/users";
+        const res = await api.get(endpoint);
+        setUsers(res.data);
+      } else if (activeTab === "satuan") {
+        const searchQuery = search.trim();
+        const endpoint = searchQuery
+          ? `/admin/products-units/search?q=${encodeURIComponent(searchQuery)}`
+          : "/admin/product-units/all";
+        const res = await api.get(endpoint);
+        setProductUnits(res.data);
+      }
+    } catch (err) {
+      console.error("Error fetching data:", err);
+      setError("Gagal memuat data. Silakan coba lagi.");
+    } finally {
+      setLoading(false);
+    }
+  }, [activeTab, search]);
+
+  // 🔹 Fetch data saat tab atau search berubah
+  useEffect(() => {
+    const debounceTimer = setTimeout(() => {
+      fetchData();
+    }, 300); // debounce untuk search
+
+    return () => clearTimeout(debounceTimer);
+  }, [fetchData]);
+
+  // 🔹 Reset pagination saat tab berubah
+  useEffect(() => {
+    setCurrentPage(1);
+    setSearch("");
+  }, [activeTab]);
+
+  // 🔹 Handle delete produk
+  const handleDeleteProduct = async (id) => {
+    if (!window.confirm("Yakin ingin menghapus produk ini?")) return;
+    try {
+      await api.delete(`/admin/products/${id}`);
+      fetchData(); // refresh data
+    } catch (err) {
+      console.error("Error deleting product:", err);
+      alert("Gagal menghapus produk.");
+    }
+  };
+
+  // 🔹 Handle delete kategori
+  const handleDeleteCategory = async (id) => {
+    if (!window.confirm("Yakin ingin menghapus kategori ini?")) return;
+    try {
+      await api.delete(`/admin/categories/${id}`);
+      fetchData();
+    } catch (err) {
+      console.error("Error deleting category:", err);
+      alert("Gagal menghapus kategori.");
+    }
+  };
+
+  // 🔹 Handle delete user
+  const handleDeleteUser = async (id) => {
+    if (!window.confirm("Yakin ingin menghapus user ini?")) return;
+    try {
+      await api.delete(`/admin/users/${id}`);
+      fetchData();
+    } catch (err) {
+      console.error("Error deleting user:", err);
+      alert("Gagal menghapus user.");
+    }
+  };
+
+  // 🔹 Handle delete satuan produk
+  const handleDeleteUnit = async (id) => {
+    if (!window.confirm("Yakin ingin menghapus satuan ini?")) return;
+    try {
+      await api.delete(`/admin/unitId/${id}`);
+      fetchData();
+    } catch (err) {
+      console.error("Error deleting unit:", err);
+      alert("Gagal menghapus satuan.");
+    }
+  };
+
+  // 🔹 Handle export Excel (produk)
+  const handleExportExcel = async () => {
+    try {
+      const res = await api.get("/admin/export-products-excel", {
+        responseType: "blob",
+      });
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "produk.xlsx");
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (err) {
+      console.error("Error exporting Excel:", err);
+      alert("Gagal export Excel.");
+    }
+  };
+
+  // 🔹 Handle copy data
+  const handleCopy = () => {
+    let dataToCopy = [];
+    if (activeTab === "produk") {
+      dataToCopy = products.map(p =>
+        `${p.productCode}\t${p.name}\t${p.category?.name || ""}\t${p.price}\t${p.stock}`
+      );
+    } else if (activeTab === "kategori") {
+      dataToCopy = categories.map(c => `${c.id}\t${c.name}`);
+    } else if (activeTab === "user") {
+      dataToCopy = users.map(u => `${u.username}\t${u.email}\t${u.role}`);
+    } else if (activeTab === "satuan") {
+      dataToCopy = productUnits.map(u =>
+        `${u.product?.name || ""}\t${u.unitName}\t${u.multiplier}\t${u.price}`
+      );
+    }
+    navigator.clipboard.writeText(dataToCopy.join("\n"));
+    alert("Data berhasil disalin!");
+  };
+
+  // 🔹 Ambil data sesuai tab aktif
+  const getCurrentData = () => {
+    switch (activeTab) {
+      case "produk": return products;
+      case "kategori": return categories;
+      case "user": return users;
+      case "satuan": return productUnits;
+      default: return [];
+    }
+  };
+
+  const currentData = getCurrentData();
+  const totalItems = currentData.length;
+
+
+  // PAGINATION berdasarkan currentData (sudah difilter dari API)
   const indexOfLast = currentPage * itemsPerPage;
   const indexOfFirst = indexOfLast - itemsPerPage;
-  const currentProducts = filteredProducts.slice(indexOfFirst, indexOfLast);
-  const totalPages = Math.max(1, Math.ceil(filteredProducts.length / itemsPerPage));
+  const paginatedData = currentData.slice(indexOfFirst, indexOfLast);
+  const totalPages = Math.max(1, Math.ceil(currentData.length / itemsPerPage));
+
+  // 🔹 Get placeholder text untuk search
+  const getSearchPlaceholder = () => {
+    switch (activeTab) {
+      case "produk": return "Cari Produk...";
+      case "kategori": return "Cari Kategori...";
+      case "user": return "Cari User...";
+      case "satuan": return "Cari Satuan...";
+      default: return "Cari...";
+    }
+  };
+
+  // 🔹 Get add button text
+  const getAddButtonText = () => {
+    switch (activeTab) {
+      case "produk": return "Tambah Produk";
+      case "kategori": return "Tambah Kategori";
+      case "user": return "Tambah User";
+      case "satuan": return "Tambah Satuan";
+      default: return "Tambah";
+    }
+  };
+
+  // 🔹 Get total label
+  const getTotalLabel = () => {
+    switch (activeTab) {
+      case "produk": return "Total Produk";
+      case "kategori": return "Total Kategori";
+      case "user": return "Total User";
+      case "satuan": return "Total Satuan";
+      default: return "Total";
+    }
+  };
+
+  // 🔹 Render table header berdasarkan tab
+  const renderTableHeader = () => {
+    switch (activeTab) {
+      case "produk":
+        return (
+          <tr>
+            <th className="dm-no-head">No</th>
+            <th>Gambar</th>
+            <th>Kode Produk & Barcode</th>
+            <th>Nama Produk</th>
+            <th>Kategori</th>
+            <th>Harga Beli</th>
+            <th>Harga Jual</th>
+            <th>Stok</th>
+            <th>Supplier</th>
+            <th>Aksi</th>
+          </tr>
+        );
+      case "kategori":
+        return (
+          <tr>
+            <th className="dm-no-head">No</th>
+            <th>Gambar</th>
+            <th>Nama Kategori</th>
+            <th>Jumlah Produk</th>
+            <th>Dibuat Pada</th>
+            <th>Aksi</th>
+          </tr>
+        );
+      case "user":
+        return (
+          <tr>
+            <th className="dm-no-head">No</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th>Dibuat Pada</th>
+            <th>Aksi</th>
+          </tr>
+        );
+      case "satuan":
+        return (
+          <tr>
+            <th className="dm-no-head">No</th>
+            <th>Nama Produk</th>
+            <th>Nama Satuan</th>
+            <th>Pcs per Satuan</th>
+            <th>Harga per Unit</th>
+            <th>Aksi</th>
+          </tr>
+        );
+      default:
+        return null;
+    }
+  };
+
+  // 🔹 Render table row berdasarkan tab
+  const renderTableRow = (item, index) => {
+    switch (activeTab) {
+      case "produk":
+        return (
+          <tr key={item.id}>
+            <td className="dm-no-cell">{indexOfFirst + index + 1}</td>
+            <td className="dm-img-cell">
+              <img
+                src={item.imageUrl || "/img/placeholder.png"}
+                alt={item.name}
+                className="dm-img"
+              />
+            </td>
+            <td className="dm-code-cell">
+              {item.productCode} <br />
+              <small>{item.barcode}</small>
+            </td>
+            <td>{item.name}</td>
+            <td>{item.category?.name || "-"}</td>
+            <td className="dm-price">
+              {"Rp " + Number(item.costPrice ?? 0).toLocaleString("id-ID")}
+            </td>
+            <td className="dm-price">
+              {"Rp " + Number(item.price ?? 0).toLocaleString("id-ID")}
+            </td>
+            <td>{item.stock}</td>
+            <td>{item.supplier?.name || "-"}</td>
+            <td>
+              <div className="dm-action-group">
+                <button
+                  className="dm-action-card dm-action-edit"
+                  onClick={() => {
+                    setSelectedProduct(item);
+                    setShowEditProductModal(true);
+                  }}
+                >
+                  <span className="dm-action-icon">✏️</span>
+                  <span className="dm-action-label">Edit</span>
+                </button>
+                <button
+                  className="dm-action-card dm-action-delete"
+                  onClick={() => handleDeleteProduct(item.id)}
+                >
+                  <span className="dm-action-icon"><FaTrash /></span>
+                  <span className="dm-action-label">Hapus</span>
+                </button>
+              </div>
+            </td>
+          </tr>
+        );
+      case "kategori":
+        return (
+          <tr key={item.id}>
+            <td className="dm-no-cell">{indexOfFirst + index + 1}</td>
+            <td className="dm-img-cell">
+              {item.image ? (
+                <img
+                  src={`/admin/category/${item.id}/image`}
+                  alt={item.name}
+                  className="dm-img"
+                />
+              ) : (
+                <div className="dm-img" style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "#94a3b8",
+                  fontSize: "10px"
+                }}>
+                  No Img
+                </div>
+              )}
+            </td>
+            <td>{item.name}</td>
+            <td>{item._count?.products || 0} Produk</td>
+            <td>{item.createdAt ? new Date(item.createdAt).toLocaleDateString("id-ID") : "-"}</td>
+            <td>
+              <div className="dm-action-group">
+                <button className="dm-action-card dm-action-edit">
+                  <span className="dm-action-icon">✏️</span>
+                  <span className="dm-action-label">Edit</span>
+                </button>
+                <button
+                  className="dm-action-card dm-action-delete"
+                  onClick={() => handleDeleteCategory(item.id)}
+                >
+                  <span className="dm-action-icon"><FaTrash /></span>
+                  <span className="dm-action-label">Hapus</span>
+                </button>
+              </div>
+            </td>
+          </tr>
+        );
+      case "user":
+        return (
+          <tr key={item.id}>
+            <td className="dm-no-cell">{indexOfFirst + index + 1}</td>
+            <td>{item.username}</td>
+            <td>{item.email}</td>
+            <td>
+              <span style={{
+                padding: "4px 10px",
+                borderRadius: "6px",
+                background: item.role === "ADMIN" ? "#fef3c7" : "#e0f2fe",
+                color: item.role === "ADMIN" ? "#f59e0b" : "#0ea5e9",
+                fontWeight: 600,
+                fontSize: "12px"
+              }}>
+                {item.role}
+              </span>
+            </td>
+            <td>
+              <span style={{
+                padding: "4px 10px",
+                borderRadius: "6px",
+                background: item.status === "AKTIF" ? "#dcfce7" : "#fee2e2",
+                color: item.status === "AKTIF" ? "#22c55e" : "#ef4444",
+                fontWeight: 600,
+                fontSize: "12px"
+              }}>
+                {item.status}
+              </span>
+            </td>
+            <td>{item.createdAt ? new Date(item.createdAt).toLocaleDateString("id-ID") : "-"}</td>
+            <td>
+              <div className="dm-action-group">
+                <button
+                  className="dm-action-card dm-action-edit"
+                  onClick={() => {
+                    setSelectedUser(item);
+                    setShowEditUserModal(true);
+                  }}
+                >
+                  <span className="dm-action-icon">✏️</span>
+                  <span className="dm-action-label">Edit</span>
+                </button>
+                <button
+                  className="dm-action-card dm-action-delete"
+                  onClick={() => handleDeleteUser(item.id)}
+                >
+                  <span className="dm-action-icon"><FaTrash /></span>
+                  <span className="dm-action-label">Hapus</span>
+                </button>
+              </div>
+            </td>
+          </tr>
+        );
+      case "satuan":
+        return (
+          <tr key={item.id}>
+            <td className="dm-no-cell">{indexOfFirst + index + 1}</td>
+            <td>{item.product?.name || "-"}</td>
+            <td>{item.unitName}</td>
+            <td>{item.multiplier} Pcs</td>
+            <td className="dm-price">
+              {"Rp " + Number(item.price ?? 0).toLocaleString("id-ID")}
+            </td>
+            <td>
+              <div className="dm-action-group">
+                <button className="dm-action-card dm-action-edit">
+                  <span className="dm-action-icon">✏️</span>
+                  <span className="dm-action-label">Edit</span>
+                </button>
+                <button
+                  className="dm-action-card dm-action-delete"
+                  onClick={() => handleDeleteUnit(item.id)}
+                >
+                  <span className="dm-action-icon"><FaTrash /></span>
+                  <span className="dm-action-label">Hapus</span>
+                </button>
+              </div>
+            </td>
+          </tr>
+        );
+      default:
+        return null;
+    }
+  };
 
   return (
     <div className="dm-page">
@@ -337,7 +517,7 @@ export default function DataMaster() {
         </div>
       </div>
 
-      {/* SEARCH + COPY/EXCEL + TAMBAH + TOTAL PRODUK */}
+      {/* SEARCH + COPY/EXCEL + TAMBAH + TOTAL */}
       <div className="dm-search-row">
         {/* SEARCH */}
         <div className="dm-search-field">
@@ -345,7 +525,7 @@ export default function DataMaster() {
           <input
             type="text"
             className="dm-search-input"
-            placeholder="Cari Produk"
+            placeholder={getSearchPlaceholder()}
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
@@ -356,106 +536,100 @@ export default function DataMaster() {
 
         {/* COPY & EXCEL */}
         <div className="dm-header-actions">
-          <button className="dm-top-btn">Copy</button>
-          <button className="dm-top-btn">Excel</button>
+          <button className="dm-top-btn" onClick={handleCopy}>Copy</button>
+          {activeTab === "produk" && (
+            <button className="dm-top-btn" onClick={handleExportExcel}>Excel</button>
+          )}
         </div>
 
-        {/* TAMBAH PRODUK */}
-        <button className="dm-top-btn dm-top-btn-orange dm-add-btn">
+        {/* TAMBAH BUTTON */}
+        <button
+          className="dm-top-btn dm-top-btn-orange dm-add-btn"
+          onClick={() => {
+            if (activeTab === "produk") {
+              setShowAddProductModal(true);
+            } else if (activeTab === "user") {
+              setShowAddUserModal(true);
+            }
+            // TODO: tambah modal untuk tab lainnya
+          }}
+        >
           <span className="dm-plus">
             <FaPlus />
           </span>
-          <span>Tambah Produk</span>
+          <span>{getAddButtonText()}</span>
         </button>
 
-        {/* TOTAL PRODUK */}
+        {/* TOTAL */}
         <div className="dm-total">
-          Total Produk : <span>{totalProduk}</span>
+          {getTotalLabel()} : <span>{totalItems}</span>
         </div>
       </div>
 
+      {/* LOADING STATE */}
+      {loading && (
+        <div style={{
+          textAlign: "center",
+          padding: "40px",
+          color: "#64748b",
+          fontSize: "14px"
+        }}>
+          Memuat data...
+        </div>
+      )}
+
+      {/* ERROR STATE */}
+      {error && (
+        <div style={{
+          textAlign: "center",
+          padding: "20px",
+          color: "#ef4444",
+          background: "#fee2e2",
+          borderRadius: "12px",
+          margin: "10px 0"
+        }}>
+          {error}
+          <button
+            onClick={fetchData}
+            style={{ marginLeft: "10px", cursor: "pointer" }}
+          >
+            Coba Lagi
+          </button>
+        </div>
+      )}
+
       {/* TABLE */}
-      <div className="dm-table-wrapper">
-        <table className="dm-table">
-          <thead>
-            <tr>
-              <th className="dm-no-head">No</th>
-              <th>Gambar</th>
-              <th>Kode Produk & Barcode</th>
-              <th>Nama Produk</th>
-              <th>Kategori</th>
-              <th>Diskon</th>
-              <th>Harga Jual</th>
-              <th>Stok</th>
-              <th>Supplier</th>
-              <th>Aksi</th>
-            </tr>
-          </thead>
+      {!loading && !error && (
+        <div className="dm-table-wrapper">
+          <table className="dm-table">
+            <thead>
+              {renderTableHeader()}
+            </thead>
 
-          <tbody>
-            {currentProducts.map((item, index) => (
-              <tr key={item.id}>
-                <td className="dm-no-cell">{indexOfFirst + index + 1}</td>
+            <tbody>
+              {paginatedData.map((item, index) => renderTableRow(item, index))}
 
-                <td className="dm-img-cell">
-                  <img src={item.imageUrl} alt={item.name} className="dm-img" />
-                </td>
+              {paginatedData.length === 0 && (
+                <tr>
+                  <td colSpan={10} style={{ textAlign: "center", padding: "20px" }}>
+                    Tidak ada data.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
 
-                <td className="dm-code-cell">
-                  {item.productCode} <br />
-                  <small>{item.barcode}</small>
-                </td>
-
-                <td>{item.name}</td>
-                <td>{item.category?.name}</td>
-
-                <td>{item.discountPercent ? item.discountPercent + "%" : "0%"}</td>
-
-                <td className="dm-price">
-                  {"Rp " + Number(item.price ?? 0).toLocaleString("id-ID")}
-                </td>
-
-                <td>{item.stock}</td>
-                <td>{item.supplier?.name}</td>
-
-                <td>
-                  <div className="dm-action-group">
-                    <button className="dm-action-card dm-action-edit">
-                      <span className="dm-action-icon">✏️</span>
-                      <span className="dm-action-label">Edit</span>
-                    </button>
-
-                    <button className="dm-action-card dm-action-delete">
-                      <span className="dm-action-icon">
-                        <FaTrash />
-                      </span>
-                      <span className="dm-action-label">Hapus</span>
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-
-            {currentProducts.length === 0 && (
-              <tr>
-                <td colSpan={10} style={{ textAlign: "center", padding: "20px" }}>
-                  Tidak ada produk.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-
-      {/* PAGINATION – mengikuti gaya Transaksi */}
+      {/* PAGINATION */}
       <div className="dm-pagination">
         <div className="dm-page-info">
-          {filteredProducts.length === 0
+          {currentData.length === 0
             ? "0–0 dari 0 item"
             : `${indexOfFirst + 1}–${Math.min(
-                indexOfLast,
-                filteredProducts.length
-              )} dari ${filteredProducts.length} item`}
+              indexOfLast,
+              currentData.length
+            )} dari ${currentData.length} item`}
         </div>
 
         <div className="dm-pages">
@@ -504,6 +678,51 @@ export default function DataMaster() {
           <span>items per page</span>
         </div>
       </div>
+
+      {/* ADD PRODUCT MODAL */}
+      <AddProductModal
+        isOpen={showAddProductModal}
+        onClose={() => setShowAddProductModal(false)}
+        onSuccess={() => {
+          fetchData(); // Refresh data setelah berhasil tambah produk
+        }}
+      />
+
+      {/* EDIT PRODUCT MODAL */}
+      <EditProductModal
+        isOpen={showEditProductModal}
+        onClose={() => {
+          setShowEditProductModal(false);
+          setSelectedProduct(null);
+        }}
+        onSuccess={() => {
+          fetchData(); // Refresh data setelah berhasil edit produk
+        }}
+        product={selectedProduct}
+      />
+
+      {/* ADD USER MODAL */}
+      <AddUserModal
+        isOpen={showAddUserModal}
+        onClose={() => setShowAddUserModal(false)}
+        onSuccess={() => {
+          fetchData(); // Refresh data setelah berhasil tambah user
+        }}
+      />
+
+      {/* EDIT USER MODAL */}
+      <EditUserModal
+        isOpen={showEditUserModal}
+        onClose={() => {
+          setShowEditUserModal(false);
+          setSelectedUser(null);
+        }}
+        onSuccess={() => {
+          fetchData(); // Refresh data setelah berhasil edit user
+        }}
+        user={selectedUser}
+      />
     </div>
   );
 }
+
