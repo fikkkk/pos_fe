@@ -23,6 +23,7 @@
   border: none;
   box-shadow: none;
   overflow: visible;
+  padding-bottom: 24px;
 }
 
 /* ==========================
@@ -34,8 +35,8 @@
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 16px;
-  padding: 20px 24px 16px;
-  overflow: hidden;
+  padding: 12px 24px 8px;
+  overflow: visible;
 }
 
 .dm-tabs {
@@ -130,10 +131,9 @@
 .dm-search-row {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
   gap: 16px;
   flex-wrap: wrap;
-  padding: 16px 24px;
+  padding: 10px 24px;
   background: transparent;
 }
 
@@ -263,14 +263,17 @@
 /* ==========================
    CONTENT BOX - Table + Pagination Section
 ==========================*/
+/* ==========================
+   CONTENT BOX - Table + Pagination Section
+==========================*/
 .dm-content-box {
+  flex: 1;
   display: flex;
   flex-direction: column;
   overflow: hidden;
   background: transparent;
   border-radius: 16px;
-  height: calc(100vh - 450px);
-  min-height: 350px;
+  min-height: 0;
 }
 
 /* ==========================
@@ -322,8 +325,10 @@
   justify-content: space-between;
   align-items: center;
   padding: 18px 24px;
-  background: transparent;
-  border-top: 1px solid #e2e8f0;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  margin-top: 16px;
   flex-shrink: 0;
 }
 
@@ -337,7 +342,7 @@
 
 .dm-table th {
   text-align: left;
-  padding: 16px 20px;
+  padding: 12px 20px;
   font-size: 12px;
   font-weight: 700;
   color: #64748b;
@@ -379,7 +384,7 @@
 }
 
 .dm-table td {
-  padding: 16px 20px;
+  padding: 12px 20px;
   font-size: 13px;
   color: #334155;
   vertical-align: middle;
@@ -762,8 +767,9 @@
 
 /* Pagination */
 .dashboard.dark .dm-pagination {
-  background: transparent;
-  border-top: 1px solid #334155;
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 16px;
 }
 
 .dashboard.dark .dm-page-info {

@@ -10,6 +10,7 @@ import AddCategoryModal from "./AddCategoryModal";
 import EditCategoryModal from "./EditCategoryModal";
 import AddUnitModal from "./AddUnitModal";
 import EditUnitModal from "./EditUnitModal";
+import DeleteConfirmationModal from "./DeleteConfirmationModal";
 
 export default function DataMaster() {
   const [activeTab, setActiveTab] = useState("produk");
@@ -45,8 +46,12 @@ export default function DataMaster() {
   const [showEditUnitModal, setShowEditUnitModal] = useState(false);
   const [selectedUnit, setSelectedUnit] = useState(null);
 
-  // 🔹 STATE untuk notifikasi sukses
-  const [notification, setNotification] = useState({ show: false, message: "", type: "success" });
+  // 🔹 STATE untuk notifikasi sukses / error
+  const [notification, setNotification] = useState({
+    show: false,
+    message: "",
+    type: "success",
+  });
 
   // 🔹 Function untuk menampilkan notifikasi
   const showNotification = (message, type = "success") => {
@@ -98,66 +103,99 @@ export default function DataMaster() {
     }
   }, [activeTab, search]);
 
-  // 🔹 Fetch data saat tab atau search berubah
+  // 🔹 Fetch data saat tab atau search berubah (debounce 300ms)
   useEffect(() => {
     const debounceTimer = setTimeout(() => {
       fetchData();
-    }, 300); // debounce untuk search
+    }, 300);
 
     return () => clearTimeout(debounceTimer);
   }, [fetchData]);
 
-  // 🔹 Reset pagination saat tab berubah
+  // 🔹 Reset pagination + search saat tab berubah
   useEffect(() => {
     setCurrentPage(1);
     setSearch("");
   }, [activeTab]);
 
-  // 🔹 Handle delete produk
-  const handleDeleteProduct = async (id) => {
-    if (!window.confirm("Yakin ingin menghapus produk ini?")) return;
-    try {
-      await api.delete(`/admin/products/${id}`);
-      fetchData(); // refresh data
-    } catch (err) {
-      console.error("Error deleting product:", err);
-      alert("Gagal menghapus produk.");
-    }
+  // 🔹 DELETE MODAL STATE
+  const [deleteModal, setDeleteModal] = useState({
+    show: false,
+    id: null,
+    type: null, // "product" | "category" | "user" | "unit"
+    title: "",
+    message: "",
+  });
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  // 🔹 Generic Delete Handlers (Open Modal)
+  const handleDeleteProduct = (id) => {
+    setDeleteModal({
+      show: true,
+      id,
+      type: "product",
+      title: "Hapus Produk",
+      message: "Apakah Anda yakin ingin menghapus produk ini? Data yang dihapus tidak dapat dikembalikan.",
+    });
   };
 
-  // 🔹 Handle delete kategori
-  const handleDeleteCategory = async (id) => {
-    if (!window.confirm("Yakin ingin menghapus kategori ini?")) return;
-    try {
-      await api.delete(`/admin/categories/${id}`);
-      fetchData();
-    } catch (err) {
-      console.error("Error deleting category:", err);
-      alert("Gagal menghapus kategori.");
-    }
+  const handleDeleteCategory = (id) => {
+    setDeleteModal({
+      show: true,
+      id,
+      type: "category",
+      title: "Hapus Kategori",
+      message: "Apakah Anda yakin ingin menghapus kategori ini? Semua produk dalam kategori ini mungkin akan terpengaruh.",
+    });
   };
 
-  // 🔹 Handle delete user
-  const handleDeleteUser = async (id) => {
-    if (!window.confirm("Yakin ingin menghapus user ini?")) return;
-    try {
-      await api.delete(`/admin/users/${id}`);
-      fetchData();
-    } catch (err) {
-      console.error("Error deleting user:", err);
-      alert("Gagal menghapus user.");
-    }
+  const handleDeleteUser = (id) => {
+    setDeleteModal({
+      show: true,
+      id,
+      type: "user",
+      title: "Hapus User",
+      message: "Apakah Anda yakin ingin menghapus user ini? User ini tidak akan bisa login lagi.",
+    });
   };
 
-  // 🔹 Handle delete satuan produk
-  const handleDeleteUnit = async (id) => {
-    if (!window.confirm("Yakin ingin menghapus satuan ini?")) return;
+  const handleDeleteUnit = (id) => {
+    setDeleteModal({
+      show: true,
+      id,
+      type: "unit",
+      title: "Hapus Satuan",
+      message: "Apakah Anda yakin ingin menghapus satuan ini?",
+    });
+  };
+
+  // 🔹 CONFIRM DELETE ACTION
+  const confirmDelete = async () => {
+    if (!deleteModal.id || !deleteModal.type) return;
+
+    setIsDeleting(true);
     try {
-      await api.delete(`/admin/unitId/${id}`);
-      fetchData();
+      if (deleteModal.type === "product") {
+        await api.delete(`/admin/products/${deleteModal.id}`);
+        showNotification("Produk berhasil dihapus!", "success");
+      } else if (deleteModal.type === "category") {
+        await api.delete(`/admin/categories/${deleteModal.id}`);
+        showNotification("Kategori berhasil dihapus!", "success");
+      } else if (deleteModal.type === "user") {
+        await api.delete(`/admin/users/${deleteModal.id}`);
+        showNotification("User berhasil dihapus!", "success");
+      } else if (deleteModal.type === "unit") {
+        await api.delete(`/admin/unitId/${deleteModal.id}`);
+        showNotification("Satuan berhasil dihapus!", "success");
+      }
+
+      fetchData(); // Refresh data
+      setDeleteModal({ show: false, id: null, type: null, title: "", message: "" });
     } catch (err) {
-      console.error("Error deleting unit:", err);
-      alert("Gagal menghapus satuan.");
+      console.error("Error deleting:", err);
+      showNotification("Gagal menghapus data.", "error");
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -176,7 +214,7 @@ export default function DataMaster() {
       link.remove();
     } catch (err) {
       console.error("Error exporting Excel:", err);
-      alert("Gagal export Excel.");
+      showNotification("Gagal export Excel.", "error");
     }
   };
 
@@ -184,73 +222,105 @@ export default function DataMaster() {
   const handleCopy = () => {
     let dataToCopy = [];
     if (activeTab === "produk") {
-      dataToCopy = products.map(p =>
-        `${p.productCode}\t${p.name}\t${p.category?.name || ""}\t${p.price}\t${p.stock}`
+      dataToCopy = products.map(
+        (p) =>
+          `${p.productCode}\t${p.name}\t${p.category?.name || ""}\t${p.price}\t${p.stock}`
       );
     } else if (activeTab === "kategori") {
-      dataToCopy = categories.map(c => `${c.id}\t${c.name}`);
+      dataToCopy = categories.map((c) => `${c.id}\t${c.name}`);
     } else if (activeTab === "user") {
-      dataToCopy = users.map(u => `${u.username}\t${u.email}\t${u.role}`);
+      dataToCopy = users.map((u) => `${u.username}\t${u.email}\t${u.role}`);
     } else if (activeTab === "satuan") {
-      dataToCopy = productUnits.map(u =>
-        `${u.product?.name || ""}\t${u.unitName}\t${u.multiplier}\t${u.price}`
+      dataToCopy = productUnits.map(
+        (u) =>
+          `${u.product?.name || ""}\t${u.unitName}\t${u.multiplier}\t${u.price}`
       );
     }
     navigator.clipboard.writeText(dataToCopy.join("\n"));
-    alert("Data berhasil disalin!");
+    showNotification("Data berhasil disalin!", "success");
   };
 
   // 🔹 Ambil data sesuai tab aktif
   const getCurrentData = () => {
     switch (activeTab) {
-      case "produk": return products;
-      case "kategori": return categories;
-      case "user": return users;
-      case "satuan": return productUnits;
-      default: return [];
+      case "produk":
+        return products;
+      case "kategori":
+        return categories;
+      case "user":
+        return users;
+      case "satuan":
+        return productUnits;
+      default:
+        return [];
     }
   };
 
   const currentData = getCurrentData();
   const totalItems = currentData.length;
 
+  // 🔹 Hitung total halaman
+  const totalPages = Math.max(1, Math.ceil(totalItems / itemsPerPage));
 
-  // PAGINATION berdasarkan currentData (sudah difilter dari API)
+  // 🔹 FIX PAGINATION:
+  // Kalau setelah delete / filter jumlah data berkurang dan currentPage > totalPages,
+  // paksa currentPage kembali ke halaman terakhir yang valid.
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages]);
+
+  // 🔹 Pagination berdasarkan currentData (sudah difilter dari API)
   const indexOfLast = currentPage * itemsPerPage;
   const indexOfFirst = indexOfLast - itemsPerPage;
   const paginatedData = currentData.slice(indexOfFirst, indexOfLast);
-  const totalPages = Math.max(1, Math.ceil(currentData.length / itemsPerPage));
 
-  // 🔹 Get placeholder text untuk search
+  // 🔹 Placeholder search
   const getSearchPlaceholder = () => {
     switch (activeTab) {
-      case "produk": return "Cari Produk...";
-      case "kategori": return "Cari Kategori...";
-      case "user": return "Cari User...";
-      case "satuan": return "Cari Satuan...";
-      default: return "Cari...";
+      case "produk":
+        return "Cari Produk...";
+      case "kategori":
+        return "Cari Kategori...";
+      case "user":
+        return "Cari User...";
+      case "satuan":
+        return "Cari Satuan...";
+      default:
+        return "Cari...";
     }
   };
 
-  // 🔹 Get add button text
+  // 🔹 Text tombol tambah
   const getAddButtonText = () => {
     switch (activeTab) {
-      case "produk": return "Tambah Produk";
-      case "kategori": return "Tambah Kategori";
-      case "user": return "Tambah User";
-      case "satuan": return "Tambah Satuan";
-      default: return "Tambah";
+      case "produk":
+        return "Tambah Produk";
+      case "kategori":
+        return "Tambah Kategori";
+      case "user":
+        return "Tambah User";
+      case "satuan":
+        return "Tambah Satuan";
+      default:
+        return "Tambah";
     }
   };
 
-  // 🔹 Get total label
+  // 🔹 Label total
   const getTotalLabel = () => {
     switch (activeTab) {
-      case "produk": return "Total Produk";
-      case "kategori": return "Total Kategori";
-      case "user": return "Total User";
-      case "satuan": return "Total Satuan";
-      default: return "Total";
+      case "produk":
+        return "Total Produk";
+      case "kategori":
+        return "Total Kategori";
+      case "user":
+        return "Total User";
+      case "satuan":
+        return "Total Satuan";
+      default:
+        return "Total";
     }
   };
 
@@ -355,7 +425,9 @@ export default function DataMaster() {
                   className="dm-action-card dm-action-delete"
                   onClick={() => handleDeleteProduct(item.id)}
                 >
-                  <span className="dm-action-icon"><FaTrash /></span>
+                  <span className="dm-action-icon">
+                    <FaTrash />
+                  </span>
                   <span className="dm-action-label">Hapus</span>
                 </button>
               </div>
@@ -374,20 +446,27 @@ export default function DataMaster() {
                   className="dm-img"
                 />
               ) : (
-                <div className="dm-img" style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  color: "#94a3b8",
-                  fontSize: "10px"
-                }}>
+                <div
+                  className="dm-img"
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "#94a3b8",
+                    fontSize: "10px",
+                  }}
+                >
                   No Img
                 </div>
               )}
             </td>
             <td>{item.name}</td>
             <td>{item._count?.products || 0} Produk</td>
-            <td>{item.createdAt ? new Date(item.createdAt).toLocaleDateString("id-ID") : "-"}</td>
+            <td>
+              {item.createdAt
+                ? new Date(item.createdAt).toLocaleDateString("id-ID")
+                : "-"}
+            </td>
             <td>
               <div className="dm-action-group">
                 <button
@@ -404,7 +483,9 @@ export default function DataMaster() {
                   className="dm-action-card dm-action-delete"
                   onClick={() => handleDeleteCategory(item.id)}
                 >
-                  <span className="dm-action-icon"><FaTrash /></span>
+                  <span className="dm-action-icon">
+                    <FaTrash />
+                  </span>
                   <span className="dm-action-label">Hapus</span>
                 </button>
               </div>
@@ -418,30 +499,40 @@ export default function DataMaster() {
             <td>{item.username}</td>
             <td>{item.email}</td>
             <td>
-              <span style={{
-                padding: "4px 10px",
-                borderRadius: "6px",
-                background: item.role === "ADMIN" ? "#fef3c7" : "#e0f2fe",
-                color: item.role === "ADMIN" ? "#f59e0b" : "#0ea5e9",
-                fontWeight: 600,
-                fontSize: "12px"
-              }}>
+              <span
+                style={{
+                  padding: "4px 10px",
+                  borderRadius: "6px",
+                  background:
+                    item.role === "ADMIN" ? "#fef3c7" : "#e0f2fe",
+                  color: item.role === "ADMIN" ? "#f59e0b" : "#0ea5e9",
+                  fontWeight: 600,
+                  fontSize: "12px",
+                }}
+              >
                 {item.role}
               </span>
             </td>
             <td>
-              <span style={{
-                padding: "4px 10px",
-                borderRadius: "6px",
-                background: item.status === "AKTIF" ? "#dcfce7" : "#fee2e2",
-                color: item.status === "AKTIF" ? "#22c55e" : "#ef4444",
-                fontWeight: 600,
-                fontSize: "12px"
-              }}>
+              <span
+                style={{
+                  padding: "4px 10px",
+                  borderRadius: "6px",
+                  background:
+                    item.status === "AKTIF" ? "#dcfce7" : "#fee2e2",
+                  color: item.status === "AKTIF" ? "#22c55e" : "#ef4444",
+                  fontWeight: 600,
+                  fontSize: "12px",
+                }}
+              >
                 {item.status}
               </span>
             </td>
-            <td>{item.createdAt ? new Date(item.createdAt).toLocaleDateString("id-ID") : "-"}</td>
+            <td>
+              {item.createdAt
+                ? new Date(item.createdAt).toLocaleDateString("id-ID")
+                : "-"}
+            </td>
             <td>
               <div className="dm-action-group">
                 <button
@@ -458,7 +549,9 @@ export default function DataMaster() {
                   className="dm-action-card dm-action-delete"
                   onClick={() => handleDeleteUser(item.id)}
                 >
-                  <span className="dm-action-icon"><FaTrash /></span>
+                  <span className="dm-action-icon">
+                    <FaTrash />
+                  </span>
                   <span className="dm-action-label">Hapus</span>
                 </button>
               </div>
@@ -491,7 +584,9 @@ export default function DataMaster() {
                   className="dm-action-card dm-action-delete"
                   onClick={() => handleDeleteUnit(item.id)}
                 >
-                  <span className="dm-action-icon"><FaTrash /></span>
+                  <span className="dm-action-icon">
+                    <FaTrash />
+                  </span>
                   <span className="dm-action-label">Hapus</span>
                 </button>
               </div>
@@ -505,35 +600,43 @@ export default function DataMaster() {
 
   return (
     <div className="dm-page">
-      {/* SUCCESS NOTIFICATION TOAST */}
+      {/* SUCCESS / ERROR NOTIFICATION TOAST */}
       {notification.show && (
-        <div className="dm-notification" style={{
-          position: "fixed",
-          top: "24px",
-          right: "24px",
-          zIndex: 9999,
-          display: "flex",
-          alignItems: "center",
-          gap: "12px",
-          padding: "16px 20px",
-          borderRadius: "16px",
-          background: notification.type === "success"
-            ? "linear-gradient(135deg, #059669 0%, #10b981 100%)"
-            : "linear-gradient(135deg, #dc2626 0%, #ef4444 100%)",
-          color: "#fff",
-          boxShadow: "0 10px 40px rgba(0, 0, 0, 0.3)",
-          animation: "slideInRight 0.4s ease-out",
-          minWidth: "300px"
-        }}>
+        <div
+          className="dm-notification"
+          style={{
+            position: "fixed",
+            top: "24px",
+            right: "24px",
+            zIndex: 9999,
+            display: "flex",
+            alignItems: "center",
+            gap: "12px",
+            padding: "16px 20px",
+            borderRadius: "16px",
+            background:
+              notification.type === "success"
+                ? "linear-gradient(135deg, #059669 0%, #10b981 100%)"
+                : "linear-gradient(135deg, #dc2626 0%, #ef4444 100%)",
+            color: "#fff",
+            boxShadow: "0 10px 40px rgba(0, 0, 0, 0.3)",
+            animation: "slideInRight 0.4s ease-out",
+            minWidth: "300px",
+          }}
+        >
           <FaCheckCircle style={{ fontSize: "24px" }} />
           <div style={{ flex: 1 }}>
             <div style={{ fontWeight: "700", fontSize: "14px" }}>
               {notification.type === "success" ? "Berhasil!" : "Error!"}
             </div>
-            <div style={{ fontSize: "13px", opacity: 0.9 }}>{notification.message}</div>
+            <div style={{ fontSize: "13px", opacity: 0.9 }}>
+              {notification.message}
+            </div>
           </div>
           <button
-            onClick={() => setNotification({ show: false, message: "", type: "success" })}
+            onClick={() =>
+              setNotification({ show: false, message: "", type: "success" })
+            }
             style={{
               background: "rgba(255,255,255,0.2)",
               border: "none",
@@ -544,7 +647,7 @@ export default function DataMaster() {
               alignItems: "center",
               justifyContent: "center",
               cursor: "pointer",
-              color: "#fff"
+              color: "#fff",
             }}
           >
             <FaTimes />
@@ -552,7 +655,7 @@ export default function DataMaster() {
         </div>
       )}
 
-      {/* MAIN BOX - Contains everything */}
+      {/* MAIN BOX */}
       <div className="dm-main-box">
         {/* HEADER TABS */}
         <div className="dm-header">
@@ -603,7 +706,7 @@ export default function DataMaster() {
           </div>
         </div>
 
-        {/* SEARCH + COPY/EXCEL + TAMBAH + TOTAL - No container box */}
+        {/* SEARCH + ACTIONS + TOTAL */}
         <div className="dm-search-row">
           {/* SEARCH */}
           <div className="dm-search-field">
@@ -622,13 +725,17 @@ export default function DataMaster() {
 
           {/* COPY & EXCEL */}
           <div className="dm-header-actions">
-            <button className="dm-top-btn" onClick={handleCopy}>Copy</button>
+            <button className="dm-top-btn" onClick={handleCopy}>
+              Copy
+            </button>
             {activeTab === "produk" && (
-              <button className="dm-top-btn" onClick={handleExportExcel}>Excel</button>
+              <button className="dm-top-btn" onClick={handleExportExcel}>
+                Excel
+              </button>
             )}
           </div>
 
-          {/* TAMBAH BUTTON */}
+          {/* BUTTON TAMBAH */}
           <button
             className="dm-top-btn dm-top-btn-orange dm-add-btn"
             onClick={() => {
@@ -657,26 +764,30 @@ export default function DataMaster() {
 
         {/* LOADING STATE */}
         {loading && (
-          <div style={{
-            textAlign: "center",
-            padding: "40px",
-            color: "#64748b",
-            fontSize: "14px"
-          }}>
+          <div
+            style={{
+              textAlign: "center",
+              padding: "40px",
+              color: "#64748b",
+              fontSize: "14px",
+            }}
+          >
             Memuat data...
           </div>
         )}
 
         {/* ERROR STATE */}
         {error && (
-          <div style={{
-            textAlign: "center",
-            padding: "20px",
-            color: "#ef4444",
-            background: "#fee2e2",
-            borderRadius: "12px",
-            margin: "10px 0"
-          }}>
+          <div
+            style={{
+              textAlign: "center",
+              padding: "20px",
+              color: "#ef4444",
+              background: "#fee2e2",
+              borderRadius: "12px",
+              margin: "10px 0",
+            }}
+          >
             {error}
             <button
               onClick={fetchData}
@@ -687,38 +798,43 @@ export default function DataMaster() {
           </div>
         )}
 
-        {/* TABLE + PAGINATION CONTAINER */}
+        {/* TABLE + PAGINATION */}
         {!loading && !error && (
-          <div className="dm-content-box">
-            <div className="dm-table-wrapper">
-              <table className="dm-table">
-                <thead>
-                  {renderTableHeader()}
-                </thead>
+          <>
+            <div className="dm-content-box">
+              <div className="dm-table-wrapper">
+                <table className="dm-table">
+                  <thead>{renderTableHeader()}</thead>
 
-                <tbody>
-                  {paginatedData.map((item, index) => renderTableRow(item, index))}
+                  <tbody>
+                    {paginatedData.map((item, index) =>
+                      renderTableRow(item, index)
+                    )}
 
-                  {paginatedData.length === 0 && (
-                    <tr>
-                      <td colSpan={10} style={{ textAlign: "center", padding: "20px" }}>
-                        Tidak ada data.
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
+                    {paginatedData.length === 0 && (
+                      <tr>
+                        <td
+                          colSpan={10}
+                          style={{ textAlign: "center", padding: "20px" }}
+                        >
+                          Tidak ada data.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+
             </div>
-
-            {/* PAGINATION */}
+            {/* PAGINATION BAR */}
             <div className="dm-pagination">
               <div className="dm-page-info">
-                {currentData.length === 0
+                {totalItems === 0
                   ? "0–0 dari 0 item"
                   : `${indexOfFirst + 1}–${Math.min(
                     indexOfLast,
-                    currentData.length
-                  )} dari ${currentData.length} item`}
+                    totalItems
+                  )} dari ${totalItems} item`}
               </div>
 
               <div className="dm-pages">
@@ -767,22 +883,20 @@ export default function DataMaster() {
                 <span>items per page</span>
               </div>
             </div>
-          </div>
+          </>
         )}
       </div>
-      {/* END dm-main-box */}
 
-      {/* ADD PRODUCT MODAL */}
+      {/* MODALS */}
       <AddProductModal
         isOpen={showAddProductModal}
         onClose={() => setShowAddProductModal(false)}
         onSuccess={() => {
           fetchData();
-          showNotification("Produk berhasil ditambahkan!");
+          showNotification("Produk berhasil ditambahkan!", "success");
         }}
       />
 
-      {/* EDIT PRODUCT MODAL */}
       <EditProductModal
         isOpen={showEditProductModal}
         onClose={() => {
@@ -791,22 +905,20 @@ export default function DataMaster() {
         }}
         onSuccess={() => {
           fetchData();
-          showNotification("Produk berhasil diperbarui!");
+          showNotification("Produk berhasil diperbarui!", "success");
         }}
         product={selectedProduct}
       />
 
-      {/* ADD USER MODAL */}
       <AddUserModal
         isOpen={showAddUserModal}
         onClose={() => setShowAddUserModal(false)}
         onSuccess={() => {
           fetchData();
-          showNotification("User berhasil ditambahkan!");
+          showNotification("User berhasil ditambahkan!", "success");
         }}
       />
 
-      {/* EDIT USER MODAL */}
       <EditUserModal
         isOpen={showEditUserModal}
         onClose={() => {
@@ -815,22 +927,20 @@ export default function DataMaster() {
         }}
         onSuccess={() => {
           fetchData();
-          showNotification("User berhasil diperbarui!");
+          showNotification("User berhasil diperbarui!", "success");
         }}
         user={selectedUser}
       />
 
-      {/* ADD CATEGORY MODAL */}
       <AddCategoryModal
         isOpen={showAddCategoryModal}
         onClose={() => setShowAddCategoryModal(false)}
         onSuccess={() => {
           fetchData();
-          showNotification("Kategori berhasil ditambahkan!");
+          showNotification("Kategori berhasil ditambahkan!", "success");
         }}
       />
 
-      {/* EDIT CATEGORY MODAL */}
       <EditCategoryModal
         isOpen={showEditCategoryModal}
         onClose={() => {
@@ -839,22 +949,20 @@ export default function DataMaster() {
         }}
         onSuccess={() => {
           fetchData();
-          showNotification("Kategori berhasil diperbarui!");
+          showNotification("Kategori berhasil diperbarui!", "success");
         }}
         category={selectedCategory}
       />
 
-      {/* ADD UNIT MODAL */}
       <AddUnitModal
         isOpen={showAddUnitModal}
         onClose={() => setShowAddUnitModal(false)}
         onSuccess={() => {
           fetchData();
-          showNotification("Satuan berhasil ditambahkan!");
+          showNotification("Satuan berhasil ditambahkan!", "success");
         }}
       />
 
-      {/* EDIT UNIT MODAL */}
       <EditUnitModal
         isOpen={showEditUnitModal}
         onClose={() => {
@@ -863,12 +971,20 @@ export default function DataMaster() {
         }}
         onSuccess={() => {
           fetchData();
-          showNotification("Satuan berhasil diperbarui!");
+          showNotification("Satuan berhasil diperbarui!", "success");
         }}
         unit={selectedUnit}
+      />
+
+      {/* DELETE CONFIRMATION MODAL */}
+      <DeleteConfirmationModal
+        isOpen={deleteModal.show}
+        onClose={() => setDeleteModal({ ...deleteModal, show: false })}
+        onConfirm={confirmDelete}
+        title={deleteModal.title}
+        message={deleteModal.message}
+        isLoading={isDeleting}
       />
     </div>
   );
 }
-
-
