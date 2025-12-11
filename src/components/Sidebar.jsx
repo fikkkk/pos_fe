@@ -8,8 +8,9 @@ import {
   FaPowerOff,
 } from "react-icons/fa";
 import "./Dashboard.css";
+import ThemeToggle from "./dashboard/ThemeToggle";
 
-export default function Sidebar({ activeMenu, setActiveMenu }) {
+export default function Sidebar({ activeMenu, setActiveMenu, isDarkMode, toggleTheme }) {
   const mainMenus = [
     { id: "dashboard", label: "Dashboard", icon: <FaThLarge /> },
     { id: "transaksi", label: "Transaksi", icon: <FaShoppingCart /> },
@@ -18,13 +19,22 @@ export default function Sidebar({ activeMenu, setActiveMenu }) {
 
   return (
     <aside className="ds-sidebar ds-sidebar-dark">
-      {/* BRAND */}
-      <div className="ds-side-brand">
-        <div className="ds-brand-logo">N</div>
-        <div className="ds-brand-text">
-          <div className="brand-name">POS Nuka</div>
-          <div className="brand-sub">Kasir UMKM</div>
+      {/* BRAND + THEME TOGGLE */}
+      <div className="ds-side-brand" style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        gap: "12px"
+      }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+          <div className="ds-brand-logo">N</div>
+          <div className="ds-brand-text">
+            <div className="brand-name">POS Nuka</div>
+            <div className="brand-sub">Kasir UMKM</div>
+          </div>
         </div>
+        {/* Theme Toggle di kanan */}
+        <ThemeToggle isDark={isDarkMode} onToggle={toggleTheme} />
       </div>
 
       {/* USER CARD */}
@@ -34,7 +44,7 @@ export default function Sidebar({ activeMenu, setActiveMenu }) {
         </div>
         <div className="ds-user-meta">
           <div className="user-name">Admin</div>
-          <div className="user-role">Mode Gelap</div>
+          <div className="user-role">{isDarkMode ? "Mode Gelap" : "Mode Terang"}</div>
         </div>
       </div>
 
@@ -75,3 +85,4 @@ export default function Sidebar({ activeMenu, setActiveMenu }) {
     </aside>
   );
 }
+

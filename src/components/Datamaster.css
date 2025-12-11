@@ -3,13 +3,25 @@
 ==========================*/
 .dm-page {
   width: 100%;
-  min-height: calc(100vh - 100px);
+  height: 100%;
   padding: 0;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  gap: 20px;
   background: transparent;
+  overflow: hidden;
+}
+
+/* ==========================
+   MAIN BOX - Unified Container
+==========================*/
+.dm-main-box {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: transparent;
+  border: none;
+  box-shadow: none;
   overflow: visible;
 }
 
@@ -22,14 +34,16 @@
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 16px;
-  padding: 0 4px;
+  padding: 20px 24px 16px;
+  overflow: hidden;
 }
 
 .dm-tabs {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 24px;
   flex-wrap: wrap;
+  padding-right: 24px;
 }
 
 /* TAB - Modern Card Style */
@@ -38,8 +52,8 @@
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  gap: 12px;
-  padding: 14px 60px 14px 20px;
+  gap: 10px;
+  padding: 12px 45px 12px 16px;
   background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
   border: 1px solid #e2e8f0;
   border-radius: 16px;
@@ -111,7 +125,7 @@
 }
 
 /* ==========================
-   SEARCH ROW - Modern Layout
+   SEARCH ROW - Inside Main Box
 ==========================*/
 .dm-search-row {
   display: flex;
@@ -119,21 +133,17 @@
   justify-content: flex-start;
   gap: 16px;
   flex-wrap: wrap;
-  padding: 16px 20px;
-  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-  border-radius: 16px;
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
-  margin-top: 0;
+  padding: 16px 24px;
+  background: transparent;
 }
 
 .dm-search-field {
   flex: 1;
   min-width: 280px;
   max-width: 400px;
-  background: #f1f5f9;
+  background: transparent;
   border-radius: 12px;
-  border: 2px solid transparent;
+  border: 2px solid #cbd5e1;
   padding: 12px 16px;
   display: flex;
   align-items: center;
@@ -245,23 +255,32 @@
 }
 
 /* ==========================
-   TABLE WRAPPER - Modern Card
+   CONTENT BOX - Table + Pagination Section
+==========================*/
+/* ==========================
+   CONTENT BOX - Table + Pagination Section
+==========================*/
+/* ==========================
+   CONTENT BOX - Table + Pagination Section
+==========================*/
+.dm-content-box {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: transparent;
+  border-radius: 16px;
+  height: calc(100vh - 450px);
+  min-height: 350px;
+}
+
+/* ==========================
+   TABLE WRAPPER - Inside Content Box
 ==========================*/
 .dm-table-wrapper {
   flex: 1;
-  border-radius: 16px;
-  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
-  overflow: hidden;
-  position: relative;
-}
-
-/* Scrollable inner area */
-.dm-table-wrapper {
-  max-height: calc(100vh - 380px);
   overflow-y: auto;
   overflow-x: auto;
+  min-height: 0;
 }
 
 /* Hide scrollbar but keep functionality */
@@ -284,13 +303,36 @@
 }
 
 /* ==========================
-   TABLE - Modern Design
+   DETAILS ROW (for expand)
 ==========================*/
+.dm-details-row {
+  background-color: #f8fafc;
+}
+
+.dm-details-content {
+  padding: 16px 24px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+/* ==========================
+   PAGINATION - Inside Content Box
+==========================*/
+.dm-pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 24px;
+  background: transparent;
+  border-top: 1px solid #e2e8f0;
+  flex-shrink: 0;
+}
+
 .dm-table {
   width: 100%;
   border-collapse: separate;
-  border-spacing: 0;
+  border-spacing: 0 8px;
   background: transparent;
+  margin-top: -8px;
 }
 
 .dm-table th {
@@ -318,24 +360,39 @@
 
 .dm-table tbody tr {
   background: #ffffff;
-  transition: all 0.2s ease;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.05),
+    0 1px 2px rgba(0, 0, 0, 0.03);
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  will-change: transform, box-shadow;
 }
 
 .dm-table tbody tr:hover {
   background: linear-gradient(135deg, #fefce8 0%, #fef3c7 100%);
-  transform: scale(1.002);
+  transform: translateY(-1px);
+  box-shadow:
+    0 8px 16px rgba(245, 158, 11, 0.15),
+    0 2px 4px rgba(0, 0, 0, 0.05);
+  border-color: #f59e0b;
 }
 
 .dm-table td {
   padding: 16px 20px;
   font-size: 13px;
   color: #334155;
-  border-bottom: 1px solid #f1f5f9;
   vertical-align: middle;
+  background: inherit;
 }
 
 .dm-table td:first-child {
+  border-radius: 12px 0 0 12px;
   padding-left: 24px;
+}
+
+.dm-table td:last-child {
+  border-radius: 0 12px 12px 0;
 }
 
 /* Number Cell */
@@ -456,18 +513,16 @@
 }
 
 /* ==========================
-   PAGINATION - Modern Design
+   PAGINATION - Inside Content Box
 ==========================*/
 .dm-pagination {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 24px;
-  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-  border: 1px solid #e2e8f0;
-  border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
-  margin-top: 0;
+  padding: 18px 24px;
+  background: transparent;
+  border-top: 1px solid #e2e8f0;
+  flex-shrink: 0;
 }
 
 .dm-page-info {
@@ -562,6 +617,13 @@
    DARK MODE STYLES
 ==========================*/
 
+/* Main Box */
+.dashboard.dark .dm-main-box {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
 /* Tabs */
 .dashboard.dark .dm-newtab {
   background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
@@ -592,18 +654,17 @@
 
 /* Search Row */
 .dashboard.dark .dm-search-row {
-  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-  border-color: #334155;
+  background: transparent;
 }
 
 .dashboard.dark .dm-search-field {
-  background: #0f172a;
-  border-color: #334155;
+  background: transparent;
+  border: 2px solid #334155;
 }
 
 .dashboard.dark .dm-search-field:focus-within {
   border-color: #f59e0b;
-  background: #1e293b;
+  background: rgba(15, 23, 42, 0.5);
 }
 
 .dashboard.dark .dm-search-field svg {
@@ -620,13 +681,13 @@
 
 /* Buttons */
 .dashboard.dark .dm-top-btn {
-  background: #334155;
+  background: transparent;
   border-color: #475569;
   color: #e2e8f0;
 }
 
 .dashboard.dark .dm-top-btn:hover {
-  background: #475569;
+  background: rgba(71, 85, 105, 0.5);
 }
 
 /* Total */
@@ -636,10 +697,19 @@
   color: #f59e0b;
 }
 
-/* Table Wrapper */
-.dashboard.dark .dm-table-wrapper {
+/* Content Box - Main Container */
+.dashboard.dark .dm-content-box {
   background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
   border-color: #334155;
+  box-shadow:
+    0 4px 24px rgba(0, 0, 0, 0.3),
+    0 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Table Wrapper - Inside Content Box */
+.dashboard.dark .dm-table-wrapper {
+  background: transparent;
+  border-color: transparent;
 }
 
 .dashboard.dark .dm-table-wrapper::-webkit-scrollbar-track {
@@ -659,15 +729,17 @@
 
 .dashboard.dark .dm-table tbody tr {
   background: #1e293b;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .dashboard.dark .dm-table tbody tr:hover {
-  background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(249, 115, 22, 0.05) 100%);
+  background: #1e293b;
+  border-color: #f59e0b;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.15);
 }
 
 .dashboard.dark .dm-table td {
   color: #e2e8f0;
-  border-color: #334155;
 }
 
 .dashboard.dark .dm-no-cell {
@@ -690,8 +762,8 @@
 
 /* Pagination */
 .dashboard.dark .dm-pagination {
-  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-  border-color: #334155;
+  background: transparent;
+  border-top: 1px solid #334155;
 }
 
 .dashboard.dark .dm-page-info {
@@ -728,19 +800,37 @@
 /* ==========================
    LIGHT MODE OVERRIDES
 ==========================*/
-.dashboard.light .dm-search-row,
-.dashboard.light .dm-table-wrapper,
-.dashboard.light .dm-pagination {
-  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-  border-color: #e2e8f0;
+.dashboard.light .dm-main-box {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+.dashboard.light .dm-search-row {
+  background: transparent;
 }
 
 .dashboard.light .dm-table th {
-  background: #f8fafc;
+  background: #e2e8f0;
+  border-color: #cbd5e1;
 }
 
 .dashboard.light .dm-table tbody tr {
   background: #ffffff;
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.1),
+    0 1px 3px rgba(0, 0, 0, 0.08);
+  border-color: #cbd5e1;
+}
+
+.dashboard.light .dm-table tbody tr:hover {
+  background: linear-gradient(135deg, #fefce8 0%, #fef3c7 100%);
+  border-color: #f59e0b;
+}
+
+.dashboard.light .dm-pagination {
+  background: rgba(255, 255, 255, 0.6);
+  border-color: #cbd5e1;
 }
 
 /* ==========================
@@ -769,5 +859,20 @@
 
   .dm-newtab {
     width: 100%;
+  }
+}
+
+/* ==========================
+   NOTIFICATION ANIMATION
+==========================*/
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
   }
 }

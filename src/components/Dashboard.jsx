@@ -297,7 +297,12 @@ export default function Dashboard() {
         userName="Admin"
       />
 
-      <Sidebar activeMenu={activeMenu} setActiveMenu={setActiveMenu} />
+      <Sidebar
+        activeMenu={activeMenu}
+        setActiveMenu={setActiveMenu}
+        isDarkMode={isDarkMode}
+        toggleTheme={toggleTheme}
+      />
 
       <main className="ds-main">
         {/* TOPBAR DARK MODE */}
@@ -315,11 +320,6 @@ export default function Dashboard() {
           </div>
 
           <div className="ds-topbar-right">
-            <ThemeToggle isDark={isDarkMode} onToggle={toggleTheme} />
-            <div className="ds-topbar-pill">
-              <FaSearch />
-              <input type="text" placeholder="Cari produk / transaksi" />
-            </div>
             <ProfilePill />
           </div>
         </header>

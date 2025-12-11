@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { FaTimes } from "react-icons/fa";
+import React, { useState, useEffect, useRef } from "react";
+import { FaTimes, FaCloudUploadAlt, FaTrash } from "react-icons/fa";
 import { api } from "../api";
 import "./AddProductModal.css"; // Reuse same CSS
 
@@ -14,8 +14,14 @@ export default function EditProductModal({ isOpen, onClose, onSuccess, product }
         description: "",
         categoryId: "",
         supplierId: "",
-        imageUrl: "",
     });
+
+    // Image state
+    const [imageFile, setImageFile] = useState(null);
+    const [imagePreview, setImagePreview] = useState(null);
+    const [compressedImage, setCompressedImage] = useState(null);
+    const [hasNewImage, setHasNewImage] = useState(false);
+    const fileInputRef = useRef(null);
 
     // Data untuk dropdown
     const [categories, setCategories] = useState([]);
@@ -35,8 +41,12 @@ export default function EditProductModal({ isOpen, onClose, onSuccess, product }
                 description: product.description || "",
                 categoryId: product.categoryId?.toString() || product.category?.id?.toString() || "",
                 supplierId: product.supplierId?.toString() || product.supplier?.id?.toString() || "",
-                imageUrl: product.imageUrl || "",
             });
+            // Set existing image as preview
+            if (product.imageUrl) {
+                setImagePreview(product.imageUrl);
+            }
+            setHasNewImage(false);
             fetchDropdownData();
         }
     }, [isOpen, product]);
@@ -52,6 +62,37 @@ export default function EditProductModal({ isOpen, onClose, onSuccess, product }
         } catch (err) {
             console.error("Error fetching dropdown data:", err);
         }
+    };
+
+    // Compress image function
+    const compressImage = (file, maxWidth = 400, quality = 0.6) => {
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement("canvas");
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > maxWidth) {
+                        height = (height * maxWidth) / width;
+                        width = maxWidth;
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+
+                    const ctx = canvas.getContext("2d");
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    const compressedDataUrl = canvas.toDataURL("image/jpeg", quality);
+                    resolve(compressedDataUrl);
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
     };
 
     // Handle input change
@@ -74,6 +115,64 @@ export default function EditProductModal({ isOpen, onClose, onSuccess, product }
         }
     };
 
+    // Handle file selection
+    const handleFileSelect = async (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            if (!file.type.startsWith("image/")) {
+                setError("Harap pilih file gambar (JPG, PNG, GIF, dll)");
+                return;
+            }
+            if (file.size > 10 * 1024 * 1024) {
+                setError("Ukuran gambar maksimal 10MB");
+                return;
+            }
+
+            setImageFile(file);
+            setHasNewImage(true);
+            setError(null);
+
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setImagePreview(reader.result);
+            };
+            reader.readAsDataURL(file);
+
+            try {
+                const compressed = await compressImage(file, 400, 0.6);
+                setCompressedImage(compressed);
+            } catch (err) {
+                console.error("Error compressing image:", err);
+                setError("Gagal memproses gambar");
+            }
+        }
+    };
+
+    // Handle drag & drop
+    const handleDrop = (e) => {
+        e.preventDefault();
+        const file = e.dataTransfer.files[0];
+        if (file) {
+            const fakeEvent = { target: { files: [file] } };
+            handleFileSelect(fakeEvent);
+        }
+    };
+
+    const handleDragOver = (e) => {
+        e.preventDefault();
+    };
+
+    // Remove image
+    const handleRemoveImage = () => {
+        setImageFile(null);
+        setImagePreview(null);
+        setCompressedImage(null);
+        setHasNewImage(true); // Mark as changed (removed)
+        if (fileInputRef.current) {
+            fileInputRef.current.value = "";
+        }
+    };
+
     // Reset form
     const resetForm = () => {
         setFormData({
@@ -85,9 +184,15 @@ export default function EditProductModal({ isOpen, onClose, onSuccess, product }
             description: "",
             categoryId: "",
             supplierId: "",
-            imageUrl: "",
         });
+        setImageFile(null);
+        setImagePreview(null);
+        setCompressedImage(null);
+        setHasNewImage(false);
         setError(null);
+        if (fileInputRef.current) {
+            fileInputRef.current.value = "";
+        }
     };
 
     // Handle submit
@@ -111,6 +216,11 @@ export default function EditProductModal({ isOpen, onClose, onSuccess, product }
                 description: formData.description || undefined,
             };
 
+            // Only include imageUrl if image changed
+            if (hasNewImage) {
+                payload.imageUrl = compressedImage || undefined;
+            }
+
             await api.patch(`/admin/products/${product.id}`, payload);
 
             resetForm();
@@ -118,7 +228,12 @@ export default function EditProductModal({ isOpen, onClose, onSuccess, product }
             onClose();
         } catch (err) {
             console.error("Error updating product:", err);
-            setError(err.response?.data?.message || "Gagal memperbarui produk. Silakan coba lagi.");
+            const message = err.response?.data?.message || err.message || "Gagal memperbarui produk.";
+            if (message.includes("entity too large") || message.includes("too large")) {
+                setError("Gambar terlalu besar. Coba gunakan gambar yang lebih kecil.");
+            } else {
+                setError(message);
+            }
         } finally {
             setLoading(false);
         }
@@ -184,6 +299,99 @@ export default function EditProductModal({ isOpen, onClose, onSuccess, product }
                             />
                         </div>
 
+                        {/* Image Upload */}
+                        <div className="form-group full-width">
+                            <label className="form-label">Gambar Produk</label>
+                            <div
+                                className="image-upload-area"
+                                onDrop={handleDrop}
+                                onDragOver={handleDragOver}
+                                onClick={() => fileInputRef.current?.click()}
+                                style={{
+                                    border: "2px dashed #93c5fd",
+                                    borderRadius: "12px",
+                                    padding: "20px",
+                                    textAlign: "center",
+                                    cursor: "pointer",
+                                    background: imagePreview ? "transparent" : "#eff6ff",
+                                    transition: "all 0.2s ease",
+                                    position: "relative",
+                                    minHeight: "120px",
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                }}
+                            >
+                                <input
+                                    type="file"
+                                    ref={fileInputRef}
+                                    onChange={handleFileSelect}
+                                    accept="image/*"
+                                    style={{ display: "none" }}
+                                />
+
+                                {imagePreview ? (
+                                    <div style={{ position: "relative", width: "100%" }}>
+                                        <img
+                                            src={imagePreview}
+                                            alt="Preview"
+                                            style={{
+                                                maxWidth: "100%",
+                                                maxHeight: "200px",
+                                                borderRadius: "8px",
+                                                objectFit: "contain",
+                                            }}
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleRemoveImage();
+                                            }}
+                                            style={{
+                                                position: "absolute",
+                                                top: "-8px",
+                                                right: "-8px",
+                                                width: "28px",
+                                                height: "28px",
+                                                borderRadius: "50%",
+                                                background: "#ef4444",
+                                                border: "none",
+                                                color: "#fff",
+                                                cursor: "pointer",
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+                                            }}
+                                        >
+                                            <FaTrash size={12} />
+                                        </button>
+                                        {hasNewImage && (
+                                            <div style={{
+                                                marginTop: "8px",
+                                                fontSize: "11px",
+                                                color: "#3b82f6",
+                                                fontWeight: 500
+                                            }}>
+                                                ✓ Gambar baru akan dikompres otomatis saat disimpan
+                                            </div>
+                                        )}
+                                    </div>
+                                ) : (
+                                    <>
+                                        <FaCloudUploadAlt size={32} style={{ color: "#3b82f6", marginBottom: "8px" }} />
+                                        <div style={{ color: "#1e40af", fontSize: "14px", fontWeight: 500 }}>
+                                            Klik atau seret gambar baru ke sini
+                                        </div>
+                                        <div style={{ color: "#64748b", fontSize: "12px", marginTop: "4px" }}>
+                                            Format: JPG, PNG, GIF (Maks. 10MB)
+                                        </div>
+                                    </>
+                                )}
+                            </div>
+                        </div>
+
                         {/* Barcode */}
                         <div className="form-group">
                             <label className="form-label">Barcode</label>
@@ -197,19 +405,17 @@ export default function EditProductModal({ isOpen, onClose, onSuccess, product }
                             />
                         </div>
 
-                        {/* Image URL */}
+                        {/* Stok */}
                         <div className="form-group">
-                            <label className="form-label">URL Gambar</label>
+                            <label className="form-label">Stok</label>
                             <input
                                 type="text"
-                                name="imageUrl"
-                                value={formData.imageUrl}
-                                onChange={handleChange}
+                                name="stock"
+                                value={formData.stock}
+                                onChange={handleNumberChange}
                                 className="form-input"
-                                placeholder="https://example.com/image.jpg"
-                                disabled
+                                placeholder="0"
                             />
-                            <small style={{ color: "#94a3b8", fontSize: "11px" }}>URL gambar tidak dapat diubah dari sini</small>
                         </div>
 
                         {/* Harga Jual (Price) */}
@@ -228,19 +434,6 @@ export default function EditProductModal({ isOpen, onClose, onSuccess, product }
                                     placeholder="0"
                                 />
                             </div>
-                        </div>
-
-                        {/* Stok */}
-                        <div className="form-group">
-                            <label className="form-label">Stok</label>
-                            <input
-                                type="text"
-                                name="stock"
-                                value={formData.stock}
-                                onChange={handleNumberChange}
-                                className="form-input"
-                                placeholder="0"
-                            />
                         </div>
 
                         {/* Kategori (readonly info) */}

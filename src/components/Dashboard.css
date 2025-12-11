@@ -4748,11 +4748,11 @@ body {
 }
 
 .dashboard.light .ds-topbar-title {
-  color: #1e293b;
+  color: #0f172a;
 }
 
 .dashboard.light .ds-topbar-sub {
-  color: #64748b;
+  color: #334155;
 }
 
 .dashboard.light .ds-topbar-sub svg {
