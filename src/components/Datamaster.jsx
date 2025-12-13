@@ -15,6 +15,7 @@ import AddPromoModal from "./AddPromoModal";
 import EditPromoModal from "./EditPromoModal";
 import AddStockModal from "./AddStockModal";
 import StockHistoryModal from "./StockHistoryModal";
+import ActivityLogModal from "./ActivityLogModal";
 
 export default function DataMaster() {
   const [activeTab, setActiveTab] = useState("produk");
@@ -60,6 +61,10 @@ export default function DataMaster() {
   const [showAddStockModal, setShowAddStockModal] = useState(false);
   const [showStockHistoryModal, setShowStockHistoryModal] = useState(false);
   const [selectedProductForStock, setSelectedProductForStock] = useState(null);
+
+  // 🔹 STATE untuk ACTIVITY LOG
+  const [showActivityLogModal, setShowActivityLogModal] = useState(false);
+  const [activityLogEntityType, setActivityLogEntityType] = useState(null);
 
   // 🔹 STATE untuk notifikasi sukses / error
   const [notification, setNotification] = useState({
@@ -933,6 +938,90 @@ export default function DataMaster() {
                 </button>
               </>
             )}
+            {/* Riwayat button for User tab */}
+            {activeTab === "user" && (
+              <button 
+                className="dm-top-btn"
+                onClick={() => {
+                  setActivityLogEntityType("USER");
+                  setShowActivityLogModal(true);
+                }}
+                style={{
+                  background: "linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)",
+                  color: "#fff",
+                  border: "none",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "6px"
+                }}
+              >
+                <FaHistory />
+                Riwayat User
+              </button>
+            )}
+            {/* Riwayat button for Kategori tab */}
+            {activeTab === "kategori" && (
+              <button 
+                className="dm-top-btn"
+                onClick={() => {
+                  setActivityLogEntityType("CATEGORY");
+                  setShowActivityLogModal(true);
+                }}
+                style={{
+                  background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
+                  color: "#fff",
+                  border: "none",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "6px"
+                }}
+              >
+                <FaHistory />
+                Riwayat Kategori
+              </button>
+            )}
+            {/* Riwayat button for Satuan tab */}
+            {activeTab === "satuan" && (
+              <button 
+                className="dm-top-btn"
+                onClick={() => {
+                  setActivityLogEntityType("PRODUCT_UNIT");
+                  setShowActivityLogModal(true);
+                }}
+                style={{
+                  background: "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)",
+                  color: "#fff",
+                  border: "none",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "6px"
+                }}
+              >
+                <FaHistory />
+                Riwayat Satuan
+              </button>
+            )}
+            {/* Riwayat button for Promo tab */}
+            {activeTab === "promo" && (
+              <button 
+                className="dm-top-btn"
+                onClick={() => {
+                  setActivityLogEntityType("PROMO");
+                  setShowActivityLogModal(true);
+                }}
+                style={{
+                  background: "linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%)",
+                  color: "#fff",
+                  border: "none",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "6px"
+                }}
+              >
+                <FaHistory />
+                Riwayat Promo
+              </button>
+            )}
           </div>
 
           {/* BUTTON TAMBAH */}
@@ -1220,6 +1309,16 @@ export default function DataMaster() {
           onDelete={() => {
             // Optional: refresh if needed
           }}
+        />
+
+        {/* ACTIVITY LOG MODAL */}
+        <ActivityLogModal
+          isOpen={showActivityLogModal}
+          onClose={() => {
+            setShowActivityLogModal(false);
+            setActivityLogEntityType(null);
+          }}
+          entityType={activityLogEntityType}
         />
 
         {/* DELETE CONFIRMATION MODAL */}
