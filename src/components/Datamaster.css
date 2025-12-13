@@ -2,7 +2,8 @@
    DATA MASTER PAGE - MODERN REDESIGN
 ==========================*/
 .dm-page {
-  width: 100%;
+  width: calc(100% + 44px);
+  /* Tambahkan lebar untuk kompensasi padding parent */
   height: 100%;
   padding: 0;
   box-sizing: border-box;
@@ -10,6 +11,12 @@
   flex-direction: column;
   background: transparent;
   overflow: hidden;
+  margin-left: -22px;
+  /* Offset padding kiri dari ds-inner */
+  margin-right: -22px;
+  /* Offset padding kanan dari ds-inner */
+  margin-top: -18px;
+  /* Offset padding atas dari ds-inner */
 }
 
 /* ==========================
@@ -36,7 +43,7 @@
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 16px;
-  padding: 12px 24px 8px;
+  padding: 12px 0 8px 0;
   overflow: visible;
 }
 
@@ -134,7 +141,7 @@
   align-items: center;
   gap: 16px;
   flex-wrap: wrap;
-  padding: 10px 24px;
+  padding: 10px 0;
   background: transparent;
 }
 
@@ -270,10 +277,11 @@
   flex-direction: column;
   overflow: visible;
   background: transparent;
-  border-radius: 16px;
+  border-radius: 0;
   min-height: 0;
-  margin: 0 24px;
+  margin: 0;
   padding: 0;
+  width: 100%;
 }
 
 /* ==========================
@@ -284,6 +292,9 @@
   overflow-y: auto;
   overflow-x: auto;
   min-height: 0;
+  width: 100%;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 /* Hide scrollbar but keep functionality */
@@ -324,10 +335,12 @@
 
 .dm-table {
   width: 100%;
-  border-collapse: separate;
-  border-spacing: 0 8px;
+  border-collapse: collapse;
+  border-spacing: 0;
   background: transparent;
-  margin-top: -8px;
+  margin: 0;
+  padding: 0;
+  table-layout: auto;
 }
 
 .dm-table th {
@@ -355,22 +368,12 @@
 
 .dm-table tbody tr {
   background: #ffffff;
-  transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
-  box-shadow:
-    0 2px 4px rgba(0, 0, 0, 0.05),
-    0 1px 2px rgba(0, 0, 0, 0.03);
-  border-radius: 12px;
-  border: 1px solid #e2e8f0;
-  will-change: transform, box-shadow;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+  border-bottom: 1px solid #e2e8f0;
 }
 
 .dm-table tbody tr:hover {
   background: linear-gradient(135deg, #fefce8 0%, #fef3c7 100%);
-  transform: translateY(-1px);
-  box-shadow:
-    0 8px 16px rgba(245, 158, 11, 0.15),
-    0 2px 4px rgba(0, 0, 0, 0.05);
-  border-color: #f59e0b;
 }
 
 .dm-table td {
@@ -382,12 +385,11 @@
 }
 
 .dm-table td:first-child {
-  border-radius: 12px 0 0 12px;
   padding-left: 24px;
 }
 
 .dm-table td:last-child {
-  border-radius: 0 12px 12px 0;
+  padding-right: 24px;
 }
 
 /* Number Cell */
@@ -518,7 +520,7 @@
   background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
   border: 1px solid #334155;
   border-radius: 16px;
-  margin: 8px 24px 24px 24px;
+  margin: 8px 0 24px 0;
   flex-shrink: 0;
   z-index: 100;
 }
@@ -727,13 +729,11 @@
 
 .dashboard.dark .dm-table tbody tr {
   background: #1e293b;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid #334155;
 }
 
 .dashboard.dark .dm-table tbody tr:hover {
-  background: #1e293b;
-  border-color: #f59e0b;
-  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.15);
+  background: #263548;
 }
 
 .dashboard.dark .dm-table td {
