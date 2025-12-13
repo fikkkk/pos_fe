@@ -11,6 +11,26 @@
     gap: 24px;
     overflow-y: auto;
     overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(148, 163, 184, 0.3) transparent;
+}
+
+/* Custom scrollbar untuk laporan page */
+.laporan-page::-webkit-scrollbar {
+    width: 6px;
+}
+
+.laporan-page::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.laporan-page::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.3);
+    border-radius: 3px;
+}
+
+.laporan-page::-webkit-scrollbar-thumb:hover {
+    background: rgba(148, 163, 184, 0.5);
 }
 
 /* Header Section */

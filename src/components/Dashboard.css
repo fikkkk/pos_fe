@@ -307,14 +307,26 @@ body {
   overflow-y: auto;
   min-height: 0;
   -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(148, 163, 184, 0.3) transparent;
   scroll-behavior: smooth;
 }
 
 .ds-inner::-webkit-scrollbar {
-  display: none;
-  width: 0;
-  height: 0;
+  width: 6px;
+}
+
+.ds-inner::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.ds-inner::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.3);
+  border-radius: 3px;
+}
+
+.ds-inner::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.5);
 }
 
 .ds-section-title {
@@ -3749,13 +3761,14 @@ body {
   align-items: center;
   gap: 10px;
 
-  padding: 12px 12px;
-  border-radius: 20px;
+  padding: 10px 14px;
+  border-radius: 999px;
 
   background: linear-gradient(135deg,
-      rgba(96, 165, 250, 0.22),
-      rgba(129, 140, 248, 0.08));
-  border: 1px solid rgba(148, 163, 184, 0.45);
+      rgba(30, 41, 59, 0.9),
+      rgba(15, 23, 42, 0.95));
+  border: 2px solid #f59e0b;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 .ds-user-avatar {
@@ -4032,13 +4045,14 @@ body {
   align-items: center;
   gap: 10px;
 
-  padding: 12px 12px;
-  border-radius: 20px;
+  padding: 10px 14px;
+  border-radius: 999px;
 
   background: linear-gradient(135deg,
-      rgba(96, 165, 250, 0.22),
-      rgba(129, 140, 248, 0.08));
-  border: 1px solid rgba(148, 163, 184, 0.45);
+      rgba(30, 41, 59, 0.9),
+      rgba(15, 23, 42, 0.95));
+  border: 2px solid #f59e0b;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 .ds-user-avatar {
@@ -4813,4 +4827,112 @@ body {
 
 .dashboard.light .ds-section-title svg {
   color: #f59e0b;
+}
+
+/* ======================= RESPONSIVE LAYOUT ======================= */
+/* Viewport medium - sidebar lebih kecil */
+@media (max-width: 1200px) {
+  .dashboard {
+    grid-template-columns: 220px minmax(0, 1fr);
+    gap: 16px;
+    padding: 16px;
+  }
+
+  .ds-sidebar.ds-sidebar-dark {
+    padding: 16px 12px;
+  }
+}
+
+/* Viewport kecil - sidebar collapse atau hidden */
+@media (max-width: 900px) {
+  .dashboard {
+    grid-template-columns: 180px minmax(0, 1fr);
+    gap: 12px;
+    padding: 12px;
+  }
+
+  .ds-sidebar.ds-sidebar-dark {
+    padding: 14px 10px;
+  }
+
+  .ds-brand-text .brand-name {
+    font-size: 14px;
+  }
+
+  .ds-brand-text .brand-sub {
+    font-size: 10px;
+  }
+
+  .ds-nav-item-dark .nav-label {
+    font-size: 12px;
+  }
+
+  .ds-side-user-card {
+    padding: 8px 10px;
+  }
+
+  .ds-user-meta .user-name {
+    font-size: 12px;
+  }
+}
+
+/* Viewport sangat kecil - sidebar sangat compact */
+@media (max-width: 768px) {
+  .dashboard {
+    grid-template-columns: 70px minmax(0, 1fr);
+    gap: 8px;
+    padding: 8px;
+  }
+
+  .ds-sidebar.ds-sidebar-dark {
+    padding: 12px 8px;
+    align-items: center;
+  }
+
+  .ds-side-brand {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .ds-brand-text {
+    display: none;
+  }
+
+  .ds-side-user-card {
+    padding: 8px;
+    justify-content: center;
+  }
+
+  .ds-user-meta {
+    display: none;
+  }
+
+  .ds-nav-item-dark .nav-label,
+  .ds-logout-btn .nav-label {
+    display: none;
+  }
+
+  .ds-nav-item-dark,
+  .ds-logout-btn {
+    justify-content: center;
+    padding: 10px;
+  }
+
+  .ds-nav-caption {
+    display: none;
+  }
+
+  /* Topbar adjustments */
+  .ds-topbar {
+    padding: 4px 8px 0;
+  }
+
+  .ds-topbar-title {
+    font-size: 16px;
+  }
+
+  .ds-main {
+    padding: 16px;
+    border-radius: 20px;
+  }
 }
