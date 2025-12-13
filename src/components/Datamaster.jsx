@@ -176,8 +176,40 @@ export default function DataMaster() {
     setIsDeleting(true);
     try {
       if (deleteModal.type === "product") {
+        // ⚡ FRONTEND CASCADE DELETE (Workaround for Backend Constraints)
+        // 1. Ambil semua unit & promo (karena endpoint by-product rusak/tidak tersedia)
+        //    NOTE: Ini tidak efisien untuk data besar, tapi satu-satunya cara tanpa ubah BE.
+        const [unitsRes, promosRes] = await Promise.all([
+          api.get("/admin/product-units/all").catch(() => ({ data: [] })),
+          api.get("/admin/promo").catch(() => ({ data: [] }))
+        ]);
+
+        const relatedUnits = unitsRes.data.filter(u => u.productId === deleteModal.id);
+        const relatedPromos = promosRes.data.filter(p => p.productId === deleteModal.id);
+
+        // 2. Delete Units
+        for (const unit of relatedUnits) {
+          // Gunakan try-catch per item agar satu gagal tidak stop semua
+          try {
+            await api.delete(`/admin/unitId/${unit.id}`);
+          } catch (e) {
+            console.warn(`Gagal hapus unit ${unit.id}`, e);
+          }
+        }
+
+        // 3. Delete Promos
+        for (const promo of relatedPromos) {
+          try {
+            await api.delete(`/admin/promo/${promo.id}`);
+          } catch (e) {
+            console.warn(`Gagal hapus promo ${promo.id}`, e);
+          }
+        }
+
+        // 4. Akhirnya hapus produk
         await api.delete(`/admin/products/${deleteModal.id}`);
         showNotification("Produk berhasil dihapus!", "success");
+
       } else if (deleteModal.type === "category") {
         await api.delete(`/admin/categories/${deleteModal.id}`);
         showNotification("Kategori berhasil dihapus!", "success");
@@ -193,7 +225,9 @@ export default function DataMaster() {
       setDeleteModal({ show: false, id: null, type: null, title: "", message: "" });
     } catch (err) {
       console.error("Error deleting:", err);
-      showNotification("Gagal menghapus data.", "error");
+      // Tampilkan pesan error detail dari backend jika ada
+      const errorMsg = err.response?.data?.message || err.message || "Gagal menghapus data.";
+      showNotification(errorMsg, "error");
     } finally {
       setIsDeleting(false);
     }
@@ -824,167 +858,167 @@ export default function DataMaster() {
                   </tbody>
                 </table>
               </div>
-
-            </div>
-            {/* PAGINATION BAR */}
-            <div className="dm-pagination">
-              <div className="dm-page-info">
-                {totalItems === 0
-                  ? "0–0 dari 0 item"
-                  : `${indexOfFirst + 1}–${Math.min(
-                    indexOfLast,
-                    totalItems
-                  )} dari ${totalItems} item`}
-              </div>
-
-              <div className="dm-pages">
-                <button
-                  disabled={currentPage === 1}
-                  onClick={() => setCurrentPage(1)}
-                >
-                  «
-                </button>
-                <button
-                  disabled={currentPage === 1}
-                  onClick={() => setCurrentPage((p) => p - 1)}
-                >
-                  ‹
-                </button>
-
-                <span className="dm-page-number">{currentPage}</span>
-
-                <button
-                  disabled={currentPage === totalPages}
-                  onClick={() => setCurrentPage((p) => p + 1)}
-                >
-                  ›
-                </button>
-                <button
-                  disabled={currentPage === totalPages}
-                  onClick={() => setCurrentPage(totalPages)}
-                >
-                  »
-                </button>
-              </div>
-
-              <div className="dm-page-size">
-                <select
-                  value={itemsPerPage}
-                  onChange={(e) => {
-                    setItemsPerPage(Number(e.target.value));
-                    setCurrentPage(1);
-                  }}
-                >
-                  <option value={10}>10</option>
-                  <option value={20}>20</option>
-                  <option value={30}>30</option>
-                  <option value={40}>40</option>
-                </select>
-                <span>items per page</span>
-              </div>
             </div>
           </>
         )}
+
+        {/* PAGINATION BAR - Always visible */}
+        <div className="dm-pagination">
+          <div className="dm-page-info">
+            {totalItems === 0
+              ? "0–0 dari 0 item"
+              : `${indexOfFirst + 1}–${Math.min(
+                indexOfLast,
+                totalItems
+              )} dari ${totalItems} item`}
+          </div>
+
+          <div className="dm-pages">
+            <button
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage(1)}
+            >
+              «
+            </button>
+            <button
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage((p) => p - 1)}
+            >
+              ‹
+            </button>
+
+            <span className="dm-page-number">{currentPage}</span>
+
+            <button
+              disabled={currentPage === totalPages}
+              onClick={() => setCurrentPage((p) => p + 1)}
+            >
+              ›
+            </button>
+            <button
+              disabled={currentPage === totalPages}
+              onClick={() => setCurrentPage(totalPages)}
+            >
+              »
+            </button>
+          </div>
+
+          <div className="dm-page-size">
+            <select
+              value={itemsPerPage}
+              onChange={(e) => {
+                setItemsPerPage(Number(e.target.value));
+                setCurrentPage(1);
+              }}
+            >
+              <option value={10}>10</option>
+              <option value={20}>20</option>
+              <option value={30}>30</option>
+              <option value={40}>40</option>
+            </select>
+            <span>items per page</span>
+          </div>
+        </div>
+
+        {/* MODALS */}
+        <AddProductModal
+          isOpen={showAddProductModal}
+          onClose={() => setShowAddProductModal(false)}
+          onSuccess={() => {
+            fetchData();
+            showNotification("Produk berhasil ditambahkan!", "success");
+          }}
+        />
+
+        <EditProductModal
+          isOpen={showEditProductModal}
+          onClose={() => {
+            setShowEditProductModal(false);
+            setSelectedProduct(null);
+          }}
+          onSuccess={() => {
+            fetchData();
+            showNotification("Produk berhasil diperbarui!", "success");
+          }}
+          product={selectedProduct}
+        />
+
+        <AddUserModal
+          isOpen={showAddUserModal}
+          onClose={() => setShowAddUserModal(false)}
+          onSuccess={() => {
+            fetchData();
+            showNotification("User berhasil ditambahkan!", "success");
+          }}
+        />
+
+        <EditUserModal
+          isOpen={showEditUserModal}
+          onClose={() => {
+            setShowEditUserModal(false);
+            setSelectedUser(null);
+          }}
+          onSuccess={() => {
+            fetchData();
+            showNotification("User berhasil diperbarui!", "success");
+          }}
+          user={selectedUser}
+        />
+
+        <AddCategoryModal
+          isOpen={showAddCategoryModal}
+          onClose={() => setShowAddCategoryModal(false)}
+          onSuccess={() => {
+            fetchData();
+            showNotification("Kategori berhasil ditambahkan!", "success");
+          }}
+        />
+
+        <EditCategoryModal
+          isOpen={showEditCategoryModal}
+          onClose={() => {
+            setShowEditCategoryModal(false);
+            setSelectedCategory(null);
+          }}
+          onSuccess={() => {
+            fetchData();
+            showNotification("Kategori berhasil diperbarui!", "success");
+          }}
+          category={selectedCategory}
+        />
+
+        <AddUnitModal
+          isOpen={showAddUnitModal}
+          onClose={() => setShowAddUnitModal(false)}
+          onSuccess={() => {
+            fetchData();
+            showNotification("Satuan berhasil ditambahkan!", "success");
+          }}
+        />
+
+        <EditUnitModal
+          isOpen={showEditUnitModal}
+          onClose={() => {
+            setShowEditUnitModal(false);
+            setSelectedUnit(null);
+          }}
+          onSuccess={() => {
+            fetchData();
+            showNotification("Satuan berhasil diperbarui!", "success");
+          }}
+          unit={selectedUnit}
+        />
+
+        {/* DELETE CONFIRMATION MODAL */}
+        <DeleteConfirmationModal
+          isOpen={deleteModal.show}
+          onClose={() => setDeleteModal({ ...deleteModal, show: false })}
+          onConfirm={confirmDelete}
+          title={deleteModal.title}
+          message={deleteModal.message}
+          isLoading={isDeleting}
+        />
       </div>
-
-      {/* MODALS */}
-      <AddProductModal
-        isOpen={showAddProductModal}
-        onClose={() => setShowAddProductModal(false)}
-        onSuccess={() => {
-          fetchData();
-          showNotification("Produk berhasil ditambahkan!", "success");
-        }}
-      />
-
-      <EditProductModal
-        isOpen={showEditProductModal}
-        onClose={() => {
-          setShowEditProductModal(false);
-          setSelectedProduct(null);
-        }}
-        onSuccess={() => {
-          fetchData();
-          showNotification("Produk berhasil diperbarui!", "success");
-        }}
-        product={selectedProduct}
-      />
-
-      <AddUserModal
-        isOpen={showAddUserModal}
-        onClose={() => setShowAddUserModal(false)}
-        onSuccess={() => {
-          fetchData();
-          showNotification("User berhasil ditambahkan!", "success");
-        }}
-      />
-
-      <EditUserModal
-        isOpen={showEditUserModal}
-        onClose={() => {
-          setShowEditUserModal(false);
-          setSelectedUser(null);
-        }}
-        onSuccess={() => {
-          fetchData();
-          showNotification("User berhasil diperbarui!", "success");
-        }}
-        user={selectedUser}
-      />
-
-      <AddCategoryModal
-        isOpen={showAddCategoryModal}
-        onClose={() => setShowAddCategoryModal(false)}
-        onSuccess={() => {
-          fetchData();
-          showNotification("Kategori berhasil ditambahkan!", "success");
-        }}
-      />
-
-      <EditCategoryModal
-        isOpen={showEditCategoryModal}
-        onClose={() => {
-          setShowEditCategoryModal(false);
-          setSelectedCategory(null);
-        }}
-        onSuccess={() => {
-          fetchData();
-          showNotification("Kategori berhasil diperbarui!", "success");
-        }}
-        category={selectedCategory}
-      />
-
-      <AddUnitModal
-        isOpen={showAddUnitModal}
-        onClose={() => setShowAddUnitModal(false)}
-        onSuccess={() => {
-          fetchData();
-          showNotification("Satuan berhasil ditambahkan!", "success");
-        }}
-      />
-
-      <EditUnitModal
-        isOpen={showEditUnitModal}
-        onClose={() => {
-          setShowEditUnitModal(false);
-          setSelectedUnit(null);
-        }}
-        onSuccess={() => {
-          fetchData();
-          showNotification("Satuan berhasil diperbarui!", "success");
-        }}
-        unit={selectedUnit}
-      />
-
-      {/* DELETE CONFIRMATION MODAL */}
-      <DeleteConfirmationModal
-        isOpen={deleteModal.show}
-        onClose={() => setDeleteModal({ ...deleteModal, show: false })}
-        onConfirm={confirmDelete}
-        title={deleteModal.title}
-        message={deleteModal.message}
-        isLoading={isDeleting}
-      />
     </div>
   );
 }

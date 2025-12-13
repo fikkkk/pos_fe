@@ -22,8 +22,9 @@
   background: transparent;
   border: none;
   box-shadow: none;
-  overflow: visible;
-  padding-bottom: 24px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-bottom: 0;
 }
 
 /* ==========================
@@ -270,10 +271,11 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow: visible;
   background: transparent;
   border-radius: 16px;
   min-height: 0;
+  padding: 0 24px;
 }
 
 /* ==========================
@@ -320,17 +322,7 @@
 /* ==========================
    PAGINATION - Inside Content Box
 ==========================*/
-.dm-pagination {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 18px 24px;
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 16px;
-  margin-top: 16px;
-  flex-shrink: 0;
-}
+/* Removed duplicate - see line 523 */
 
 .dm-table {
   width: 100%;
@@ -518,16 +510,21 @@
 }
 
 /* ==========================
-   PAGINATION - Inside Content Box
+   PAGINATION - Sticky Bottom Bar
 ==========================*/
 .dm-pagination {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 18px 24px;
-  background: transparent;
-  border-top: 1px solid #e2e8f0;
+  padding: 16px 24px;
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  border: 1px solid #334155;
+  border-radius: 16px;
+  margin: 16px 24px;
   flex-shrink: 0;
+  position: sticky;
+  bottom: 0;
+  z-index: 100;
 }
 
 .dm-page-info {
