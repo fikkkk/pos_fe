@@ -1,444 +1,727 @@
-import React, { useState, useEffect } from "react";
-import { FaChartBar, FaCalendarAlt, FaSearch, FaFileExcel, FaFilePdf, FaPrint, FaCheckCircle } from "react-icons/fa";
+import React, { useState, useEffect, useCallback } from "react";
+import {
+    FaChartBar,
+    FaChartPie,
+    FaFileExcel,
+    FaFilePdf,
+    FaPrint,
+    FaCheckCircle,
+    FaUser,
+    FaUsers,
+    FaSpinner,
+    FaSync,
+    FaArrowUp,
+    FaArrowDown,
+    FaMoneyBillWave,
+    FaClock,
+    FaReceipt,
+    FaPercent,
+} from "react-icons/fa";
 import { api } from "../api";
 import "./LaporanManajemen.css";
 
-// Demo data - akan diganti dengan API call jika backend sudah siap
-const DEMO_DAILY_SALES = [
-    { day: "01", value: 25000000 },
-    { day: "03", value: 32000000 },
-    { day: "05", value: 28000000 },
-    { day: "07", value: 45000000 },
-    { day: "09", value: 38000000 },
-    { day: "11", value: 42000000 },
-    { day: "13", value: 35000000 },
-    { day: "15", value: 48000000 },
-    { day: "17", value: 52000000 },
-    { day: "19", value: 39000000 },
-    { day: "21", value: 44000000 },
-    { day: "23", value: 51000000 },
-    { day: "25", value: 47000000 },
-    { day: "27", value: 55000000 },
-    { day: "29", value: 58000000 },
-];
+// Decode JWT Token to get user info
+function decodeJWT(token) {
+    try {
+        const base64Url = token.split(".")[1];
+        const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+        const jsonPayload = decodeURIComponent(
+            atob(base64)
+                .split("")
+                .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+                .join("")
+        );
+        return JSON.parse(jsonPayload);
+    } catch (e) {
+        return null;
+    }
+}
 
-const DEMO_PAYMENT_METHODS = [
-    { name: "Cash", value: 45, color: "#10b981" },
-    { name: "Debit", value: 30, color: "#3b82f6" },
-    { name: "Credit", value: 15, color: "#8b5cf6" },
-    { name: "QRIS", value: 10, color: "#f59e0b" },
-];
+// Modern Bar Chart Component
+function ModernBarChart({ data, maxValue, formatValue }) {
+    if (!data || data.length === 0) {
+        return <div className="no-data">Tidak ada data untuk periode ini</div>;
+    }
 
-const DEMO_TRANSACTIONS = [
-    { id: 1, date: "12-12-2024 14:30", invoice: "TRX20241212001", customer: "Umum", cashier: "Admin", payment: "Cash", subtotal: 350000, discount: 0, total: 350000 },
-    { id: 2, date: "12-12-2024 15:45", invoice: "TRX20241212002", customer: "Banu", cashier: "Kasir1", payment: "Debit", subtotal: 520000, discount: 20000, total: 500000 },
-    { id: 3, date: "12-12-2024 16:20", invoice: "TRX20241212003", customer: "Maya", cashier: "Admin", payment: "QRIS", subtotal: 180000, discount: 0, total: 180000 },
-    { id: 4, date: "12-12-2024 17:00", invoice: "TRX20241212004", customer: "Umum", cashier: "Kasir2", payment: "Cash", subtotal: 275000, discount: 25000, total: 250000 },
-    { id: 5, date: "12-12-2024 17:30", invoice: "TRX20241212005", customer: "Andi", cashier: "Admin", payment: "Credit", subtotal: 890000, discount: 0, total: 890000 },
-];
+    return (
+        <div className="modern-bar-chart">
+            <div className="bar-chart-container">
+                {data.slice(-20).map((d, i) => {
+                    const percentage = maxValue > 0 ? ((d.total || 0) / maxValue) * 100 : 0;
+                    const isHighest = d.total === maxValue;
 
-const DEMO_PRODUCTS = [
-    { id: 1, name: "Kopi Susu Gula Aren", category: "Minuman", qty: 156, total: 3120000, profit: 1560000 },
-    { id: 2, name: "Nasi Goreng Spesial", category: "Makanan", qty: 89, total: 2225000, profit: 890000 },
-    { id: 3, name: "Teh Tarik", category: "Minuman", qty: 234, total: 1170000, profit: 702000 },
-    { id: 4, name: "Mie Ayam Bakso", category: "Makanan", qty: 67, total: 1005000, profit: 402000 },
-    { id: 5, name: "Es Jeruk Segar", category: "Minuman", qty: 189, total: 945000, profit: 567000 },
-];
+                    return (
+                        <div key={i} className="bar-column">
+                            <div className="bar-tooltip">{formatValue(d.total)}</div>
+                            <div className="bar-wrapper">
+                                <div
+                                    className={`bar-fill ${isHighest ? "highest" : ""}`}
+                                    style={{ height: `${Math.max(percentage, 2)}%` }}
+                                >
+                                    <div className="bar-glow"></div>
+                                </div>
+                            </div>
+                            <span className="bar-label">{d.tanggal?.split("-")[2] || ""}</span>
+                        </div>
+                    );
+                })}
+            </div>
+            <div className="chart-y-axis">
+                <span>{formatValue(maxValue)}</span>
+                <span>{formatValue(maxValue / 2)}</span>
+                <span>0</span>
+            </div>
+        </div>
+    );
+}
 
-const DEMO_CASHIERS = [
-    { name: "Admin", transactions: 45, total: 8500000, avgTransaction: 188889 },
-    { name: "Kasir1", transactions: 38, total: 6200000, avgTransaction: 163158 },
-    { name: "Kasir2", transactions: 29, total: 4800000, avgTransaction: 165517 },
-];
+// Modern Pie Chart Component with Animation
+function ModernPieChart({ data, colors, totalLabel, totalValue, formatNumber }) {
+    if (!data || data.length === 0) {
+        return <div className="no-data">Tidak ada data pembayaran</div>;
+    }
+
+    const total = data.reduce((a, b) => a + (b.jumlahTransaksi || 0), 0);
+    let currentAngle = 0;
+
+    return (
+        <div className="modern-pie-chart">
+            <div className="pie-container">
+                <svg viewBox="0 0 100 100" className="pie-svg">
+                    <defs>
+                        {data.map((item, i) => (
+                            <linearGradient key={i} id={`grad-${i}`} x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stopColor={colors[item.metode] || "#666"} stopOpacity="1" />
+                                <stop offset="100%" stopColor={colors[item.metode] || "#666"} stopOpacity="0.7" />
+                            </linearGradient>
+                        ))}
+                    </defs>
+
+                    {data.map((item, i) => {
+                        const percentage = total > 0 ? (item.jumlahTransaksi / total) * 100 : 0;
+                        const angle = (percentage / 100) * 360;
+                        const startAngle = currentAngle;
+                        currentAngle += angle;
+
+                        const x1 = 50 + 40 * Math.cos((Math.PI * (startAngle - 90)) / 180);
+                        const y1 = 50 + 40 * Math.sin((Math.PI * (startAngle - 90)) / 180);
+                        const x2 = 50 + 40 * Math.cos((Math.PI * (startAngle + angle - 90)) / 180);
+                        const y2 = 50 + 40 * Math.sin((Math.PI * (startAngle + angle - 90)) / 180);
+                        const largeArc = angle > 180 ? 1 : 0;
+
+                        return (
+                            <path
+                                key={i}
+                                d={`M 50 50 L ${x1} ${y1} A 40 40 0 ${largeArc} 1 ${x2} ${y2} Z`}
+                                fill={`url(#grad-${i})`}
+                                className="pie-slice"
+                                style={{ animationDelay: `${i * 0.1}s` }}
+                            />
+                        );
+                    })}
+
+                    <circle cx="50" cy="50" r="25" className="pie-center-circle" />
+                </svg>
+
+                <div className="pie-center-content">
+                    <span className="pie-center-label">{totalLabel}</span>
+                    <span className="pie-center-value">{formatNumber(totalValue)}</span>
+                </div>
+            </div>
+
+            <div className="pie-legend">
+                {data.map((item, i) => {
+                    const percentage = total > 0 ? Math.round((item.jumlahTransaksi / total) * 100) : 0;
+                    return (
+                        <div key={i} className="legend-row">
+                            <div className="legend-marker" style={{ background: colors[item.metode] || "#666" }} />
+                            <div className="legend-info">
+                                <span className="legend-name">{item.metode}</span>
+                                <span className="legend-stats">
+                                    {item.jumlahTransaksi} transaksi ({percentage}%)
+                                </span>
+                            </div>
+                            <div className="legend-amount">{formatNumber(item.totalNominal)}</div>
+                        </div>
+                    );
+                })}
+            </div>
+        </div>
+    );
+}
 
 export default function LaporanManajemen() {
+    // Get user from JWT token
+    const token = localStorage.getItem("token");
+    const userInfo = token ? decodeJWT(token) : null;
+    const isAdmin = userInfo?.role === "ADMIN" || userInfo?.role === "SUPERADMIN";
+    const currentUserId = userInfo?.sub;
+
+    // Filter states
     const [dateFrom, setDateFrom] = useState(() => {
         const d = new Date();
         d.setDate(1);
-        return d.toISOString().split('T')[0];
+        return d.toISOString().split("T")[0];
     });
-    const [dateTo, setDateTo] = useState(() => new Date().toISOString().split('T')[0]);
-    const [period, setPeriod] = useState("daily");
-    const [paymentFilter, setPaymentFilter] = useState("all");
+    const [dateTo, setDateTo] = useState(() => new Date().toISOString().split("T")[0]);
+    const [selectedCashier, setSelectedCashier] = useState("all");
+    const [paymentFilter, setPaymentFilter] = useState("");
+
+    // Data states
+    const [cashiers, setCashiers] = useState([]);
+    const [summary, setSummary] = useState(null);
+    const [dailyChart, setDailyChart] = useState([]);
+    const [paymentStats, setPaymentStats] = useState([]);
+    const [transactions, setTransactions] = useState([]);
+    const [productsData, setProductsData] = useState([]);
+    const [cashierStats, setCashierStats] = useState([]);
+
+    // UI states
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
 
-    // Summary values (demo)
-    const [summary, setSummary] = useState({
-        totalSales: 3304040560,
-        totalTransactions: 2380,
-        totalProfit: 480230000,
-        ppn: 383444461,
-        netProfit: 2915298099,
-        avgTime: "00:02:15"
-    });
-
+    // Format currency
     const formatCurrency = (value) => {
-        return new Intl.NumberFormat('id-ID', {
-            style: 'currency',
-            currency: 'IDR',
+        if (value >= 1000000000) {
+            return `Rp ${(value / 1000000000).toFixed(1)}M`;
+        } else if (value >= 1000000) {
+            return `Rp ${(value / 1000000).toFixed(1)}Jt`;
+        } else if (value >= 1000) {
+            return `Rp ${(value / 1000).toFixed(0)}rb`;
+        }
+        return new Intl.NumberFormat("id-ID", {
+            style: "currency",
+            currency: "IDR",
             minimumFractionDigits: 0,
-            maximumFractionDigits: 0
-        }).format(value);
+        }).format(value || 0);
     };
 
-    const formatNumber = (value) => {
-        return new Intl.NumberFormat('id-ID').format(value);
+    const formatFullCurrency = (value) => {
+        return new Intl.NumberFormat("id-ID", {
+            style: "currency",
+            currency: "IDR",
+            minimumFractionDigits: 0,
+        }).format(value || 0);
     };
 
-    const maxSale = Math.max(...DEMO_DAILY_SALES.map(d => d.value));
+    const formatNumber = (value) => new Intl.NumberFormat("id-ID").format(value || 0);
+
+    // Fetch cashiers list (Admin only) - only KASIR role users
+    useEffect(() => {
+        if (isAdmin) {
+            api
+                .get("/admin/users")
+                .then((res) => {
+                    // Only include KASIR in dropdown filter
+                    const kasirList = (res.data || []).filter(
+                        (u) => u.role === "KASIR"
+                    );
+                    setCashiers(kasirList);
+                })
+                .catch((err) => console.error("Error fetching cashiers:", err));
+        }
+    }, [isAdmin]);
+
+    // Build filter DTO
+    const buildFilterDto = useCallback(() => {
+        const dto = { from: dateFrom, to: dateTo };
+        if (isAdmin) {
+            if (selectedCashier !== "all") dto.cashierId = selectedCashier;
+        } else {
+            dto.cashierId = String(currentUserId);
+        }
+        if (paymentFilter) dto.paymentMethod = paymentFilter;
+        return dto;
+    }, [dateFrom, dateTo, selectedCashier, paymentFilter, isAdmin, currentUserId]);
+
+    // Fetch all report data
+    const fetchReportData = useCallback(async () => {
+        setLoading(true);
+        setError(null);
+        const dto = buildFilterDto();
+
+        try {
+            // Use Promise.allSettled to handle individual failures gracefully
+            const results = await Promise.allSettled([
+                api.post("/report/summary", dto),
+                api.post("/report/daily", dto),
+                api.post("/report/payment", dto),
+                api.post(`/report/transactions?page=${currentPage}&limit=10`, dto),
+                api.post("/report/product", dto),
+                isAdmin ? api.post("/report/cashier", dto) : Promise.resolve({ data: [] }),
+                isAdmin ? api.get("/admin/users") : Promise.resolve({ data: [] }),
+            ]);
+
+            // Extract values, defaulting to empty on failure
+            const [summaryRes, dailyRes, paymentRes, transRes, productRes, cashierRes, usersRes] = results.map(
+                (r, i) => {
+                    if (r.status === "fulfilled") {
+                        return r.value;
+                    } else {
+                        console.error(`API call ${i} failed:`, r.reason);
+                        return { data: null };
+                    }
+                }
+            );
+
+            // Check if critical endpoint failed
+            if (summaryRes.data === null) {
+                console.error("Failed to load summary - DTO:", dto);
+                setError("Gagal memuat ringkasan. Periksa koneksi backend.");
+                setLoading(false);
+                return;
+            }
+
+            setSummary(summaryRes.data);
+            setDailyChart(dailyRes.data || []);
+            setPaymentStats(paymentRes.data || []);
+            setTransactions(transRes.data?.data || transRes.data || []);
+            setTotalPages(transRes.data?.pagination?.totalPages || 1);
+            setProductsData(productRes.data || []);
+
+            // Merge cashiers: combine user list with sales data
+            if (isAdmin) {
+                const salesData = cashierRes.data || [];
+                // Only show KASIR users in Performa Kasir table (not ADMIN)
+                let allUsers = (usersRes.data || []).filter(
+                    (u) => u.role === "KASIR"
+                );
+
+                // If a specific cashier is selected, filter to show only that cashier
+                if (selectedCashier !== "all") {
+                    allUsers = allUsers.filter(
+                        (u) => String(u.id) === String(selectedCashier)
+                    );
+                }
+
+                // Create map of sales data by kasir name
+                const salesMap = {};
+                salesData.forEach((s) => {
+                    salesMap[s.kasir] = s;
+                });
+
+                // Merge: show users, fill with sales data if available
+                const mergedCashierStats = allUsers.map((user) => {
+                    const name = user.name || user.username || user.email;
+                    const salesInfo = salesMap[name];
+                    return {
+                        kasir: name,
+                        jumlahTransaksi: salesInfo?.jumlahTransaksi || 0,
+                        totalPenjualan: salesInfo?.totalPenjualan || 0,
+                        rataRataTransaksi: salesInfo?.rataRataTransaksi || 0,
+                    };
+                });
+
+                setCashierStats(mergedCashierStats);
+            } else {
+                setCashierStats([]);
+            }
+        } catch (err) {
+            console.error("Error fetching report:", err);
+            setError("Gagal memuat data laporan. Silakan coba lagi.");
+        } finally {
+            setLoading(false);
+        }
+    }, [buildFilterDto, currentPage, isAdmin, selectedCashier]);
+
+    useEffect(() => {
+        fetchReportData();
+    }, [fetchReportData]);
+
+    const handleApplyFilter = () => {
+        setCurrentPage(1);
+        fetchReportData();
+    };
+
+    const handleReset = () => {
+        const d = new Date();
+        d.setDate(1);
+        setDateFrom(d.toISOString().split("T")[0]);
+        setDateTo(new Date().toISOString().split("T")[0]);
+        setSelectedCashier("all");
+        setPaymentFilter("");
+        setCurrentPage(1);
+    };
+
+    const maxChartValue = Math.max(...dailyChart.map((d) => d.total || 0), 1);
+
+    const paymentColors = {
+        TUNAI: "#10b981",
+        DEBIT: "#3b82f6",
+        KREDIT: "#8b5cf6",
+        QRIS: "#f59e0b",
+    };
+
+    const totalPaymentTransactions = paymentStats.reduce(
+        (a, b) => a + (b.jumlahTransaksi || 0), 0
+    );
+
+    // Summary card configs
+    const summaryCards = summary ? [
+        {
+            icon: <FaMoneyBillWave />,
+            label: "Penjualan Kotor",
+            value: formatFullCurrency(summary.totalPenjualanKotor),
+            color: "blue",
+            highlight: true,
+        },
+        {
+            icon: <FaReceipt />,
+            label: "Total Transaksi",
+            value: formatNumber(summary.totalTransaksi),
+            color: "green",
+        },
+        {
+            icon: <FaPercent />,
+            label: "Total Diskon",
+            value: `-${formatFullCurrency(summary.totalDiskon)}`,
+            color: "red",
+        },
+        {
+            icon: <FaArrowUp />,
+            label: "Total Pajak",
+            value: formatFullCurrency(summary.totalPajak),
+            color: "purple",
+        },
+        {
+            icon: <FaArrowDown />,
+            label: "Penjualan Bersih",
+            value: formatFullCurrency(summary.totalPenjualanBersih),
+            color: "emerald",
+        },
+        {
+            icon: <FaClock />,
+            label: "Waktu Rata-rata",
+            value: summary.waktuRataRataTransaksi || "00:00:00",
+            color: "orange",
+        },
+    ] : [];
 
     return (
         <div className="laporan-page">
             {/* Header */}
             <div className="laporan-header">
-                <h1 className="laporan-title">
-                    <span className="laporan-title-icon">📊</span>
-                    Laporan Manajemen
-                </h1>
-                <p className="laporan-subtitle">
-                    Ringkasan penjualan, kasir, metode pembayaran, pajak, dan performa operasional POS Anda
-                </p>
+                <div className="laporan-header-content">
+                    <div className="laporan-header-icon">
+                        <FaChartPie />
+                    </div>
+                    <div className="laporan-header-text">
+                        <h1 className="laporan-title">
+                            {isAdmin ? "Laporan Manajemen" : "Laporan Kinerja Saya"}
+                        </h1>
+                        <p className="laporan-subtitle">
+                            {isAdmin
+                                ? "Analisis lengkap penjualan, performa kasir, dan statistik operasional"
+                                : `Dashboard performa pribadi Anda sebagai ${userInfo?.role || "Kasir"}`}
+                        </p>
+                    </div>
+                </div>
+                {!isAdmin && (
+                    <div className="user-profile-badge">
+                        <FaUser />
+                        <span>{userInfo?.email || "User"}</span>
+                    </div>
+                )}
             </div>
 
             {/* Filters */}
             <div className="laporan-filters">
-                <div className="filter-group">
-                    <label className="filter-label">Periode Awal</label>
-                    <input
-                        type="date"
-                        className="filter-input"
-                        value={dateFrom}
-                        onChange={(e) => setDateFrom(e.target.value)}
-                    />
-                </div>
-                <div className="filter-group">
-                    <label className="filter-label">Periode Akhir</label>
-                    <input
-                        type="date"
-                        className="filter-input"
-                        value={dateTo}
-                        onChange={(e) => setDateTo(e.target.value)}
-                    />
-                </div>
-                <div className="filter-group">
-                    <label className="filter-label">Kasir</label>
-                    <select className="filter-input">
-                        <option value="all">Semua Kasir</option>
-                        <option value="admin">Admin</option>
-                        <option value="kasir1">Kasir1</option>
-                        <option value="kasir2">Kasir2</option>
-                    </select>
-                </div>
-                <div className="filter-group">
-                    <label className="filter-label">Metode Pembayaran</label>
-                    <select
-                        className="filter-input"
-                        value={paymentFilter}
-                        onChange={(e) => setPaymentFilter(e.target.value)}
-                    >
-                        <option value="all">Semua Metode</option>
-                        <option value="cash">Cash</option>
-                        <option value="debit">Debit</option>
-                        <option value="credit">Credit</option>
-                        <option value="qris">QRIS</option>
-                    </select>
-                </div>
-                <div className="filter-actions">
-                    <button className="btn-reset">Reset</button>
-                    <button className="btn-apply">Terapkan Filter</button>
-                </div>
-            </div>
-
-            {/* Summary Cards */}
-            <div className="laporan-summary">
-                <div className="summary-card highlight">
-                    <div className="summary-label">Total Penjualan (Sales Total)</div>
-                    <div className="summary-value">{formatCurrency(summary.totalSales)}</div>
-                    <div className="summary-period">Periode: {dateFrom} - {dateTo}</div>
-                </div>
-                <div className="summary-card">
-                    <div className="summary-label">Total Transaksi</div>
-                    <div className="summary-value">{formatNumber(summary.totalTransactions)}</div>
-                    <div className="summary-period">Rata-rata {Math.round(summary.totalTransactions / 30)}/hari</div>
-                </div>
-                <div className="summary-card">
-                    <div className="summary-label">Perkiraan Laba Kotor</div>
-                    <div className="summary-value money">{formatCurrency(summary.totalProfit)}</div>
-                    <div className="summary-period">Periode: {dateFrom} - {dateTo}</div>
-                </div>
-                <div className="summary-card">
-                    <div className="summary-label">Total PPN (Estimasi PKP)</div>
-                    <div className="summary-value">{formatCurrency(summary.ppn)}</div>
-                    <div className="summary-period">Persentase PPN = 11% dari total</div>
-                </div>
-                <div className="summary-card">
-                    <div className="summary-label">Net Profit (Setelah PPh)</div>
-                    <div className="summary-value money">{formatCurrency(summary.netProfit)}</div>
-                    <div className="summary-period">Laba bersih setelah pajak penghasilan badan</div>
-                </div>
-                <div className="summary-card">
-                    <div className="summary-label">Rata-rata Durasi Transaksi</div>
-                    <div className="summary-value">{summary.avgTime}</div>
-                    <div className="summary-period">Durasi dari mulai transaksi hingga pembayaran selesai</div>
-                </div>
-            </div>
-
-            {/* Charts */}
-            <div className="laporan-charts">
-                {/* Sales Chart */}
-                <div className="chart-box">
-                    <div className="chart-header">
-                        <div className="chart-title">
-                            <FaChartBar style={{ color: "#f59e0b" }} />
-                            Grafik Penjualan Harian
-                        </div>
-                        <div className="chart-period-tabs">
-                            <button
-                                className={`period-tab ${period === 'daily' ? 'active' : ''}`}
-                                onClick={() => setPeriod('daily')}
-                            >
-                                Bulan
-                            </button>
-                            <button
-                                className={`period-tab ${period === 'yearly' ? 'active' : ''}`}
-                                onClick={() => setPeriod('yearly')}
-                            >
-                                Tahun
-                            </button>
-                        </div>
+                <div className="filter-row">
+                    <div className="filter-group">
+                        <label>Dari Tanggal</label>
+                        <input
+                            type="date"
+                            value={dateFrom}
+                            onChange={(e) => setDateFrom(e.target.value)}
+                        />
                     </div>
-                    <div className="chart-area">
-                        {DEMO_DAILY_SALES.map((d, i) => (
-                            <div key={i} className="chart-bar-wrapper">
-                                <div
-                                    className="chart-bar"
-                                    style={{ height: `${(d.value / maxSale) * 220}px` }}
-                                >
-                                    <span className="chart-bar-value">{formatCurrency(d.value)}</span>
+
+                    <div className="filter-group">
+                        <label>Sampai Tanggal</label>
+                        <input
+                            type="date"
+                            value={dateTo}
+                            onChange={(e) => setDateTo(e.target.value)}
+                        />
+                    </div>
+
+                    {isAdmin && (
+                        <div className="filter-group">
+                            <label>
+                                <FaUsers /> Kasir
+                            </label>
+                            <select
+                                value={selectedCashier}
+                                onChange={(e) => setSelectedCashier(e.target.value)}
+                            >
+                                <option value="all">Semua Kasir</option>
+                                {cashiers.map((c) => (
+                                    <option key={c.id} value={c.id}>
+                                        {c.name || c.username || c.email}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    )}
+
+                    <div className="filter-group">
+                        <label>Pembayaran</label>
+                        <select
+                            value={paymentFilter}
+                            onChange={(e) => setPaymentFilter(e.target.value)}
+                        >
+                            <option value="">Semua</option>
+                            <option value="TUNAI">Tunai</option>
+                            <option value="DEBIT">Debit</option>
+                            <option value="KREDIT">Kredit</option>
+                            <option value="QRIS">QRIS</option>
+                        </select>
+                    </div>
+
+                    <div className="filter-actions">
+                        <button className="btn-reset" onClick={handleReset}>Reset</button>
+                        <button className="btn-apply" onClick={handleApplyFilter}>
+                            <FaSync /> Terapkan
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            {/* Loading Overlay */}
+            {loading && (
+                <div className="loading-overlay">
+                    <div className="loading-content">
+                        <FaSpinner className="spinner" />
+                        <span>Memuat data laporan...</span>
+                    </div>
+                </div>
+            )}
+
+            {/* Error */}
+            {error && <div className="error-banner">{error}</div>}
+
+            {/* Scrollable Content */}
+            <div className="laporan-content">
+                {/* Summary Cards */}
+                {summary && (
+                    <div className="summary-grid">
+                        {summaryCards.map((card, i) => (
+                            <div key={i} className={`summary-card ${card.color} ${card.highlight ? "highlight" : ""}`}>
+                                <div className="summary-card-icon">{card.icon}</div>
+                                <div className="summary-card-info">
+                                    <span className="summary-card-label">{card.label}</span>
+                                    <span className="summary-card-value">{card.value}</span>
                                 </div>
-                                <span className="chart-bar-label">{d.day}</span>
                             </div>
                         ))}
                     </div>
-                </div>
+                )}
 
-                {/* Payment Method Chart */}
-                <div className="chart-box">
-                    <div className="chart-header">
-                        <div className="chart-title">Metode Pembayaran</div>
-                    </div>
-                    <div className="donut-chart-wrapper">
-                        <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                            {/* Simple visual representation */}
-                            <div style={{
-                                width: "180px",
-                                height: "180px",
-                                borderRadius: "50%",
-                                background: `conic-gradient(
-                  ${DEMO_PAYMENT_METHODS[0].color} 0% ${DEMO_PAYMENT_METHODS[0].value}%,
-                  ${DEMO_PAYMENT_METHODS[1].color} ${DEMO_PAYMENT_METHODS[0].value}% ${DEMO_PAYMENT_METHODS[0].value + DEMO_PAYMENT_METHODS[1].value}%,
-                  ${DEMO_PAYMENT_METHODS[2].color} ${DEMO_PAYMENT_METHODS[0].value + DEMO_PAYMENT_METHODS[1].value}% ${DEMO_PAYMENT_METHODS[0].value + DEMO_PAYMENT_METHODS[1].value + DEMO_PAYMENT_METHODS[2].value}%,
-                  ${DEMO_PAYMENT_METHODS[3].color} ${100 - DEMO_PAYMENT_METHODS[3].value}% 100%
-                )`,
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                boxShadow: "0 8px 24px rgba(0,0,0,0.1)"
-                            }}>
-                                <div style={{
-                                    width: "110px",
-                                    height: "110px",
-                                    borderRadius: "50%",
-                                    background: "#fff",
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    alignItems: "center",
-                                    justifyContent: "center"
-                                }}>
-                                    <div className="donut-center-label">Total Transaksi</div>
-                                    <div className="donut-center-value">{formatNumber(summary.totalTransactions)}</div>
-                                </div>
+                {/* Charts Section */}
+                <div className="charts-grid">
+                    {/* Bar Chart */}
+                    <div className="chart-card">
+                        <div className="chart-card-header">
+                            <div className="chart-card-title">
+                                <FaChartBar className="chart-icon orange" />
+                                <span>Grafik Penjualan Harian</span>
                             </div>
-                            <div className="donut-legend">
-                                {DEMO_PAYMENT_METHODS.map((m, i) => (
-                                    <div key={i} className="legend-item">
-                                        <span className="legend-color" style={{ background: m.color }}></span>
-                                        <span>{m.name}: {m.value}%</span>
-                                    </div>
-                                ))}
+                            <div className="chart-period">{dateFrom} - {dateTo}</div>
+                        </div>
+                        <div className="chart-card-body">
+                            <ModernBarChart
+                                data={dailyChart}
+                                maxValue={maxChartValue}
+                                formatValue={formatCurrency}
+                            />
+                        </div>
+                    </div>
+
+                    {/* Pie Chart */}
+                    <div className="chart-card">
+                        <div className="chart-card-header">
+                            <div className="chart-card-title">
+                                <FaChartPie className="chart-icon blue" />
+                                <span>Distribusi Metode Pembayaran</span>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-
-            {/* Transactions Table */}
-            <div className="laporan-tables">
-                <div className="table-box">
-                    <div className="table-header">
-                        <div className="table-title">📋 Laporan Transaksi</div>
-                        <div className="table-actions">
-                            <button className="table-btn active">
-                                <FaFileExcel /> Excel
-                            </button>
-                            <button className="table-btn">
-                                <FaFilePdf /> PDF
-                            </button>
-                            <button className="table-btn">
-                                <FaPrint /> Cetak
-                            </button>
+                        <div className="chart-card-body">
+                            <ModernPieChart
+                                data={paymentStats}
+                                colors={paymentColors}
+                                totalLabel="Total Transaksi"
+                                totalValue={totalPaymentTransactions}
+                                formatNumber={formatFullCurrency}
+                            />
                         </div>
                     </div>
-                    <div style={{ overflowX: "auto" }}>
-                        <table className="laporan-table">
-                            <thead>
-                                <tr>
-                                    <th>No</th>
-                                    <th>Tanggal & Waktu</th>
-                                    <th>No Invoice</th>
-                                    <th>Kasir</th>
-                                    <th>Pelanggan</th>
-                                    <th>Metode</th>
-                                    <th>Subtotal</th>
-                                    <th>Diskon</th>
-                                    <th>Total</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {DEMO_TRANSACTIONS.map((t, i) => (
-                                    <tr key={t.id}>
-                                        <td>{i + 1}</td>
-                                        <td>{t.date}</td>
-                                        <td><strong>{t.invoice}</strong></td>
-                                        <td>{t.cashier}</td>
-                                        <td>{t.customer}</td>
-                                        <td>{t.payment}</td>
-                                        <td>{formatCurrency(t.subtotal)}</td>
-                                        <td className={t.discount > 0 ? "negative" : ""}>{t.discount > 0 ? `-${formatCurrency(t.discount)}` : "-"}</td>
-                                        <td className="money">{formatCurrency(t.total)}</td>
-                                        <td>
-                                            <span className="status-badge success">
-                                                <FaCheckCircle /> Selesai
-                                            </span>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
                 </div>
 
-                {/* Products Table */}
-                <div className="table-box">
-                    <div className="table-header">
-                        <div className="table-title">📦 Laporan Penjualan per Produk</div>
-                        <div className="table-actions">
-                            <button className="table-btn active">
-                                <FaFileExcel /> Excel
-                            </button>
+                {/* Tables Section */}
+                <div className="tables-section">
+                    {/* Transactions Table */}
+                    <div className="table-card">
+                        <div className="table-card-header">
+                            <h3>📋 Riwayat Transaksi</h3>
+                            <div className="table-actions">
+                                <button className="table-btn excel"><FaFileExcel /> Excel</button>
+                                <button className="table-btn pdf"><FaFilePdf /> PDF</button>
+                                <button className="table-btn print"><FaPrint /> Cetak</button>
+                            </div>
+                        </div>
+                        <div className="table-scroll-wrapper">
+                            <table className="modern-table">
+                                <thead>
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Tanggal</th>
+                                        <th>Kasir</th>
+                                        <th>Pelanggan</th>
+                                        <th>Metode</th>
+                                        <th>Subtotal</th>
+                                        <th>Diskon</th>
+                                        <th>Total</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {transactions.length > 0 ? (
+                                        transactions.map((t, i) => (
+                                            <tr key={t.id || i}>
+                                                <td>{(currentPage - 1) * 10 + i + 1}</td>
+                                                <td>
+                                                    {new Date(t.tanggal).toLocaleString("id-ID", {
+                                                        day: "2-digit",
+                                                        month: "short",
+                                                        year: "numeric",
+                                                        hour: "2-digit",
+                                                        minute: "2-digit",
+                                                    })}
+                                                </td>
+                                                <td>{t.kasir}</td>
+                                                <td>{t.pelanggan}</td>
+                                                <td>
+                                                    <span className={`payment-badge ${t.metodePembayaran?.toLowerCase()}`}>
+                                                        {t.metodePembayaran}
+                                                    </span>
+                                                </td>
+                                                <td>{formatFullCurrency(t.subtotal)}</td>
+                                                <td className={t.diskon > 0 ? "discount" : ""}>
+                                                    {t.diskon > 0 ? `-${formatFullCurrency(t.diskon)}` : "-"}
+                                                </td>
+                                                <td className="total">{formatFullCurrency(t.total)}</td>
+                                                <td>
+                                                    <span className="status-badge success">
+                                                        <FaCheckCircle /> Selesai
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        ))
+                                    ) : (
+                                        <tr>
+                                            <td colSpan="9" className="empty-row">
+                                                Tidak ada transaksi untuk periode ini
+                                            </td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        {totalPages > 1 && (
+                            <div className="pagination">
+                                <button
+                                    disabled={currentPage === 1}
+                                    onClick={() => setCurrentPage((p) => p - 1)}
+                                >
+                                    ← Sebelumnya
+                                </button>
+                                <span>Halaman {currentPage} dari {totalPages}</span>
+                                <button
+                                    disabled={currentPage === totalPages}
+                                    onClick={() => setCurrentPage((p) => p + 1)}
+                                >
+                                    Selanjutnya →
+                                </button>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Products Table */}
+                    <div className="table-card">
+                        <div className="table-card-header">
+                            <h3>📦 Penjualan per Produk</h3>
+                        </div>
+                        <div className="table-scroll-wrapper">
+                            <table className="modern-table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Produk</th>
+                                        <th>Kategori</th>
+                                        <th>Qty</th>
+                                        <th>Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {productsData.length > 0 ? (
+                                        productsData.slice(0, 10).map((p, i) => (
+                                            <tr key={i}>
+                                                <td>{i + 1}</td>
+                                                <td><strong>{p.productName}</strong></td>
+                                                <td>{p.categoryName || "-"}</td>
+                                                <td>{formatNumber(p.qty)}</td>
+                                                <td className="total">{formatFullCurrency(p.totalPenjualan)}</td>
+                                            </tr>
+                                        ))
+                                    ) : (
+                                        <tr>
+                                            <td colSpan="5" className="empty-row">Tidak ada data</td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </table>
                         </div>
                     </div>
-                    <div style={{ overflowX: "auto" }}>
-                        <table className="laporan-table">
-                            <thead>
-                                <tr>
-                                    <th>No</th>
-                                    <th>Nama Produk</th>
-                                    <th>Kategori</th>
-                                    <th>Qty Terjual</th>
-                                    <th>Total Penjualan</th>
-                                    <th>Perk. Laba Kotor</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {DEMO_PRODUCTS.map((p, i) => (
-                                    <tr key={p.id}>
-                                        <td>{i + 1}</td>
-                                        <td><strong>{p.name}</strong></td>
-                                        <td>{p.category}</td>
-                                        <td>{p.qty}</td>
-                                        <td className="money">{formatCurrency(p.total)}</td>
-                                        <td className="money">{formatCurrency(p.profit)}</td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
 
-                {/* Cashier Summary */}
-                <div className="table-box">
-                    <div className="table-header">
-                        <div className="table-title">👤 Ringkasan per Kasir</div>
-                    </div>
-                    <div style={{ overflowX: "auto" }}>
-                        <table className="laporan-table">
-                            <thead>
-                                <tr>
-                                    <th>Nama Kasir</th>
-                                    <th>Jumlah Transaksi</th>
-                                    <th>Total Penjualan</th>
-                                    <th>Rata-rata/Transaksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {DEMO_CASHIERS.map((c, i) => (
-                                    <tr key={i}>
-                                        <td><strong>{c.name}</strong></td>
-                                        <td>{c.transactions}</td>
-                                        <td className="money">{formatCurrency(c.total)}</td>
-                                        <td>{formatCurrency(c.avgTransaction)}</td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                {/* Payment Method Summary */}
-                <div className="table-box">
-                    <div className="table-header">
-                        <div className="table-title">💳 Ringkasan per Metode Pembayaran</div>
-                    </div>
-                    <div style={{ overflowX: "auto" }}>
-                        <table className="laporan-table">
-                            <thead>
-                                <tr>
-                                    <th>Metode Pembayaran</th>
-                                    <th>Jumlah Transaksi</th>
-                                    <th>Total Penjualan</th>
-                                    <th>Persentase</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td><strong>Cash</strong></td>
-                                    <td>1,068</td>
-                                    <td className="money">{formatCurrency(1500000000)}</td>
-                                    <td>45%</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Debit</strong></td>
-                                    <td>714</td>
-                                    <td className="money">{formatCurrency(1000000000)}</td>
-                                    <td>30%</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Credit</strong></td>
-                                    <td>357</td>
-                                    <td className="money">{formatCurrency(500000000)}</td>
-                                    <td>15%</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>QRIS</strong></td>
-                                    <td>238</td>
-                                    <td className="money">{formatCurrency(300000000)}</td>
-                                    <td>10%</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                    {/* Cashier Stats - Admin Only */}
+                    {isAdmin && (
+                        <div className="table-card">
+                            <div className="table-card-header">
+                                <h3>👤 Performa Kasir</h3>
+                            </div>
+                            <div className="table-scroll-wrapper">
+                                <table className="modern-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Kasir</th>
+                                            <th>Transaksi</th>
+                                            <th>Total Penjualan</th>
+                                            <th>Rata-rata</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {cashierStats.length > 0 ? (
+                                            cashierStats.map((c, i) => (
+                                                <tr key={i}>
+                                                    <td><strong>{c.kasir}</strong></td>
+                                                    <td>{formatNumber(c.jumlahTransaksi)}</td>
+                                                    <td className="total">{formatFullCurrency(c.totalPenjualan)}</td>
+                                                    <td>{formatFullCurrency(c.rataRataTransaksi)}</td>
+                                                </tr>
+                                            ))
+                                        ) : (
+                                            <tr>
+                                                <td colSpan="4" className="empty-row">Tidak ada data</td>
+                                            </tr>
+                                        )}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>
