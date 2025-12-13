@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import "./DataMaster.css";
-import { FaSearch, FaPlus, FaTrash, FaCheckCircle, FaTimes } from "react-icons/fa";
+import { FaSearch, FaPlus, FaTrash, FaCheckCircle, FaTimes, FaBox, FaHistory } from "react-icons/fa";
 import { api } from "../api";
 import AddProductModal from "./AddProductModal";
 import EditProductModal from "./EditProductModal";
@@ -11,6 +11,10 @@ import EditCategoryModal from "./EditCategoryModal";
 import AddUnitModal from "./AddUnitModal";
 import EditUnitModal from "./EditUnitModal";
 import DeleteConfirmationModal from "./DeleteConfirmationModal";
+import AddPromoModal from "./AddPromoModal";
+import EditPromoModal from "./EditPromoModal";
+import AddStockModal from "./AddStockModal";
+import StockHistoryModal from "./StockHistoryModal";
 
 export default function DataMaster() {
   const [activeTab, setActiveTab] = useState("produk");
@@ -45,6 +49,17 @@ export default function DataMaster() {
   const [showAddUnitModal, setShowAddUnitModal] = useState(false);
   const [showEditUnitModal, setShowEditUnitModal] = useState(false);
   const [selectedUnit, setSelectedUnit] = useState(null);
+
+  // 🔹 STATE untuk PROMO
+  const [promos, setPromos] = useState([]);
+  const [showAddPromoModal, setShowAddPromoModal] = useState(false);
+  const [showEditPromoModal, setShowEditPromoModal] = useState(false);
+  const [selectedPromo, setSelectedPromo] = useState(null);
+
+  // 🔹 STATE untuk STOCK
+  const [showAddStockModal, setShowAddStockModal] = useState(false);
+  const [showStockHistoryModal, setShowStockHistoryModal] = useState(false);
+  const [selectedProductForStock, setSelectedProductForStock] = useState(null);
 
   // 🔹 STATE untuk notifikasi sukses / error
   const [notification, setNotification] = useState({
@@ -94,6 +109,10 @@ export default function DataMaster() {
           : "/admin/product-units/all";
         const res = await api.get(endpoint);
         setProductUnits(res.data);
+      } else if (activeTab === "promo") {
+        const res = await api.get("/admin/promo");
+        setPromos(res.data);
+        // Note: Backend promo search not verified, client side filter could be used if needed
       }
     } catch (err) {
       console.error("Error fetching data:", err);
@@ -169,6 +188,16 @@ export default function DataMaster() {
     });
   };
 
+  const handleDeletePromo = (id) => {
+    setDeleteModal({
+      show: true,
+      id,
+      type: "promo",
+      title: "Hapus Promo",
+      message: "Apakah Anda yakin ingin menghapus promo produk ini?",
+    });
+  };
+
   // 🔹 CONFIRM DELETE ACTION
   const confirmDelete = async () => {
     if (!deleteModal.id || !deleteModal.type) return;
@@ -219,6 +248,9 @@ export default function DataMaster() {
       } else if (deleteModal.type === "unit") {
         await api.delete(`/admin/unitId/${deleteModal.id}`);
         showNotification("Satuan berhasil dihapus!", "success");
+      } else if (deleteModal.type === "promo") {
+        await api.delete(`/admin/promo/${deleteModal.id}`);
+        showNotification("Promo berhasil dihapus!", "success");
       }
 
       fetchData(); // Refresh data
@@ -269,6 +301,10 @@ export default function DataMaster() {
         (u) =>
           `${u.product?.name || ""}\t${u.unitName}\t${u.multiplier}\t${u.price}`
       );
+    } else if (activeTab === "promo") {
+      dataToCopy = promos.map(p =>
+        `${p.product?.name}\t${p.minQty}\t${p.bonusQty ? `Bonus ${p.bonusQty}` : p.discountPercent ? `Disc ${p.discountPercent}%` : `Potongan Rp${p.discountValue}`}`
+      );
     }
     navigator.clipboard.writeText(dataToCopy.join("\n"));
     showNotification("Data berhasil disalin!", "success");
@@ -285,6 +321,8 @@ export default function DataMaster() {
         return users;
       case "satuan":
         return productUnits;
+      case "promo":
+        return promos;
       default:
         return [];
     }
@@ -321,6 +359,8 @@ export default function DataMaster() {
         return "Cari User...";
       case "satuan":
         return "Cari Satuan...";
+      case "promo":
+        return "Cari Promo...";
       default:
         return "Cari...";
     }
@@ -337,6 +377,8 @@ export default function DataMaster() {
         return "Tambah User";
       case "satuan":
         return "Tambah Satuan";
+      case "promo":
+        return "Tambah Promo";
       default:
         return "Tambah";
     }
@@ -353,6 +395,8 @@ export default function DataMaster() {
         return "Total User";
       case "satuan":
         return "Total Satuan";
+      case "promo":
+        return "Total Promo";
       default:
         return "Total";
     }
@@ -410,6 +454,18 @@ export default function DataMaster() {
             <th>Aksi</th>
           </tr>
         );
+      case "promo":
+        return (
+          <tr>
+            <th className="dm-no-head">No</th>
+            <th>Produk</th>
+            <th>Min Beli</th>
+            <th>Benefit Promo</th>
+            <th>Periode</th>
+            <th>Status</th>
+            <th>Aksi</th>
+          </tr>
+        );
       default:
         return null;
     }
@@ -454,6 +510,20 @@ export default function DataMaster() {
                 >
                   <span className="dm-action-icon">✏️</span>
                   <span className="dm-action-label">Edit</span>
+                </button>
+                <button
+                  className="dm-action-card"
+                  style={{
+                    background: "linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)",
+                    border: "none"
+                  }}
+                  onClick={() => {
+                    setSelectedProductForStock(item);
+                    setShowAddStockModal(true);
+                  }}
+                >
+                  <span className="dm-action-icon"><FaBox /></span>
+                  <span className="dm-action-label">+Stok</span>
                 </button>
                 <button
                   className="dm-action-card dm-action-delete"
@@ -627,6 +697,74 @@ export default function DataMaster() {
             </td>
           </tr>
         );
+      case "promo":
+        return (
+          <tr key={item.id}>
+            <td className="dm-no-cell">{indexOfFirst + index + 1}</td>
+            <td>
+              <div style={{ fontWeight: 600, color: "#fff" }}>{item.product?.name || "-"}</div>
+            </td>
+            <td style={{ color: "#e2e8f0" }}>{item.minQty} Pcs</td>
+            <td>
+              {item.bonusQty ? (
+                <span style={{ color: "#fff", fontWeight: 600, background: "linear-gradient(135deg, #10b981 0%, #059669 100%)", padding: "6px 12px", borderRadius: "8px", display: "inline-block", boxShadow: "0 2px 8px rgba(16, 185, 129, 0.3)" }}>
+                  🎁 Gratis {item.bonusQty} Pcs
+                </span>
+              ) : item.discountPercent ? (
+                <span style={{ color: "#fff", fontWeight: 600, background: "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)", padding: "6px 12px", borderRadius: "8px", display: "inline-block", boxShadow: "0 2px 8px rgba(245, 158, 11, 0.3)" }}>
+                  🏷️ Diskon {item.discountPercent}%
+                </span>
+              ) : (
+                <span style={{ color: "#fff", fontWeight: 600, background: "linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)", padding: "6px 12px", borderRadius: "8px", display: "inline-block", boxShadow: "0 2px 8px rgba(59, 130, 246, 0.3)" }}>
+                  💰 Potongan Rp {Number(item.discountValue || 0).toLocaleString("id-ID")}
+                </span>
+              )}
+            </td>
+            <td style={{ color: "#e2e8f0" }}>{item.startDate ? new Date(item.startDate).toLocaleDateString("id-ID") : "-"} s/d {item.endDate ? new Date(item.endDate).toLocaleDateString("id-ID") : "-"}</td>
+            <td>
+              <span
+                style={{
+                  padding: "6px 14px",
+                  borderRadius: "20px",
+                  background: item.isActive
+                    ? "linear-gradient(135deg, #10b981 0%, #059669 100%)"
+                    : "linear-gradient(135deg, #ef4444 0%, #dc2626 100%)",
+                  color: "#fff",
+                  fontWeight: 600,
+                  fontSize: "12px",
+                  boxShadow: item.isActive
+                    ? "0 2px 8px rgba(16, 185, 129, 0.4)"
+                    : "0 2px 8px rgba(239, 68, 68, 0.4)",
+                }}
+              >
+                {item.isActive ? "✓ Aktif" : "✗ Tidak Aktif"}
+              </span>
+            </td>
+            <td>
+              <div className="dm-action-group">
+                <button
+                  className="dm-action-card dm-action-edit"
+                  onClick={() => {
+                    setSelectedPromo(item);
+                    setShowEditPromoModal(true);
+                  }}
+                >
+                  <span className="dm-action-icon">✏️</span>
+                  <span className="dm-action-label">Edit</span>
+                </button>
+                <button
+                  className="dm-action-card dm-action-delete"
+                  onClick={() => handleDeletePromo(item.id)}
+                >
+                  <span className="dm-action-icon">
+                    <FaTrash />
+                  </span>
+                  <span className="dm-action-label">Hapus</span>
+                </button>
+              </div>
+            </td>
+          </tr>
+        );
       default:
         return null;
     }
@@ -737,6 +875,17 @@ export default function DataMaster() {
                 <img src="/img/datasatuan.png" alt="satuan" />
               </span>
             </button>
+
+            {/* TAB PROMO */}
+            <button
+              className={"dm-newtab " + (activeTab === "promo" ? "active" : "")}
+              onClick={() => setActiveTab("promo")}
+            >
+              <span className="dm-newtab-text">Promo Produk</span>
+              <span className="dm-newtab-circle">
+                <span style={{ fontSize: "24px" }}>🏷️</span>
+              </span>
+            </button>
           </div>
         </div>
 
@@ -763,9 +912,26 @@ export default function DataMaster() {
               Copy
             </button>
             {activeTab === "produk" && (
-              <button className="dm-top-btn" onClick={handleExportExcel}>
-                Excel
-              </button>
+              <>
+                <button className="dm-top-btn" onClick={handleExportExcel}>
+                  Excel
+                </button>
+                <button
+                  className="dm-top-btn"
+                  onClick={() => setShowStockHistoryModal(true)}
+                  style={{
+                    background: "linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%)",
+                    color: "#fff",
+                    border: "none",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "6px"
+                  }}
+                >
+                  <FaHistory />
+                  Riwayat Stok
+                </button>
+              </>
             )}
           </div>
 
@@ -781,6 +947,8 @@ export default function DataMaster() {
                 setShowAddCategoryModal(true);
               } else if (activeTab === "satuan") {
                 setShowAddUnitModal(true);
+              } else if (activeTab === "promo") {
+                setShowAddPromoModal(true);
               }
             }}
           >
@@ -1007,6 +1175,51 @@ export default function DataMaster() {
             showNotification("Satuan berhasil diperbarui!", "success");
           }}
           unit={selectedUnit}
+        />
+
+        {/* PROMO MODALS */}
+        <AddPromoModal
+          isOpen={showAddPromoModal}
+          onClose={() => setShowAddPromoModal(false)}
+          onSuccess={() => {
+            fetchData();
+            showNotification("Promo berhasil dibuat!", "success");
+          }}
+        />
+
+        <EditPromoModal
+          isOpen={showEditPromoModal}
+          onClose={() => {
+            setShowEditPromoModal(false);
+            setSelectedPromo(null);
+          }}
+          promo={selectedPromo}
+          onSuccess={() => {
+            fetchData();
+            showNotification("Promo berhasil diperbarui!", "success");
+          }}
+        />
+
+        {/* STOCK MODALS */}
+        <AddStockModal
+          isOpen={showAddStockModal}
+          onClose={() => {
+            setShowAddStockModal(false);
+            setSelectedProductForStock(null);
+          }}
+          product={selectedProductForStock}
+          onSuccess={(result) => {
+            fetchData();
+            showNotification(`Berhasil menambahkan ${result.added} stok untuk ${result.productName}!`, "success");
+          }}
+        />
+
+        <StockHistoryModal
+          isOpen={showStockHistoryModal}
+          onClose={() => setShowStockHistoryModal(false)}
+          onDelete={() => {
+            // Optional: refresh if needed
+          }}
         />
 
         {/* DELETE CONFIRMATION MODAL */}
