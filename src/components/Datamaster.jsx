@@ -527,8 +527,8 @@ export default function DataMaster() {
                     setShowAddStockModal(true);
                   }}
                 >
-                  <span className="dm-action-icon"><FaBox /></span>
-                  <span className="dm-action-label">+Stok</span>
+                  <span className="dm-action-icon" style={{ color: "#fff" }}><FaBox /></span>
+                  <span className="dm-action-label" style={{ color: "#fff" }}>+Stok</span>
                 </button>
                 <button
                   className="dm-action-card dm-action-delete"
@@ -940,7 +940,7 @@ export default function DataMaster() {
             )}
             {/* Riwayat button for User tab */}
             {activeTab === "user" && (
-              <button 
+              <button
                 className="dm-top-btn"
                 onClick={() => {
                   setActivityLogEntityType("USER");
@@ -961,7 +961,7 @@ export default function DataMaster() {
             )}
             {/* Riwayat button for Kategori tab */}
             {activeTab === "kategori" && (
-              <button 
+              <button
                 className="dm-top-btn"
                 onClick={() => {
                   setActivityLogEntityType("CATEGORY");
@@ -982,7 +982,7 @@ export default function DataMaster() {
             )}
             {/* Riwayat button for Satuan tab */}
             {activeTab === "satuan" && (
-              <button 
+              <button
                 className="dm-top-btn"
                 onClick={() => {
                   setActivityLogEntityType("PRODUCT_UNIT");
@@ -1003,7 +1003,7 @@ export default function DataMaster() {
             )}
             {/* Riwayat button for Promo tab */}
             {activeTab === "promo" && (
-              <button 
+              <button
                 className="dm-top-btn"
                 onClick={() => {
                   setActivityLogEntityType("PROMO");

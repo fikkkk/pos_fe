@@ -20,6 +20,7 @@ import { api } from "../api";
 import Sidebar from "./Sidebar";
 import Transaksi from "./Transaksi";
 import Datamaster from "./Datamaster";
+import LaporanManajemen from "./LaporanManajemen";
 
 // New Components
 import LoginNotification from "./LoginNotification";
@@ -48,7 +49,7 @@ function SkillsWheel() {
 /* ============================= MAIN DASHBOARD ============================= */
 
 export default function Dashboard() {
-  // MENU AKTIF: "dashboard" | "transaksi" | "datamaster"
+  // MENU AKTIF: "dashboard" | "transaksi" | "datamaster" | "laporan"
   const [activeMenu, setActiveMenu] = useState("dashboard");
   // Show welcome toast - initialize to true so it shows immediately
   const [showWelcomeToast, setShowWelcomeToast] = useState(true);
@@ -678,6 +679,9 @@ export default function Dashboard() {
 
           {/* ================= HALAMAN DATA-MASTER ================= */}
           {activeMenu === "datamaster" && <Datamaster />}
+
+          {/* ================= HALAMAN LAPORAN ================= */}
+          {activeMenu === "laporan" && <LaporanManajemen />}
         </section>
       </main>
     </div>

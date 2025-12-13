@@ -1,9 +1,9 @@
-// src/components/Sidebar.jsx
 import React from "react";
 import {
   FaThLarge,
   FaShoppingCart,
   FaFileAlt,
+  FaChartPie,
   FaUsers,
   FaPowerOff,
 } from "react-icons/fa";
@@ -15,6 +15,7 @@ export default function Sidebar({ activeMenu, setActiveMenu, isDarkMode, toggleT
     { id: "dashboard", label: "Dashboard", icon: <FaThLarge /> },
     { id: "transaksi", label: "Transaksi", icon: <FaShoppingCart /> },
     { id: "datamaster", label: "Data Master", icon: <FaFileAlt /> },
+    { id: "laporan", label: "Laporan", icon: <FaChartPie /> },
   ];
 
   return (

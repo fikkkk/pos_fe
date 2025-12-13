@@ -637,7 +637,7 @@
 
 .dashboard.dark .dm-newtab.active {
   background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
-  color: #1e293b;
+  color: #ffffff;
 }
 
 .dashboard.dark .dm-newtab-circle {
