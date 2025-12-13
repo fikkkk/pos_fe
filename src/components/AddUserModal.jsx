@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { FaTimes } from "react-icons/fa";
 import { api } from "../api";
 import "./AddProductModal.css"; // Reuse same CSS
+import SearchableDropdown from "./SearchableDropdown";
 
 export default function AddUserModal({ isOpen, onClose, onSuccess }) {
     // Form state
@@ -210,15 +211,18 @@ export default function AddUserModal({ isOpen, onClose, onSuccess }) {
                             <label className="form-label">
                                 Role <span className="required">*</span>
                             </label>
-                            <select
+                            <SearchableDropdown
                                 name="role"
                                 value={formData.role}
                                 onChange={handleChange}
-                                className="form-select"
-                            >
-                                <option value="KASIR">Kasir</option>
-                                <option value="ADMIN">Admin</option>
-                            </select>
+                                options={[
+                                    { id: "KASIR", name: "Kasir" },
+                                    { id: "ADMIN", name: "Admin" }
+                                ]}
+                                placeholder="Pilih Role"
+                                searchPlaceholder="Cari role..."
+                                required
+                            />
                         </div>
                     </div>
 

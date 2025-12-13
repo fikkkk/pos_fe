@@ -264,9 +264,6 @@
 /* ==========================
    CONTENT BOX - Table + Pagination Section
 ==========================*/
-/* ==========================
-   CONTENT BOX - Table + Pagination Section
-==========================*/
 .dm-content-box {
   flex: 1;
   display: flex;
@@ -275,7 +272,8 @@
   background: transparent;
   border-radius: 16px;
   min-height: 0;
-  padding: 0 24px;
+  margin: 0 24px;
+  padding: 0;
 }
 
 /* ==========================
@@ -520,10 +518,8 @@
   background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
   border: 1px solid #334155;
   border-radius: 16px;
-  margin: 16px 24px;
+  margin: 8px 24px 24px 24px;
   flex-shrink: 0;
-  position: sticky;
-  bottom: 0;
   z-index: 100;
 }
 

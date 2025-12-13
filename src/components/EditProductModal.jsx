@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { FaTimes, FaCloudUploadAlt, FaTrash } from "react-icons/fa";
 import { api } from "../api";
 import "./AddProductModal.css"; // Reuse same CSS
+import SearchableDropdown from "./SearchableDropdown";
 
 export default function EditProductModal({ isOpen, onClose, onSuccess, product }) {
     // Form state
@@ -439,40 +440,30 @@ export default function EditProductModal({ isOpen, onClose, onSuccess, product }
                         {/* Kategori (readonly info) */}
                         <div className="form-group">
                             <label className="form-label">Kategori</label>
-                            <select
+                            <SearchableDropdown
                                 name="categoryId"
                                 value={formData.categoryId}
                                 onChange={handleChange}
-                                className="form-select"
+                                options={categories}
+                                placeholder="Pilih Kategori"
+                                searchPlaceholder="Cari kategori..."
                                 disabled
-                            >
-                                <option value="">Pilih Kategori</option>
-                                {categories.map((cat) => (
-                                    <option key={cat.id} value={cat.id}>
-                                        {cat.name}
-                                    </option>
-                                ))}
-                            </select>
+                            />
                             <small style={{ color: "#94a3b8", fontSize: "11px" }}>Kategori tidak dapat diubah</small>
                         </div>
 
                         {/* Supplier (readonly info) */}
                         <div className="form-group">
                             <label className="form-label">Supplier</label>
-                            <select
+                            <SearchableDropdown
                                 name="supplierId"
                                 value={formData.supplierId}
                                 onChange={handleChange}
-                                className="form-select"
+                                options={suppliers}
+                                placeholder="Pilih Supplier"
+                                searchPlaceholder="Cari supplier..."
                                 disabled
-                            >
-                                <option value="">Pilih Supplier</option>
-                                {suppliers.map((sup) => (
-                                    <option key={sup.id} value={sup.id}>
-                                        {sup.name}
-                                    </option>
-                                ))}
-                            </select>
+                            />
                             <small style={{ color: "#94a3b8", fontSize: "11px" }}>Supplier tidak dapat diubah</small>
                         </div>
 

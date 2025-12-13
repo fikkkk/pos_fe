@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { FaTimes } from "react-icons/fa";
 import { api } from "../api";
 import "./AddProductModal.css"; // Reuse same CSS
+import SearchableDropdown from "./SearchableDropdown";
 
 export default function EditUserModal({ isOpen, onClose, onSuccess, user }) {
     // Form state
@@ -218,29 +219,33 @@ export default function EditUserModal({ isOpen, onClose, onSuccess, user }) {
                         {/* Role */}
                         <div className="form-group">
                             <label className="form-label">Role</label>
-                            <select
+                            <SearchableDropdown
                                 name="role"
                                 value={formData.role}
                                 onChange={handleChange}
-                                className="form-select"
-                            >
-                                <option value="KASIR">Kasir</option>
-                                <option value="ADMIN">Admin</option>
-                            </select>
+                                options={[
+                                    { id: "KASIR", name: "Kasir" },
+                                    { id: "ADMIN", name: "Admin" }
+                                ]}
+                                placeholder="Pilih Role"
+                                searchPlaceholder="Cari role..."
+                            />
                         </div>
 
                         {/* Status */}
                         <div className="form-group">
                             <label className="form-label">Status</label>
-                            <select
+                            <SearchableDropdown
                                 name="status"
                                 value={formData.status}
                                 onChange={handleChange}
-                                className="form-select"
-                            >
-                                <option value="AKTIF">Aktif</option>
-                                <option value="TIDAK_AKTIF">Tidak Aktif</option>
-                            </select>
+                                options={[
+                                    { id: "AKTIF", name: "Aktif" },
+                                    { id: "TIDAK_AKTIF", name: "Tidak Aktif" }
+                                ]}
+                                placeholder="Pilih Status"
+                                searchPlaceholder="Cari status..."
+                            />
                         </div>
                     </div>
 

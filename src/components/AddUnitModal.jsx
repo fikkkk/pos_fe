@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { FaTimes } from "react-icons/fa";
 import { api } from "../api";
 import "./AddProductModal.css"; // Reuse same CSS
+import SearchableDropdown from "./SearchableDropdown";
 
 export default function AddUnitModal({ isOpen, onClose, onSuccess }) {
     // Form state
@@ -140,19 +141,16 @@ export default function AddUnitModal({ isOpen, onClose, onSuccess }) {
                             <label className="form-label">
                                 Pilih Produk <span className="required">*</span>
                             </label>
-                            <select
+                            <SearchableDropdown
                                 name="productId"
                                 value={formData.productId}
                                 onChange={handleChange}
-                                className="form-select"
-                            >
-                                <option value="">-- Pilih Produk --</option>
-                                {products.map((product) => (
-                                    <option key={product.id} value={product.id}>
-                                        {product.name} - Rp {Number(product.price || 0).toLocaleString("id-ID")}
-                                    </option>
-                                ))}
-                            </select>
+                                options={products}
+                                placeholder="-- Pilih Produk --"
+                                searchPlaceholder="Cari produk..."
+                                displayField="name" // Kita harus memodifikasi tampilan opsi sedikit berbeda jika complex
+                                required
+                            />
                         </div>
 
                         {/* Nama Satuan */}

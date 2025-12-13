@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { FaTimes, FaCloudUploadAlt, FaTrash } from "react-icons/fa";
 import { api } from "../api";
 import "./AddProductModal.css";
+import SearchableDropdown from "./SearchableDropdown";
 
 export default function AddProductModal({ isOpen, onClose, onSuccess }) {
     // Form state
@@ -431,19 +432,15 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }) {
                             <label className="form-label">
                                 Kategori <span className="required">*</span>
                             </label>
-                            <select
+                            <SearchableDropdown
                                 name="categoryId"
                                 value={formData.categoryId}
                                 onChange={handleChange}
-                                className="form-select"
-                            >
-                                <option value="">Pilih Kategori</option>
-                                {categories.map((cat) => (
-                                    <option key={cat.id} value={cat.id}>
-                                        {cat.name}
-                                    </option>
-                                ))}
-                            </select>
+                                options={categories}
+                                placeholder="Pilih Kategori"
+                                searchPlaceholder="Cari kategori..."
+                                required
+                            />
                         </div>
 
                         {/* Supplier */}
@@ -451,19 +448,15 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }) {
                             <label className="form-label">
                                 Supplier <span className="required">*</span>
                             </label>
-                            <select
+                            <SearchableDropdown
                                 name="supplierId"
                                 value={formData.supplierId}
                                 onChange={handleChange}
-                                className="form-select"
-                            >
-                                <option value="">Pilih Supplier</option>
-                                {suppliers.map((sup) => (
-                                    <option key={sup.id} value={sup.id}>
-                                        {sup.name}
-                                    </option>
-                                ))}
-                            </select>
+                                options={suppliers}
+                                placeholder="Pilih Supplier"
+                                searchPlaceholder="Cari supplier..."
+                                required
+                            />
                         </div>
 
                         {/* Deskripsi */}
@@ -499,7 +492,7 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }) {
                         </button>
                     </div>
                 </form>
-            </div>
-        </div>
+            </div >
+        </div >
     );
 }
