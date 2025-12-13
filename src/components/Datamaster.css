@@ -851,13 +851,162 @@
 }
 
 @media (max-width: 768px) {
+  .dm-header {
+    padding: 8px 12px;
+    gap: 8px;
+  }
+
   .dm-tabs {
-    flex-direction: column;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    overflow-x: auto;
     width: 100%;
+    gap: 8px;
+    padding-right: 16px;
+    padding-bottom: 8px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .dm-tabs::-webkit-scrollbar {
+    display: none;
   }
 
   .dm-newtab {
-    width: 100%;
+    min-width: auto;
+    padding: 10px 35px 10px 12px;
+    font-size: 12px;
+    flex-shrink: 0;
+  }
+
+  .dm-newtab-circle {
+    width: 36px;
+    height: 36px;
+    right: -12px;
+  }
+
+  .dm-newtab-circle img {
+    width: 18px;
+    height: 18px;
+  }
+
+  .dm-search-row {
+    padding: 8px 12px;
+    gap: 8px;
+  }
+
+  .dm-search-field {
+    min-width: 100%;
+    padding: 10px 12px;
+  }
+
+  .dm-header-actions {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .dm-top-btn {
+    padding: 8px 12px;
+    font-size: 11px;
+  }
+
+  .dm-content-box {
+    margin: 0 12px;
+  }
+
+  .dm-table th,
+  .dm-table td {
+    padding: 10px 12px;
+    font-size: 11px;
+  }
+
+  .dm-table th:first-child,
+  .dm-table td:first-child {
+    padding-left: 12px;
+  }
+
+  .dm-action-group {
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .dm-action-card {
+    padding: 6px 8px;
+    min-width: 50px;
+  }
+
+  .dm-action-icon {
+    width: 26px;
+    height: 26px;
+    font-size: 12px;
+  }
+
+  .dm-action-label {
+    font-size: 9px;
+  }
+
+  .dm-pagination {
+    margin: 8px 12px 12px 12px;
+    padding: 12px 16px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .dm-page-info {
+    font-size: 11px;
+  }
+
+  .dm-pages {
+    gap: 4px;
+  }
+
+  .dm-pages button {
+    min-width: 30px;
+    height: 30px;
+    padding: 0 8px;
+    font-size: 12px;
+  }
+
+  .dm-page-size {
+    font-size: 11px;
+  }
+
+  .dm-page-size select {
+    padding: 8px 28px 8px 10px;
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 480px) {
+  .dm-newtab {
+    padding: 8px 30px 8px 10px;
+    font-size: 11px;
+    border-radius: 12px;
+  }
+
+  .dm-newtab-circle {
+    width: 30px;
+    height: 30px;
+    right: -10px;
+  }
+
+  .dm-newtab-circle img {
+    width: 16px;
+    height: 16px;
+  }
+
+  .dm-img {
+    width: 35px;
+    height: 35px;
+  }
+
+  .dm-action-label {
+    display: none;
+  }
+
+  .dm-action-card {
+    min-width: auto;
+    padding: 6px;
   }
 }
 

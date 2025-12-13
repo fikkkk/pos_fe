@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FaTimes } from "react-icons/fa";
+import { FaTimes, FaEye, FaEyeSlash } from "react-icons/fa";
 import { api } from "../api";
 import "./AddProductModal.css"; // Reuse same CSS
 import SearchableDropdown from "./SearchableDropdown";
@@ -186,7 +186,7 @@ export default function EditUserModal({ isOpen, onClose, onSuccess, user }) {
                             <label className="form-label">
                                 Password Baru <span style={{ color: "#94a3b8", fontWeight: 400 }}>(kosongkan jika tidak ingin mengubah)</span>
                             </label>
-                            <div style={{ position: "relative" }}>
+                            <div style={{ position: "relative", width: "100%" }}>
                                 <input
                                     type={showPassword ? "text" : "password"}
                                     name="password"
@@ -194,24 +194,35 @@ export default function EditUserModal({ isOpen, onClose, onSuccess, user }) {
                                     onChange={handleChange}
                                     className="form-input"
                                     placeholder="Masukkan password baru..."
-                                    style={{ paddingRight: "50px" }}
+                                    style={{ width: "100%", paddingRight: "45px" }}
                                 />
                                 <button
                                     type="button"
                                     onClick={() => setShowPassword(!showPassword)}
+                                    title={showPassword ? "Sembunyikan password" : "Tampilkan password"}
                                     style={{
                                         position: "absolute",
-                                        right: "12px",
+                                        right: "14px",
                                         top: "50%",
                                         transform: "translateY(-50%)",
-                                        background: "none",
+                                        background: "transparent",
                                         border: "none",
                                         cursor: "pointer",
-                                        fontSize: "12px",
-                                        color: "#64748b"
+                                        padding: "4px",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        color: showPassword ? "#8b5cf6" : "#94a3b8",
+                                        transition: "color 0.2s ease"
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        e.currentTarget.style.color = "#8b5cf6";
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.currentTarget.style.color = showPassword ? "#8b5cf6" : "#94a3b8";
                                     }}
                                 >
-                                    {showPassword ? "Hide" : "Show"}
+                                    {showPassword ? <FaEyeSlash size={16} /> : <FaEye size={16} />}
                                 </button>
                             </div>
                         </div>
