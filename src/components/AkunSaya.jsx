@@ -12,9 +12,11 @@ import {
     FaCheckCircle,
     FaSpinner,
     FaShieldAlt,
+    FaTrash,
 } from "react-icons/fa";
 import { api } from "../api";
 import "./AkunSaya.css";
+import ImageCropModal from "./ImageCropModal";
 
 // Decode JWT Token
 function decodeJWT(token) {
@@ -33,14 +35,18 @@ function decodeJWT(token) {
     }
 }
 
-export default function AkunSaya() {
+export default function AkunSaya({ onProfileUpdate }) {
     const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
-    
+
+    // Crop modal state
+    const [cropModalOpen, setCropModalOpen] = useState(false);
+    const [imageToCrop, setImageToCrop] = useState(null);
+
     const [formData, setFormData] = useState({
         name: "",
         username: "",
@@ -88,6 +94,8 @@ export default function AkunSaya() {
             setSuccess("Profil berhasil diperbarui!");
             setIsEditing(false);
             setTimeout(() => setSuccess(null), 3000);
+            // Notify parent to refresh sidebar
+            if (onProfileUpdate) onProfileUpdate();
         } catch (err) {
             console.error("Error updating profile:", err);
             setError(err.response?.data?.message || "Gagal memperbarui profil");
@@ -96,26 +104,80 @@ export default function AkunSaya() {
         }
     };
 
-    const handlePhotoUpload = async (e) => {
+    // Handle file selection - open crop modal
+    const handleFileSelect = (e) => {
         const file = e.target.files[0];
         if (!file) return;
 
+        // Create URL for the selected image
+        const imageUrl = URL.createObjectURL(file);
+        setImageToCrop(imageUrl);
+        setCropModalOpen(true);
+
+        // Reset input so same file can be selected again
+        e.target.value = "";
+    };
+
+    // Handle cropped image upload
+    const handleCroppedUpload = async (croppedFile) => {
         const formDataFile = new FormData();
-        formDataFile.append("photo", file);
+        formDataFile.append("photo", croppedFile);
 
         try {
             setSaving(true);
+            setCropModalOpen(false);
+
             const res = await api.patch("/profile/photo", formDataFile, {
                 headers: { "Content-Type": "multipart/form-data" },
             });
             setProfile((prev) => ({ ...prev, picture: res.data.picture }));
             setSuccess("Foto profil berhasil diperbarui!");
             setTimeout(() => setSuccess(null), 3000);
+            // Notify parent to refresh sidebar
+            if (onProfileUpdate) onProfileUpdate();
         } catch (err) {
             console.error("Error uploading photo:", err);
             setError("Gagal mengupload foto");
         } finally {
             setSaving(false);
+            // Clean up the object URL
+            if (imageToCrop) {
+                URL.revokeObjectURL(imageToCrop);
+                setImageToCrop(null);
+            }
+        }
+    };
+
+    // Handle delete photo
+    const handleDeletePhoto = async () => {
+        if (!profile?.picture) return;
+
+        if (!window.confirm("Apakah Anda yakin ingin menghapus foto profil?")) {
+            return;
+        }
+
+        try {
+            setSaving(true);
+            await api.delete("/profile/photo");
+            setProfile((prev) => ({ ...prev, picture: null }));
+            setSuccess("Foto profil berhasil dihapus!");
+            setTimeout(() => setSuccess(null), 3000);
+            // Notify parent to refresh sidebar
+            if (onProfileUpdate) onProfileUpdate();
+        } catch (err) {
+            console.error("Error deleting photo:", err);
+            setError(err.response?.data?.message || "Gagal menghapus foto");
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    // Close crop modal
+    const handleCloseCropModal = () => {
+        setCropModalOpen(false);
+        if (imageToCrop) {
+            URL.revokeObjectURL(imageToCrop);
+            setImageToCrop(null);
         }
     };
 
@@ -208,24 +270,37 @@ export default function AkunSaya() {
                 {/* Profile Card */}
                 <div className="akun-profile-card">
                     <div className="profile-cover"></div>
-                    
+
                     <div className="profile-avatar-section">
                         <div className="profile-avatar">
                             {profile?.picture ? (
-                                <img src={profile.picture} alt="Profile" />
+                                <img src={`http://localhost:3000${profile.picture}`} alt="Profile" />
                             ) : (
                                 <span>{(profile?.name || profile?.username || "U")[0].toUpperCase()}</span>
                             )}
-                            
+
+                            {/* Upload button */}
                             <label className="avatar-upload-btn">
                                 <FaCamera />
                                 <input
                                     type="file"
                                     accept="image/jpeg,image/jpg,image/png"
-                                    onChange={handlePhotoUpload}
+                                    onChange={handleFileSelect}
                                     hidden
                                 />
                             </label>
+
+                            {/* Delete button - only show if has picture */}
+                            {profile?.picture && (
+                                <button
+                                    className="avatar-delete-btn"
+                                    onClick={handleDeletePhoto}
+                                    disabled={saving}
+                                    title="Hapus foto"
+                                >
+                                    <FaTrash />
+                                </button>
+                            )}
                         </div>
 
                         <div className="profile-info">
@@ -362,6 +437,14 @@ export default function AkunSaya() {
                     </div>
                 </div>
             </div>
+
+            {/* Image Crop Modal */}
+            <ImageCropModal
+                isOpen={cropModalOpen}
+                imageSrc={imageToCrop}
+                onClose={handleCloseCropModal}
+                onSave={handleCroppedUpload}
+            />
         </div>
     );
 }

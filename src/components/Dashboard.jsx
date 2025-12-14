@@ -55,6 +55,13 @@ export default function Dashboard() {
   const [activeMenu, setActiveMenu] = useState("dashboard");
   // Show welcome toast - initialize to true so it shows immediately
   const [showWelcomeToast, setShowWelcomeToast] = useState(true);
+  // Profile update key - increment to trigger Sidebar refresh
+  const [profileUpdateKey, setProfileUpdateKey] = useState(0);
+
+  // Callback when profile is updated in AkunSaya
+  const handleProfileUpdate = () => {
+    setProfileUpdateKey((prev) => prev + 1);
+  };
 
   // Theme state - check localStorage for saved preference
   const [isDarkMode, setIsDarkMode] = useState(() => {
@@ -305,6 +312,7 @@ export default function Dashboard() {
         setActiveMenu={setActiveMenu}
         isDarkMode={isDarkMode}
         toggleTheme={toggleTheme}
+        profileUpdateKey={profileUpdateKey}
       />
 
       <main className="ds-main">
@@ -686,7 +694,7 @@ export default function Dashboard() {
           {activeMenu === "laporan" && <LaporanManajemen />}
 
           {/* ================= HALAMAN AKUN SAYA ================= */}
-          {activeMenu === "akun" && <AkunSaya />}
+          {activeMenu === "akun" && <AkunSaya onProfileUpdate={handleProfileUpdate} />}
 
           {/* ================= HALAMAN PENGATURAN ================= */}
           {activeMenu === "pengaturan" && <Pengaturan isDarkMode={isDarkMode} toggleTheme={toggleTheme} />}

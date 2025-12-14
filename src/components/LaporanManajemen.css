@@ -9,7 +9,7 @@
   overflow: hidden;
   animation: pageSlideIn 0.4s ease-out;
   gap: 7px;
-  padding-top: 4px;
+  padding-top: 10x;
 }
 
 @keyframes pageSlideIn {
@@ -1078,6 +1078,7 @@
 .dashboard.dark .loading-content {
   background: #1e293b;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+  color: #fff;
 }
 
 .dashboard.dark .error-banner {

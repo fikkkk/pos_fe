@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   FaThLarge,
   FaShoppingCart,
@@ -10,8 +10,24 @@ import {
 } from "react-icons/fa";
 import "./Dashboard.css";
 import ThemeToggle from "./dashboard/ThemeToggle";
+import { api } from "../api";
 
-export default function Sidebar({ activeMenu, setActiveMenu, isDarkMode, toggleTheme, onLogout }) {
+export default function Sidebar({ activeMenu, setActiveMenu, isDarkMode, toggleTheme, onLogout, profileUpdateKey }) {
+  const [profile, setProfile] = useState(null);
+
+  // Fetch user profile - refetch when profileUpdateKey changes
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const res = await api.get("/profile/me");
+        setProfile(res.data);
+      } catch (err) {
+        console.error("Error fetching profile for sidebar:", err);
+      }
+    };
+    fetchProfile();
+  }, [profileUpdateKey]);
+
   const mainMenus = [
     { id: "dashboard", label: "Dashboard", icon: <FaThLarge /> },
     { id: "transaksi", label: "Transaksi", icon: <FaShoppingCart /> },
@@ -27,6 +43,13 @@ export default function Sidebar({ activeMenu, setActiveMenu, isDarkMode, toggleT
       window.location.reload();
     }
   };
+
+  // Get display name (username or name)
+  const displayName = profile?.username || profile?.name || "User";
+  // Get role label
+  const roleLabel = profile?.role || "User";
+  // Get avatar initial
+  const avatarInitial = displayName[0]?.toUpperCase() || "U";
 
   return (
     <aside className="ds-sidebar ds-sidebar-dark">
@@ -48,14 +71,27 @@ export default function Sidebar({ activeMenu, setActiveMenu, isDarkMode, toggleT
         <ThemeToggle isDark={isDarkMode} onToggle={toggleTheme} />
       </div>
 
-      {/* USER CARD - Simple display only */}
+      {/* USER CARD - Dynamic user display */}
       <div className="ds-side-user-card">
         <div className="ds-user-avatar">
-          <span>A</span>
+          {profile?.picture ? (
+            <img
+              src={`http://localhost:3000${profile.picture}`}
+              alt="Profile"
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                borderRadius: "50%"
+              }}
+            />
+          ) : (
+            <span>{avatarInitial}</span>
+          )}
         </div>
         <div className="ds-user-meta">
-          <div className="user-name">Admin</div>
-          <div className="user-role">Administrator</div>
+          <div className="user-name">{displayName}</div>
+          <div className="user-role">{roleLabel}</div>
         </div>
       </div>
 
@@ -111,4 +147,3 @@ export default function Sidebar({ activeMenu, setActiveMenu, isDarkMode, toggleT
     </aside>
   );
 }
-
