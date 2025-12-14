@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React from "react";
 import {
   FaThLarge,
   FaShoppingCart,
@@ -7,38 +7,17 @@ import {
   FaUser,
   FaCog,
   FaSignOutAlt,
-  FaChevronUp,
-  FaChevronDown,
 } from "react-icons/fa";
 import "./Dashboard.css";
 import ThemeToggle from "./dashboard/ThemeToggle";
 
 export default function Sidebar({ activeMenu, setActiveMenu, isDarkMode, toggleTheme, onLogout }) {
-  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
-  const dropdownRef = useRef(null);
-
   const mainMenus = [
     { id: "dashboard", label: "Dashboard", icon: <FaThLarge /> },
     { id: "transaksi", label: "Transaksi", icon: <FaShoppingCart /> },
     { id: "datamaster", label: "Data Master", icon: <FaFileAlt /> },
     { id: "laporan", label: "Laporan", icon: <FaChartPie /> },
   ];
-
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setUserDropdownOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  const handleMenuClick = (menuId) => {
-    setActiveMenu(menuId);
-    setUserDropdownOpen(false);
-  };
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -69,51 +48,15 @@ export default function Sidebar({ activeMenu, setActiveMenu, isDarkMode, toggleT
         <ThemeToggle isDark={isDarkMode} onToggle={toggleTheme} />
       </div>
 
-      {/* USER CARD WITH DROPDOWN */}
-      <div className="ds-side-user-wrapper" ref={dropdownRef}>
-        <div
-          className={`ds-side-user-card clickable ${userDropdownOpen ? "open" : ""}`}
-          onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-        >
-          <div className="ds-user-avatar">
-            <span>A</span>
-          </div>
-          <div className="ds-user-meta">
-            <div className="user-name">Admin</div>
-            <div className="user-role">Administrator</div>
-          </div>
-          <div className="ds-user-chevron">
-            {userDropdownOpen ? <FaChevronUp /> : <FaChevronDown />}
-          </div>
+      {/* USER CARD - Simple display only */}
+      <div className="ds-side-user-card">
+        <div className="ds-user-avatar">
+          <span>A</span>
         </div>
-
-        {/* Dropdown Menu */}
-        {userDropdownOpen && (
-          <div className="ds-user-dropdown">
-            <button
-              className="dropdown-item"
-              onClick={() => handleMenuClick("akun")}
-            >
-              <FaUser />
-              <span>Profil Saya</span>
-            </button>
-            <button
-              className="dropdown-item"
-              onClick={() => handleMenuClick("pengaturan")}
-            >
-              <FaCog />
-              <span>Pengaturan</span>
-            </button>
-            <div className="dropdown-divider"></div>
-            <button
-              className="dropdown-item logout"
-              onClick={handleLogout}
-            >
-              <FaSignOutAlt />
-              <span>Logout</span>
-            </button>
-          </div>
-        )}
+        <div className="ds-user-meta">
+          <div className="user-name">Admin</div>
+          <div className="user-role">Administrator</div>
+        </div>
       </div>
 
       {/* MENU UTAMA */}
@@ -123,7 +66,7 @@ export default function Sidebar({ activeMenu, setActiveMenu, isDarkMode, toggleT
           <button
             key={m.id}
             type="button"
-            onClick={() => handleMenuClick(m.id)}
+            onClick={() => setActiveMenu(m.id)}
             className={
               "ds-nav-item-dark" + (activeMenu === m.id ? " active" : "")
             }
@@ -139,7 +82,7 @@ export default function Sidebar({ activeMenu, setActiveMenu, isDarkMode, toggleT
         <button
           type="button"
           className={"ds-nav-item-dark" + (activeMenu === "akun" ? " active" : "")}
-          onClick={() => handleMenuClick("akun")}
+          onClick={() => setActiveMenu("akun")}
         >
           <span className="nav-ico">
             <FaUser />
@@ -150,7 +93,7 @@ export default function Sidebar({ activeMenu, setActiveMenu, isDarkMode, toggleT
         <button
           type="button"
           className={"ds-nav-item-dark" + (activeMenu === "pengaturan" ? " active" : "")}
-          onClick={() => handleMenuClick("pengaturan")}
+          onClick={() => setActiveMenu("pengaturan")}
         >
           <span className="nav-ico">
             <FaCog />

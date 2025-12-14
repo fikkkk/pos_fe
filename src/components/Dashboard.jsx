@@ -323,7 +323,7 @@ export default function Dashboard() {
           </div>
 
           <div className="ds-topbar-right">
-            <ProfilePill />
+            {/* ProfilePill removed */}
           </div>
         </header>
 

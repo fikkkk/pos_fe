@@ -303,7 +303,7 @@ body {
 
 /* ===== Isi yang scroll ===== */
 .ds-inner {
-  padding: 18px 22px 24px;
+  padding: 18px 20px 24px;
   overflow-y: auto;
   min-height: 0;
   -webkit-overflow-scrolling: touch;
