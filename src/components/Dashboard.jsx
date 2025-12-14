@@ -21,6 +21,8 @@ import Sidebar from "./Sidebar";
 import Transaksi from "./Transaksi";
 import Datamaster from "./Datamaster";
 import LaporanManajemen from "./LaporanManajemen";
+import AkunSaya from "./AkunSaya";
+import Pengaturan from "./Pengaturan";
 
 // New Components
 import LoginNotification from "./LoginNotification";
@@ -682,6 +684,12 @@ export default function Dashboard() {
 
           {/* ================= HALAMAN LAPORAN ================= */}
           {activeMenu === "laporan" && <LaporanManajemen />}
+
+          {/* ================= HALAMAN AKUN SAYA ================= */}
+          {activeMenu === "akun" && <AkunSaya />}
+
+          {/* ================= HALAMAN PENGATURAN ================= */}
+          {activeMenu === "pengaturan" && <Pengaturan isDarkMode={isDarkMode} toggleTheme={toggleTheme} />}
         </section>
       </main>
     </div>
