@@ -2,18 +2,8 @@ import React, { useState, useEffect } from "react";
 
 export default function SalesChartMonthly({ monthlyStats }) {
     const months = [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "Mei",
-        "Jun",
-        "Jul",
-        "Agu",
-        "Sep",
-        "Okt",
-        "Nov",
-        "Des",
+        "Jan", "Feb", "Mar", "Apr", "Mei", "Jun",
+        "Jul", "Agu", "Sep", "Okt", "Nov", "Des",
     ];
 
     if (!monthlyStats || monthlyStats.length === 0)
@@ -22,42 +12,52 @@ export default function SalesChartMonthly({ monthlyStats }) {
     const yearsAvailable = monthlyStats.map((y) => y.year);
     const newestYear = Math.max(...yearsAvailable);
 
+    // Modern colors - cyan for newest, magenta for older
     const datasets = monthlyStats.map((y) => ({
         label: y.year,
-        // Tahun terbaru kuning, lainnya biru
-        color: y.year === newestYear ? "#f6b21c" : "#1560d9",
+        color: y.year === newestYear ? "#22d3ee" : "#f472b6",
+        colorLight: y.year === newestYear ? "rgba(34, 211, 238, 0.15)" : "rgba(244, 114, 182, 0.15)",
         data: months.map((_, idx) => y.months[idx]?.value ?? 0),
     }));
 
-    const W = 700,
-        H = 270,
-        PL = 68,
-        PR = 18,
-        PT = 16,
-        PB = 30;
-    const innerW = W - PL - PR,
-        innerH = H - PT - PB;
+    const W = 700, H = 280;
+    const PL = 55, PR = 20, PT = 20, PB = 35;
+    const innerW = W - PL - PR, innerH = H - PT - PB;
 
     const allVals = datasets.flatMap((d) => d.data);
     const rawMax = Math.max(...allVals, 10);
     const maxY = Math.ceil(rawMax / 50) * 50;
     const yStep = 50;
-    const yTicks = Array.from(
-        { length: Math.floor(maxY / yStep) + 1 },
-        (_, i) => i * yStep
-    );
+    const yTicks = Array.from({ length: Math.floor(maxY / yStep) + 1 }, (_, i) => i * yStep);
 
     const toXY = (i, v) => [
         PL + (i / (months.length - 1)) * innerW,
         PT + innerH - (v / maxY) * innerH,
     ];
-    const pathFor = (arr) =>
-        arr
-            .map((v, i) => {
-                const [x, y] = toXY(i, v);
-                return `${i === 0 ? "M" : "L"}${x},${y}`;
-            })
-            .join(" ");
+
+    // Smooth curve path using bezier
+    const smoothPath = (arr) => {
+        const points = arr.map((v, i) => toXY(i, v));
+        if (points.length < 2) return "";
+
+        let d = `M ${points[0][0]},${points[0][1]}`;
+        for (let i = 1; i < points.length; i++) {
+            const prev = points[i - 1];
+            const curr = points[i];
+            const cpx = (prev[0] + curr[0]) / 2;
+            d += ` C ${cpx},${prev[1]} ${cpx},${curr[1]} ${curr[0]},${curr[1]}`;
+        }
+        return d;
+    };
+
+    // Area path for gradient fill
+    const areaPath = (arr) => {
+        const linePath = smoothPath(arr);
+        const firstX = toXY(0, 0)[0];
+        const lastX = toXY(arr.length - 1, 0)[0];
+        const bottom = PT + innerH;
+        return `${linePath} L ${lastX},${bottom} L ${firstX},${bottom} Z`;
+    };
 
     const fmtAxis = (m) => `${m.toLocaleString("id-ID")}`;
     const fmtMoney = (v) => `Rp ${v.toLocaleString("id-ID")}`;
@@ -65,229 +65,123 @@ export default function SalesChartMonthly({ monthlyStats }) {
     const [activeKey, setActiveKey] = useState(null);
     const [tip, setTip] = useState(null);
 
-    const Tooltip = ({ x, y, text, bg, appearKey }) => {
-        const pad = 8,
-            h = 26,
-            r = 6;
-        const w = Math.max(60, text.length * 7 + pad * 2);
-        let ty = y - h - 10,
-            pointerUp = true;
-        if (ty < PT + 6) {
-            ty = y + 14;
-            pointerUp = false;
-        }
-        const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
-        const tx = clamp(x - w / 2, PL + 4, W - PR - w - 4);
-        const px = clamp(x, tx + 10, tx + w - 10);
-        const py = pointerUp ? ty + h : ty;
-
-        const [show, setShow] = useState(false);
-        useEffect(() => {
-            const id = requestAnimationFrame(() => setShow(true));
-            return () => cancelAnimationFrame(id);
-        }, []);
+    const Tooltip = ({ x, y, text, bg }) => {
+        const w = Math.max(100, text.length * 7 + 16);
+        const h = 32;
+        const tx = Math.max(PL, Math.min(x - w / 2, W - PR - w));
+        const ty = y - h - 12;
 
         return (
-            <g
-                key={appearKey}
-                pointerEvents="none"
-                style={{
-                    opacity: show ? 1 : 0,
-                    transform: `translateY(${show ? 0 : 6}px)`,
-                    transition: "opacity .18s ease, transform .18s ease",
-                }}
-            >
-                <rect
-                    x={tx}
-                    y={ty}
-                    width={w}
-                    height={h}
-                    rx={r}
-                    fill={bg}
-                    opacity="0.95"
-                    stroke="rgba(0,0,0,.15)"
-                />
-                <text
-                    x={tx + w / 2}
-                    y={ty + h / 2 + 4}
-                    textAnchor="middle"
-                    fontSize="12"
-                    fontWeight="700"
-                    fill="#fff"
-                    style={{ paintOrder: "stroke" }}
-                    stroke="rgba(0,0,0,.35)"
-                    strokeWidth="1"
-                >
+            <g pointerEvents="none">
+                <rect x={tx} y={ty} width={w} height={h} rx={8} fill="#1e293b" stroke={bg} strokeWidth="2" />
+                <text x={tx + w / 2} y={ty + h / 2 + 4} textAnchor="middle" fontSize="12" fontWeight="600" fill="#fff">
                     {text}
                 </text>
-                <path
-                    d={
-                        pointerUp
-                            ? `M ${px - 6} ${py} L ${px + 6} ${py} L ${px} ${py + 6} Z`
-                            : `M ${px - 6} ${py} L ${px + 6} ${py} L ${px} ${py - 6} Z`
-                    }
-                    fill={bg}
-                    opacity="0.95"
-                    stroke="rgba(0,0,0,.15)"
-                />
             </g>
         );
     };
 
     return (
-        <div
-            className="chart-container"
-            onMouseLeave={() => {
-                setActiveKey(null);
-                setTip(null);
-            }}
-        >
-            <div className="chart-overlay">
-                <label className="filter-label">Pilih Periode</label>
-                <div className="filter-row">
-                    <div className="overlay-legend">
-                        {datasets.map((d) => (
-                            <span key={d.label} className="legend-item">
-                                <span className="pill" style={{ background: d.color }}></span>
-                                <span className="legend-text">{d.label}</span>
-                            </span>
-                        ))}
-                    </div>
-                </div>
-            </div>
-
+        <div className="chart-container" onMouseLeave={() => { setActiveKey(null); setTip(null); }}>
             <svg viewBox={`0 0 ${W} ${H}`} className="chart-svg">
-                {months.map((_, i) => {
-                    const x = PL + (i / (months.length - 1)) * innerW;
-                    return (
-                        <line
-                            key={`vx${i}`}
-                            x1={x}
-                            y1={PT}
-                            x2={x}
-                            y2={PT + innerH}
-                            stroke="#cfd8e3"
-                            opacity=".9"
-                        />
-                    );
-                })}
+                <defs>
+                    {datasets.map((ds, i) => (
+                        <linearGradient key={`grad-${i}`} id={`areaGrad-${ds.label}`} x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stopColor={ds.color} stopOpacity="0.4" />
+                            <stop offset="100%" stopColor={ds.color} stopOpacity="0" />
+                        </linearGradient>
+                    ))}
+                    <filter id="glow">
+                        <feGaussianBlur stdDeviation="3" result="coloredBlur" />
+                        <feMerge>
+                            <feMergeNode in="coloredBlur" />
+                            <feMergeNode in="SourceGraphic" />
+                        </feMerge>
+                    </filter>
+                </defs>
 
+                {/* Grid lines */}
                 {yTicks.map((t, i) => {
                     const y = PT + innerH - (t / maxY) * innerH;
                     return (
-                        <line
-                            key={`hy${i}`}
-                            x1={PL}
-                            y1={y}
-                            x2={W - PR}
-                            y2={y}
-                            stroke="#cfd8e3"
-                            opacity=".9"
-                        />
+                        <line key={`hy${i}`} x1={PL} y1={y} x2={W - PR} y2={y} stroke="rgba(148, 163, 184, 0.2)" strokeDasharray="4 4" />
                     );
                 })}
 
-                <rect
-                    x={PL}
-                    y={PT}
-                    width={innerW}
-                    height={innerH}
-                    fill="none"
-                    stroke="#cfd8e3"
-                />
-
-                {months.map((m, i) => {
-                    const [x] = toXY(i, 0);
-                    return (
-                        <text
-                            key={m}
-                            x={x}
-                            y={H - 8}
-                            textAnchor="middle"
-                            fontSize="10"
-                            fill="#7b8aa0"
-                        >
-                            {m}
-                        </text>
-                    );
-                })}
-
+                {/* Y axis labels */}
                 {yTicks.map((t, i) => {
                     const y = PT + innerH - (t / maxY) * innerH;
                     return (
-                        <text
-                            key={`yt${i}`}
-                            x={PL - 8}
-                            y={y + 3}
-                            textAnchor="end"
-                            fontSize="10"
-                            fill="#7b8aa0"
-                        >
+                        <text key={`yt${i}`} x={PL - 10} y={y + 4} textAnchor="end" fontSize="11" fill="#94a3b8">
                             {fmtAxis(t)}
                         </text>
                     );
                 })}
 
-                {datasets.map((ds, di) => (
-                    <g key={ds.label}>
-                        <path
-                            d={pathFor(ds.data)}
-                            fill="none"
-                            stroke={ds.color}
-                            strokeWidth="2.6"
-                        />
+                {/* X axis labels */}
+                {months.map((m, i) => {
+                    const [x] = toXY(i, 0);
+                    return (
+                        <text key={m} x={x} y={H - 10} textAnchor="middle" fontSize="11" fill="#94a3b8">
+                            {m}
+                        </text>
+                    );
+                })}
 
-                        {ds.data.map((v, i) => {
-                            const [cx, cy] = toXY(i, v);
-                            const key = `${di}-${i}`;
-                            const active = activeKey === key;
-
-                            return (
-                                <g key={key}>
-                                    <circle
-                                        cx={cx}
-                                        cy={cy}
-                                        r={active ? 5.2 : 4.2}
-                                        fill={ds.color}
-                                        stroke="#fff"
-                                        strokeWidth="1.5"
-                                    />
-                                    <circle
-                                        cx={cx}
-                                        cy={cy}
-                                        r="12"
-                                        fill="transparent"
-                                        style={{ cursor: "pointer" }}
-                                        onMouseEnter={() => {
-                                            setActiveKey(key);
-                                            setTip({
-                                                x: cx,
-                                                y: cy,
-                                                text: `${ds.label} ${months[i]} · ${fmtMoney(v)}`,
-                                                color: ds.color,
-                                            });
-                                        }}
-                                        onMouseLeave={() => {
-                                            setActiveKey(null);
-                                            setTip(null);
-                                        }}
-                                    />
-                                </g>
-                            );
-                        })}
-                    </g>
+                {/* Area fills */}
+                {datasets.map((ds) => (
+                    <path key={`area-${ds.label}`} d={areaPath(ds.data)} fill={`url(#areaGrad-${ds.label})`} />
                 ))}
 
-                {tip && (
-                    <Tooltip
-                        x={tip.x}
-                        y={tip.y}
-                        text={tip.text}
-                        bg={tip.color}
-                        appearKey={activeKey}
+                {/* Lines with glow */}
+                {datasets.map((ds) => (
+                    <path
+                        key={`line-${ds.label}`}
+                        d={smoothPath(ds.data)}
+                        fill="none"
+                        stroke={ds.color}
+                        strokeWidth="3"
+                        strokeLinecap="round"
+                        filter="url(#glow)"
                     />
+                ))}
+
+                {/* Data points */}
+                {datasets.map((ds, di) =>
+                    ds.data.map((v, i) => {
+                        const [cx, cy] = toXY(i, v);
+                        const key = `${di}-${i}`;
+                        const active = activeKey === key;
+
+                        return (
+                            <g key={key}>
+                                {active && <circle cx={cx} cy={cy} r="12" fill={ds.color} opacity="0.2" />}
+                                <circle cx={cx} cy={cy} r={active ? 6 : 4} fill="#0f172a" stroke={ds.color} strokeWidth="2.5" />
+                                <circle
+                                    cx={cx} cy={cy} r="14" fill="transparent" style={{ cursor: "pointer" }}
+                                    onMouseEnter={() => {
+                                        setActiveKey(key);
+                                        setTip({ x: cx, y: cy, text: `${ds.label} ${months[i]}: ${fmtMoney(v)}`, color: ds.color });
+                                    }}
+                                    onMouseLeave={() => { setActiveKey(null); setTip(null); }}
+                                />
+                            </g>
+                        );
+                    })
                 )}
+
+                {tip && <Tooltip x={tip.x} y={tip.y} text={tip.text} bg={tip.color} />}
             </svg>
+
+            {/* Legend */}
+            <div className="chart-legend">
+                {datasets.map((d) => (
+                    <div key={d.label} className="legend-item">
+                        <span className="legend-dot" style={{ background: d.color, boxShadow: `0 0 8px ${d.color}` }} />
+                        <span className="legend-text">{d.label}</span>
+                    </div>
+                ))}
+            </div>
         </div>
     );
 }

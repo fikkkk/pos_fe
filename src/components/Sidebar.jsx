@@ -4,19 +4,29 @@ import {
   FaShoppingCart,
   FaFileAlt,
   FaChartPie,
-  FaUsers,
-  FaPowerOff,
+  FaUser,
+  FaCog,
+  FaSignOutAlt,
 } from "react-icons/fa";
 import "./Dashboard.css";
 import ThemeToggle from "./dashboard/ThemeToggle";
 
-export default function Sidebar({ activeMenu, setActiveMenu, isDarkMode, toggleTheme }) {
+export default function Sidebar({ activeMenu, setActiveMenu, isDarkMode, toggleTheme, onLogout }) {
   const mainMenus = [
     { id: "dashboard", label: "Dashboard", icon: <FaThLarge /> },
     { id: "transaksi", label: "Transaksi", icon: <FaShoppingCart /> },
     { id: "datamaster", label: "Data Master", icon: <FaFileAlt /> },
     { id: "laporan", label: "Laporan", icon: <FaChartPie /> },
   ];
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    if (onLogout) {
+      onLogout();
+    } else {
+      window.location.reload();
+    }
+  };
 
   return (
     <aside className="ds-sidebar ds-sidebar-dark">
@@ -38,14 +48,14 @@ export default function Sidebar({ activeMenu, setActiveMenu, isDarkMode, toggleT
         <ThemeToggle isDark={isDarkMode} onToggle={toggleTheme} />
       </div>
 
-      {/* USER CARD */}
+      {/* USER CARD - Simple display only */}
       <div className="ds-side-user-card">
         <div className="ds-user-avatar">
           <span>A</span>
         </div>
         <div className="ds-user-meta">
           <div className="user-name">Admin</div>
-          <div className="user-role">{isDarkMode ? "Mode Gelap" : "Mode Terang"}</div>
+          <div className="user-role">Administrator</div>
         </div>
       </div>
 
@@ -69,16 +79,31 @@ export default function Sidebar({ activeMenu, setActiveMenu, isDarkMode, toggleT
 
       {/* BAGIAN BAWAH */}
       <div className="ds-side-bottom-dark">
-        <button type="button" className="ds-nav-item-dark ghost">
+        <button
+          type="button"
+          className={"ds-nav-item-dark" + (activeMenu === "akun" ? " active" : "")}
+          onClick={() => setActiveMenu("akun")}
+        >
           <span className="nav-ico">
-            <FaUsers />
+            <FaUser />
           </span>
-          <span className="nav-label">Pengguna</span>
+          <span className="nav-label">Akun Saya</span>
         </button>
 
-        <button type="button" className="ds-logout-btn">
+        <button
+          type="button"
+          className={"ds-nav-item-dark" + (activeMenu === "pengaturan" ? " active" : "")}
+          onClick={() => setActiveMenu("pengaturan")}
+        >
           <span className="nav-ico">
-            <FaPowerOff />
+            <FaCog />
+          </span>
+          <span className="nav-label">Pengaturan</span>
+        </button>
+
+        <button type="button" className="ds-logout-btn" onClick={handleLogout}>
+          <span className="nav-ico">
+            <FaSignOutAlt />
           </span>
           <span className="nav-label">Logout</span>
         </button>

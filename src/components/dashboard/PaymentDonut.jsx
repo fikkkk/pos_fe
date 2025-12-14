@@ -1,118 +1,133 @@
-import React from "react";
-import { getPaymentColor, idFmt } from "./utils"; // Import helpers
+import React, { useState } from "react";
+import { idFmt } from "./utils";
 
 export default function PaymentDonut({ paymentStats, totalTransaksi }) {
     if (!paymentStats || paymentStats.length === 0)
         return <div className="donut-wrap empty" />;
 
+    // Modern vivid colors
+    const colorMap = {
+        CASH: "#22c55e",
+        QRIS: "#f97316",
+        DEBIT: "#3b82f6",
+        KREDIT: "#a855f7",
+    };
+
     const payments = paymentStats.map((p) => ({
         label: p.method,
-        val: p.percentage,
-        color: getPaymentColor(p.method),
+        val: p.count || Math.round((p.percentage / 100) * Number(totalTransaksi ?? 0)),
+        pct: p.percentage || 0,
+        color: colorMap[p.method] || "#64748b",
     }));
 
-    const size = 240,
-        stroke = 26,
-        pad = 24;
+    const total = payments.reduce((sum, p) => sum + p.val, 0) || 1;
 
-    const r = (size - stroke) / 2;
-    const cx = pad + size / 2;
-    const cy = pad + size / 2;
+    const size = 180;
+    const strokeWidth = 28;
+    const radius = (size - strokeWidth) / 2;
+    const circumference = 2 * Math.PI * radius;
+    const cx = size / 2;
+    const cy = size / 2;
 
-    const W = size + pad * 2;
-    const H = size + pad * 2;
+    const [activeIdx, setActiveIdx] = useState(null);
 
-    const C = 2 * Math.PI * r;
-    const gapArc = 4;
-    const totalPct = payments.reduce((a, b) => a + b.val, 0);
+    // Calculate dash offsets for each segment
+    let accumulated = 0;
+    const segments = payments.map((p, i) => {
+        const pct = p.val / total;
+        const dashLength = pct * circumference;
+        const dashOffset = circumference * 0.25 - accumulated; // Start from top
+        accumulated += dashLength;
 
-    let accPct = 0;
-    const pctLabels = [];
-
-    const rings = payments.map((p) => {
-        const frac = p.val / totalPct;
-        const dash = Math.max(0, frac * C - gapArc);
-        const offset = C * 0.25 - accPct * C - gapArc / 2;
-
-        const start = -Math.PI / 2 + accPct * 2 * Math.PI;
-        const mid = start + (frac * 2 * Math.PI) / 2;
-        const txtR = r + 18;
-
-        const tx = cx + txtR * Math.cos(mid);
-        const ty = cy + txtR * Math.sin(mid) + 4;
-
-        pctLabels.push({ x: tx, y: ty, text: `${p.val}%` });
-
-        accPct += frac;
-
-        return (
-            <circle
-                key={p.label}
-                cx={cx}
-                cy={cy}
-                r={r}
-                fill="none"
-                stroke={p.color}
-                strokeWidth={stroke}
-                strokeDasharray={`${dash} ${C - dash}`}
-                strokeDashoffset={offset}
-            />
-        );
+        return {
+            ...p,
+            index: i,
+            pct,
+            dashLength,
+            dashOffset,
+            displayPct: Math.round(pct * 100),
+        };
     });
 
     return (
         <div className="donut-wrap">
-            <div className="donut-box">
-                <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`}>
+            <div className="donut-chart-container">
+                <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+                    <defs>
+                        <filter id="donutGlow">
+                            <feGaussianBlur stdDeviation="2" result="coloredBlur" />
+                            <feMerge>
+                                <feMergeNode in="coloredBlur" />
+                                <feMergeNode in="SourceGraphic" />
+                            </feMerge>
+                        </filter>
+                    </defs>
+
+                    {/* Background circle */}
                     <circle
                         cx={cx}
                         cy={cy}
-                        r={r}
+                        r={radius}
                         fill="none"
-                        stroke="#e9eef5"
-                        strokeWidth={stroke}
+                        stroke="rgba(148, 163, 184, 0.1)"
+                        strokeWidth={strokeWidth}
                     />
 
-                    {rings}
-
-                    {pctLabels.map((pt, i) => (
-                        <text
+                    {/* Segments */}
+                    {segments.map((seg, i) => (
+                        <circle
                             key={i}
-                            x={pt.x}
-                            y={pt.y}
-                            textAnchor="middle"
-                            className="donut-pct"
-                        >
-                            {pt.text}
-                        </text>
+                            cx={cx}
+                            cy={cy}
+                            r={radius}
+                            fill="none"
+                            stroke={seg.color}
+                            strokeWidth={activeIdx === i ? strokeWidth + 6 : strokeWidth}
+                            strokeDasharray={`${seg.dashLength} ${circumference - seg.dashLength}`}
+                            strokeDashoffset={seg.dashOffset}
+                            strokeLinecap="round"
+                            filter={activeIdx === i ? "url(#donutGlow)" : undefined}
+                            style={{
+                                cursor: "pointer",
+                                transition: "stroke-width 0.2s ease",
+                                transformOrigin: "center",
+                            }}
+                            onMouseEnter={() => setActiveIdx(i)}
+                            onMouseLeave={() => setActiveIdx(null)}
+                        />
                     ))}
-                </svg>
 
-                <div className="donut-center" style={{ inset: "24px" }}>
-                    <div>
-                        <div className="dc-top">Total Transaksi</div>
-                        <div className="dc-big">{idFmt(totalTransaksi)}</div>
-                        <div className="dc-sub">semua metode</div>
-                    </div>
-                </div>
+                    {/* Center content */}
+                    <circle cx={cx} cy={cy} r={radius - strokeWidth / 2 - 8} fill="#0f172a" />
+                    <text x={cx} y={cy - 12} textAnchor="middle" fontSize="10" fill="#94a3b8" fontWeight="500">
+                        TOTAL
+                    </text>
+                    <text x={cx} y={cy + 6} textAnchor="middle" fontSize="22" fontWeight="800" fill="#e2e8f0">
+                        {idFmt(totalTransaksi)}
+                    </text>
+                    <text x={cx} y={cy + 22} textAnchor="middle" fontSize="9" fill="#64748b">
+                        transaksi
+                    </text>
+                </svg>
             </div>
 
+            {/* Legend */}
             <ul className="donut-legend">
-                {payments.map((p) => {
-                    const jumlah = Math.round(
-                        (p.val / 100) * Number(totalTransaksi ?? 0)
-                    );
-                    return (
-                        <li key={p.label}>
-                            <span className="dot" style={{ background: p.color }} />
-                            <div className="dl-text">
-                                <div className="dl-label">{p.label}</div>
-                                <div className="dl-sub">Jumlah Transaksi Sebanyak</div>
-                            </div>
-                            <div className="dl-count">{idFmt(jumlah)}</div>
-                        </li>
-                    );
-                })}
+                {segments.map((seg, i) => (
+                    <li
+                        key={seg.label}
+                        className={activeIdx === i ? "active" : ""}
+                        onMouseEnter={() => setActiveIdx(i)}
+                        onMouseLeave={() => setActiveIdx(null)}
+                    >
+                        <span className="dot" style={{ background: seg.color, boxShadow: `0 0 8px ${seg.color}` }} />
+                        <div className="dl-text">
+                            <div className="dl-label">{seg.label}</div>
+                            <div className="dl-sub">{seg.displayPct}% dari total</div>
+                        </div>
+                        <div className="dl-count">{idFmt(seg.val)}</div>
+                    </li>
+                ))}
             </ul>
         </div>
     );

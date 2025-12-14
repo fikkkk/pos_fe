@@ -1,226 +1,120 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
 export default function SalesChartYearly({ yearlyStats }) {
     if (!yearlyStats || yearlyStats.length === 0)
         return <svg className="chart-svg" />;
 
-    const W = 420,
-        H = 270,
-        PL = 48,
-        PR = 16,
-        PT = 16,
-        PB = 30;
-    const innerW = W - PL - PR,
-        innerH = H - PT - PB;
+    const W = 400, H = 280;
+    const PL = 50, PR = 20, PT = 30, PB = 40;
+    const innerW = W - PL - PR, innerH = H - PT - PB;
 
     const data = yearlyStats.map((y) => ({ year: y.year, val: y.total }));
+
+    // Colors - gradient for each bar
+    const colors = ["#f97316", "#3b82f6", "#22c55e", "#a855f7"];
 
     const step = 500;
     const rawMax = Math.max(...data.map((d) => d.val), 10);
     const maxY = Math.ceil(rawMax / step) * step;
+    const ticks = Array.from({ length: Math.floor(maxY / step) + 1 }, (_, i) => i * step);
 
-    const ticks = Array.from(
-        { length: Math.floor(maxY / step) + 1 },
-        (_, i) => i * step
-    );
-
-    const barW = 50,
-        gap = 60;
-
-    const startX =
-        PL + (innerW - (data.length * barW + (data.length - 1) * gap)) / 2;
+    const barW = Math.min(60, (innerW / data.length) * 0.6);
+    const gap = (innerW - barW * data.length) / (data.length + 1);
 
     const fmtAxis = (m) => `${m.toLocaleString("id-ID")}`;
     const fmtMoney = (v) => `Rp ${v.toLocaleString("id-ID")}`;
 
-    const [activeKey, setActiveKey] = useState(null);
+    const [activeIdx, setActiveIdx] = useState(null);
     const [tip, setTip] = useState(null);
 
-    const Tooltip = ({ x, y, text, bg, appearKey }) => {
-        const pad = 8,
-            h = 26,
-            r = 6;
-        const w = Math.max(60, text.length * 7 + pad * 2);
-
-        let ty = y - h - 10,
-            pointerUp = true;
-
-        if (ty < PT + 6) {
-            ty = y + 14;
-            pointerUp = false;
-        }
-
-        const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
-        const tx = clamp(x - w / 2, PL + 4, W - PR - w - 4);
-        const px = clamp(x, tx + 10, tx + w - 10);
-
-        const py = pointerUp ? ty + h : ty;
-
-        const [show, setShow] = useState(false);
-        useEffect(() => {
-            const id = requestAnimationFrame(() => setShow(true));
-            return () => cancelAnimationFrame(id);
-        }, []);
-
-        return (
-            <g
-                key={appearKey}
-                pointerEvents="none"
-                style={{
-                    opacity: show ? 1 : 0,
-                    transform: `translateY(${show ? 0 : 6}px)`,
-                    transition: "opacity .18s ease, transform .18s ease",
-                }}
-            >
-                <rect
-                    x={tx}
-                    y={ty}
-                    width={w}
-                    height={h}
-                    rx={r}
-                    fill={bg}
-                    opacity="0.95"
-                    stroke="rgba(0,0,0,.15)"
-                />
-                <text
-                    x={tx + w / 2}
-                    y={ty + h / 2 + 4}
-                    textAnchor="middle"
-                    fontSize="12"
-                    fontWeight="700"
-                    fill="#fff"
-                    stroke="rgba(0,0,0,.35)"
-                    strokeWidth="1"
-                >
-                    {text}
-                </text>
-                <path
-                    d={
-                        pointerUp
-                            ? `M ${px - 6} ${py} L ${px + 6} ${py} L ${px} ${py + 6} Z`
-                            : `M ${px - 6} ${py} L ${px + 6} ${py} L ${px} ${py - 6} Z`
-                    }
-                    fill={bg}
-                    opacity="0.95"
-                    stroke="rgba(0,0,0,.15)"
-                />
-            </g>
-        );
-    };
-
     return (
-        <svg
-            viewBox={`0 0 ${W} ${H}`}
-            className="chart-svg"
-            onMouseLeave={() => {
-                setActiveKey(null);
-                setTip(null);
-            }}
-        >
+        <svg viewBox={`0 0 ${W} ${H}`} className="chart-svg" onMouseLeave={() => { setActiveIdx(null); setTip(null); }}>
+            <defs>
+                {data.map((d, i) => (
+                    <linearGradient key={`barGrad-${i}`} id={`barGrad-${i}`} x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor={colors[i % colors.length]} stopOpacity="1" />
+                        <stop offset="100%" stopColor={colors[i % colors.length]} stopOpacity="0.6" />
+                    </linearGradient>
+                ))}
+                <filter id="barGlow">
+                    <feGaussianBlur stdDeviation="4" result="coloredBlur" />
+                    <feMerge>
+                        <feMergeNode in="coloredBlur" />
+                        <feMergeNode in="SourceGraphic" />
+                    </feMerge>
+                </filter>
+            </defs>
+
+            {/* Grid lines */}
             {ticks.map((t, i) => {
                 const y = PT + innerH - (t / maxY) * innerH;
                 return (
-                    <line
-                        key={i}
-                        x1={PL}
-                        y1={y}
-                        x2={W - PR}
-                        y2={y}
-                        stroke="#cfd8e3"
-                        opacity=".9"
-                    />
+                    <line key={`hy${i}`} x1={PL} y1={y} x2={W - PR} y2={y} stroke="rgba(148, 163, 184, 0.2)" strokeDasharray="4 4" />
                 );
             })}
 
-            <rect
-                x={PL}
-                y={PT}
-                width={innerW}
-                height={innerH}
-                fill="none"
-                stroke="#cfd8e3"
-            />
-
+            {/* Y axis labels */}
             {ticks.map((t, i) => {
                 const y = PT + innerH - (t / maxY) * innerH;
                 return (
-                    <text
-                        key={`yt${i}`}
-                        x={PL - 8}
-                        y={y + 3}
-                        textAnchor="end"
-                        fontSize="10"
-                        fill="#7b8aa0"
-                    >
+                    <text key={`yt${i}`} x={PL - 10} y={y + 4} textAnchor="end" fontSize="11" fill="#94a3b8">
                         {fmtAxis(t)}
                     </text>
                 );
             })}
 
+            {/* Bars */}
             {data.map((d, i) => {
-                const h = (d.val / maxY) * innerH;
-                const x = startX + i * (barW + gap);
-                const y = PT + innerH - h;
-
-                const color = i === 0 ? "#f6b21c" : "#1560d9";
-                const cx = x + barW / 2;
-                const cy = y;
+                const barH = (d.val / maxY) * innerH;
+                const x = PL + gap + i * (barW + gap);
+                const y = PT + innerH - barH;
+                const color = colors[i % colors.length];
+                const active = activeIdx === i;
 
                 return (
                     <g key={d.year}>
+                        {/* Glow behind bar */}
+                        {active && (
+                            <rect x={x - 4} y={y - 4} width={barW + 8} height={barH + 8} rx={10} fill={color} opacity="0.3" filter="url(#barGlow)" />
+                        )}
+
+                        {/* Bar with rounded top */}
                         <rect
                             x={x}
                             y={y}
                             width={barW}
-                            height={h}
-                            rx="6"
-                            fill={color}
-                            style={{ cursor: "pointer" }}
+                            height={barH}
+                            rx={8}
+                            fill={`url(#barGrad-${i})`}
+                            style={{ cursor: "pointer", transition: "all 0.2s ease" }}
                             onMouseEnter={() => {
-                                setActiveKey(i);
-                                setTip({
-                                    x: cx,
-                                    y: cy,
-                                    text: `${d.year} · ${fmtMoney(d.val)}`,
-                                    color,
-                                });
+                                setActiveIdx(i);
+                                setTip({ x: x + barW / 2, y: y - 10, text: `${d.year}: ${fmtMoney(d.val)}`, color });
                             }}
-                            onMouseMove={() => {
-                                setActiveKey(i);
-                                setTip({
-                                    x: cx,
-                                    y: cy,
-                                    text: `${d.year} · ${fmtMoney(d.val)}`,
-                                    color,
-                                });
-                            }}
-                            onMouseLeave={() => {
-                                setActiveKey(null);
-                                setTip(null);
-                            }}
+                            onMouseLeave={() => { setActiveIdx(null); setTip(null); }}
                         />
 
-                        <text
-                            x={x + barW / 2}
-                            y={H - 8}
-                            textAnchor="middle"
-                            fontSize="12"
-                            fill="#4b5b71"
-                        >
+                        {/* Value on top of bar */}
+                        <text x={x + barW / 2} y={y - 8} textAnchor="middle" fontSize="12" fontWeight="700" fill={color}>
+                            {d.val.toLocaleString("id-ID")}
+                        </text>
+
+                        {/* Year label */}
+                        <text x={x + barW / 2} y={H - 15} textAnchor="middle" fontSize="13" fontWeight="600" fill="#e2e8f0">
                             {d.year}
                         </text>
                     </g>
                 );
             })}
 
+            {/* Tooltip */}
             {tip && (
-                <Tooltip
-                    x={tip.x}
-                    y={tip.y}
-                    text={tip.text}
-                    bg={tip.color}
-                    appearKey={activeKey}
-                />
+                <g pointerEvents="none">
+                    <rect x={tip.x - 70} y={tip.y - 35} width="140" height="28" rx={8} fill="#1e293b" stroke={tip.color} strokeWidth="2" />
+                    <text x={tip.x} y={tip.y - 18} textAnchor="middle" fontSize="12" fontWeight="600" fill="#fff">
+                        {tip.text}
+                    </text>
+                </g>
             )}
         </svg>
     );

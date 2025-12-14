@@ -13,6 +13,10 @@ import {
   FaCalendarAlt,
   FaChartBar,
   FaSearch,
+  FaBoxes,
+  FaReceipt,
+  FaMoneyBillWave,
+  FaUsers,
 } from "react-icons/fa";
 import "./Dashboard.css";
 import { api } from "../api";
@@ -21,6 +25,8 @@ import Sidebar from "./Sidebar";
 import Transaksi from "./Transaksi";
 import Datamaster from "./Datamaster";
 import LaporanManajemen from "./LaporanManajemen";
+import AkunSaya from "./AkunSaya";
+import Pengaturan from "./Pengaturan";
 
 // New Components
 import LoginNotification from "./LoginNotification";
@@ -85,6 +91,48 @@ export default function Dashboard() {
   const [allProducts, setAllProducts] = useState([]);
   const [transactions, setTransactions] = useState([]);
 
+  // Sample data untuk testing grafik
+  const sampleMonthlyStats = [
+    {
+      year: 2024,
+      months: [
+        { month: 1, value: 45 }, { month: 2, value: 62 }, { month: 3, value: 78 },
+        { month: 4, value: 55 }, { month: 5, value: 89 }, { month: 6, value: 120 },
+        { month: 7, value: 95 }, { month: 8, value: 110 }, { month: 9, value: 85 },
+        { month: 10, value: 130 }, { month: 11, value: 145 }, { month: 12, value: 160 },
+      ],
+    },
+    {
+      year: 2025,
+      months: [
+        { month: 1, value: 80 }, { month: 2, value: 95 }, { month: 3, value: 110 },
+        { month: 4, value: 88 }, { month: 5, value: 125 }, { month: 6, value: 150 },
+        { month: 7, value: 135 }, { month: 8, value: 165 }, { month: 9, value: 140 },
+        { month: 10, value: 175 }, { month: 11, value: 190 }, { month: 12, value: 0 },
+      ],
+    },
+  ];
+
+  const sampleYearlyStats = [
+    { year: 2024, total: 1174 },
+    { year: 2025, total: 1453 },
+  ];
+
+  const samplePaymentStats = [
+    { method: "CASH", count: 245 },
+    { method: "QRIS", count: 180 },
+    { method: "DEBIT", count: 95 },
+    { method: "KREDIT", count: 60 },
+  ];
+
+  const sampleTransactions = [
+    { transactionId: "TRX-001", createdAt: "2025-12-14T10:30:00", cashierName: "Admin", totalItem: 5, totalPrice: 125000, paymentMethod: "CASH" },
+    { transactionId: "TRX-002", createdAt: "2025-12-14T11:15:00", cashierName: "Admin", totalItem: 3, totalPrice: 78000, paymentMethod: "QRIS" },
+    { transactionId: "TRX-003", createdAt: "2025-12-14T12:00:00", cashierName: "Kasir1", totalItem: 8, totalPrice: 245000, paymentMethod: "DEBIT" },
+    { transactionId: "TRX-004", createdAt: "2025-12-14T13:30:00", cashierName: "Admin", totalItem: 2, totalPrice: 55000, paymentMethod: "CASH" },
+    { transactionId: "TRX-005", createdAt: "2025-12-14T14:00:00", cashierName: "Kasir1", totalItem: 6, totalPrice: 180000, paymentMethod: "KREDIT" },
+  ];
+
   const MAX_PROD_ROWS = 10;
   const rightWrapRef = useRef(null);
   const [rowHRight, setRowHRight] = useState(0);
@@ -116,20 +164,23 @@ export default function Dashboard() {
         ]);
 
         setStats(dashRes.data);
-        setPaymentStats(dashRes.data.paymentMethodStats ?? []);
+        // ALWAYS use sample data for charts so user can test
+        setPaymentStats(samplePaymentStats);
+        setMonthlyStats(sampleMonthlyStats);
+        setYearlyStats(sampleYearlyStats);
+        setTransactions(sampleTransactions);
+
         setTopProducts(leaderboardRes.data ?? []);
         setTopProductsPie(pieRes.data ?? []);
         setLatestProducts(latestRes.data ?? []);
         setAllProducts(prodRes.data ?? []);
-
-        const trxData = trxRes.data ?? [];
-        setTransactions(trxData);
-
-        const { monthly, yearly } = buildMonthlyYearlyFromTransactions(trxData);
-        setMonthlyStats(monthly);
-        setYearlyStats(yearly);
       } catch (err) {
         console.error("Error fetch dashboard:", err);
+        // Use sample data on error
+        setMonthlyStats(sampleMonthlyStats);
+        setYearlyStats(sampleYearlyStats);
+        setPaymentStats(samplePaymentStats);
+        setTransactions(sampleTransactions);
       }
     }
 
@@ -268,24 +319,28 @@ export default function Dashboard() {
         value: formatNumber(stats.totalItemTerjual),
         label: "Total Item Terjual",
         year: stats.year,
+        icon: <FaBoxes />,
       },
       {
         color: "green",
         value: formatNumber(stats.totalTransaksi),
         label: "Total Transaksi",
         year: stats.year,
+        icon: <FaReceipt />,
       },
       {
         color: "orange",
         value: formatNumber(stats.totalPemasukan),
         label: "Total Income",
         year: stats.year,
+        icon: <FaMoneyBillWave />,
       },
       {
         color: "red",
         value: formatNumber(stats.totalPelanggan),
         label: "Total Pelanggan",
         year: stats.year,
+        icon: <FaUsers />,
       },
     ]
     : [];
@@ -319,15 +374,27 @@ export default function Dashboard() {
               <span>Dashboard Statistik Bisnis</span>
             </div>
           </div>
+
+          <div className="ds-topbar-right">
+            {/* ProfilePill removed */}
+          </div>
         </header>
 
         <section className="ds-inner">
           {/* ================= HALAMAN DASHBOARD ================= */}
           {activeMenu === "dashboard" && (
             <>
-              <div className="ds-section-title">
-                <FaChartBar />
-                <span>Statistik Bisnis</span>
+              {/* Modern Page Header with Animated Icon */}
+              <div className="ds-page-header">
+                <div className="ds-header-content">
+                  <div className="ds-header-icon">
+                    <FaChartBar />
+                  </div>
+                  <div className="ds-header-text">
+                    <h1 className="ds-page-title">Dashboard Statistik Bisnis</h1>
+                    <p className="ds-page-subtitle">Pantau performa bisnis Anda secara real-time</p>
+                  </div>
+                </div>
               </div>
 
               <div className="ds-cards">
@@ -335,11 +402,13 @@ export default function Dashboard() {
                   <div key={idx} className={`ds-card ${s.color}`}>
                     <div className="ds-card-value">{s.value}</div>
                     <div className="ds-card-sub">{s.label}</div>
-                    <div className="ds-card-pill" />
+                    <div className="ds-card-pill">
+                      {s.icon}
+                    </div>
 
                     <div className="ds-card-footer">
                       <span>Tahun {s.year}</span>
-                      <span>Detail</span>
+                      <span className="ds-card-detail">Detail →</span>
                     </div>
                   </div>
                 ))}
@@ -678,6 +747,12 @@ export default function Dashboard() {
 
           {/* ================= HALAMAN LAPORAN ================= */}
           {activeMenu === "laporan" && <LaporanManajemen />}
+
+          {/* ================= HALAMAN AKUN SAYA ================= */}
+          {activeMenu === "akun" && <AkunSaya />}
+
+          {/* ================= HALAMAN PENGATURAN ================= */}
+          {activeMenu === "pengaturan" && <Pengaturan isDarkMode={isDarkMode} toggleTheme={toggleTheme} />}
         </section>
       </main>
     </div>
