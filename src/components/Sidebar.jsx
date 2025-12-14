@@ -97,6 +97,15 @@ export default function Sidebar({ activeMenu, setActiveMenu, isDarkMode, toggleT
 
       {/* MENU UTAMA */}
       <nav className="ds-nav-dark">
+        <div className="ds-sidebar-date">
+          <span className="ds-date-text">
+            {new Date().toLocaleDateString("id-ID", {
+              day: "2-digit",
+              month: "long",
+              year: "numeric",
+            })}
+          </span>
+        </div>
         <div className="ds-nav-caption">Menu</div>
         {mainMenus.map((m) => (
           <button

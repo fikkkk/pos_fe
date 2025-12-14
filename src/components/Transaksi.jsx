@@ -1,5 +1,6 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { FaSearch, FaTrash, FaPlus, FaMinus } from "react-icons/fa";
+import { api } from "../api";
 import "./transaksi.css";
 
 const formatRp = (n) =>
@@ -9,176 +10,8 @@ const formatRp = (n) =>
     maximumFractionDigits: 0,
   });
 
-// ====================================
-// DUMMY PRODUK
-// ====================================
-const dummyProducts = [
-  {
-    id: 1,
-    name: "Minyak Fortune 2L",
-    price: 32900,
-    stock: 60,
-    imageUrl: "/img/minyak.png",
-    discountPercent: 20, // contoh produk ada diskon
-  },
-  {
-    id: 2,
-    name: "Mie Goreng Indomie",
-    price: 3500,
-    stock: 110,
-    imageUrl: "/img/indomie.png",
-  },
-  {
-    id: 3,
-    name: "Beras Ramos 5Kg",
-    price: 78000,
-    stock: 30,
-    imageUrl: "/img/beras.png",
-  },
-  {
-    id: 4,
-    name: "Sabun Lifebuoy 450ml",
-    price: 20000,
-    stock: 50,
-    imageUrl: "/img/sabun.png",
-  },
-  {
-    id: 5,
-    name: "Aqua Botol 600ml",
-    price: 3500,
-    stock: 200,
-    imageUrl: "/img/aqua.png",
-  },
-  {
-    id: 6,
-    name: "Rinso 900gr",
-    price: 24000,
-    stock: 80,
-    imageUrl: "/img/rinso.png",
-  },
-  {
-    id: 7,
-    name: "Gula Pasir 1Kg",
-    price: 14000,
-    stock: 40,
-    imageUrl: "/img/gula.png",
-  },
-  {
-    id: 8,
-    name: "Telur Ayam 1Kg",
-    price: 28000,
-    stock: 50,
-    imageUrl: "/img/telur.png",
-  },
-  {
-    id: 9,
-    name: "Susu Dancow 400gr",
-    price: 52000,
-    stock: 30,
-    imageUrl: "/img/dancow.png",
-  },
-  {
-    id: 10,
-    name: "Choki-Choki 5pc",
-    price: 6000,
-    stock: 100,
-    imageUrl: "/img/choki.png",
-  },
-  {
-    id: 11,
-    name: "Kecap ABC 600ml",
-    price: 18000,
-    stock: 90,
-    imageUrl: "/img/kecap.png",
-  },
-  {
-    id: 12,
-    name: "Tepung Segitiga Biru 1Kg",
-    price: 12500,
-    stock: 70,
-    imageUrl: "/img/tepung.png",
-  },
-  {
-    id: 13,
-    name: "Sprite Botol 390ml",
-    price: 4500,
-    stock: 150,
-    imageUrl: "/img/sprite.png",
-  },
-  {
-    id: 14,
-    name: "Sarden ABC 425gr",
-    price: 22000,
-    stock: 45,
-    imageUrl: "/img/sarden.png",
-  },
-  {
-    id: 15,
-    name: "Teh Pucuk 500ml",
-    price: 4000,
-    stock: 160,
-    imageUrl: "/img/pucuk.png",
-  },
-  {
-    id: 16,
-    name: "Gas Elpiji 3Kg",
-    price: 23000,
-    stock: 25,
-    imageUrl: "/img/gas.png",
-  },
-  {
-    id: 17,
-    name: "Roti Tawar Sari Roti",
-    price: 16500,
-    stock: 35,
-    imageUrl: "/img/roti.png",
-  },
-  {
-    id: 18,
-    name: "Susu Ultramilk 1L",
-    price: 19500,
-    stock: 45,
-    imageUrl: "/img/ultramilk.png",
-  },
-  {
-    id: 19,
-    name: "SilverQueen 65gr",
-    price: 14500,
-    stock: 60,
-    imageUrl: "/img/silverqueen.png",
-  },
-  {
-    id: 20,
-    name: "Downy 650ml",
-    price: 21000,
-    stock: 40,
-    imageUrl: "/img/downy.png",
-  },
-  {
-    id: 21,
-    name: "Japota Honey Butter",
-    price: 23000,
-    stock: 25,
-    imageUrl: "/img/japotamadu.png",
-  },
-];
-
-// ====================================
-// KATEGORI
-// ====================================
-const categories = [
-  { label: "Makanan", icon: "/img/cat-makanan.png" },
-  { label: "Sembako", icon: "/img/cat-sembako.png" },
-  { label: "Perawatan Tubuh", icon: "/img/cat-perawatan.png" },
-  { label: "Produk Bayi", icon: "/img/cat-bayi.png" },
-  { label: "Bumbu Dapur", icon: "/img/cat-bumbu.png" },
-  { label: "Frozen Food", icon: "/img/cat-frozen.png" },
-  { label: "Minuman", icon: "/img/cat-minuman.png" },
-  { label: "Kebutuhan Rumah Tangga", icon: "/img/cat-rumah.png" },
-  { label: "Peralatan / Alat", icon: "/img/cat-alat.png" },
-  { label: "Obat & Kesehatan", icon: "/img/cat-obat.png" },
-  { label: "Lainnya", icon: "/img/cat-lainnya.png" },
-];
+// Default icon for categories without image
+const DEFAULT_CATEGORY_ICON = "/img/cat-lainnya.png";
 
 // hitung total per-item (sudah termasuk diskon kalau ada)
 const getItemTotal = (item) => {
@@ -193,7 +26,12 @@ const getItemTotal = (item) => {
 // MAIN COMPONENT
 // ====================================
 const Transaksi = () => {
-  const [activeCategory, setActiveCategory] = useState("Makanan");
+  // Data from API
+  const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const [activeCategory, setActiveCategory] = useState(null); // null = semua kategori
   const [search, setSearch] = useState("");
   const [cart, setCart] = useState([]);
 
@@ -201,16 +39,73 @@ const Transaksi = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(20);
 
-  // FILTER PRODUK (sementara hanya by search, kategori hanya styling aktif)
-  const filteredProducts = dummyProducts.filter((p) =>
-    p.name.toLowerCase().includes(search.toLowerCase())
-  );
+  // Fetch data from API
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const [productsRes, categoriesRes] = await Promise.all([
+          api.get("/admin/products"),
+          api.get("/admin/categories")
+        ]);
+
+        // Map products to format yang dibutuhkan
+        const mappedProducts = (productsRes.data || []).map((p) => ({
+          id: p.id,
+          name: p.name,
+          price: p.selling_price || p.harga_jual || 0,
+          stock: p.stock ?? p.stok ?? 0,
+          imageUrl: p.image_url || p.gambar || "/img/placeholder.png",
+          categoryId: p.category_id || p.kategori_id,
+          categoryName: p.category?.name || p.kategori?.nama || "",
+          discountPercent: p.discount_percent || 0,
+          barcode: p.barcode || p.kode_barcode || "",
+        }));
+
+        // Map categories
+        const mappedCategories = (categoriesRes.data || []).map((c) => ({
+          id: c.id,
+          label: c.name || c.nama,
+          icon: c.icon || c.gambar || DEFAULT_CATEGORY_ICON,
+        }));
+
+        setProducts(mappedProducts);
+        setCategories(mappedCategories);
+
+        // Set kategori aktif ke kategori pertama jika ada
+        if (mappedCategories.length > 0) {
+          setActiveCategory(mappedCategories[0].id);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  // FILTER PRODUK berdasarkan search dan kategori
+  const filteredProducts = useMemo(() => {
+    return products.filter((p) => {
+      const matchSearch = p.name.toLowerCase().includes(search.toLowerCase()) ||
+        (p.barcode && p.barcode.toLowerCase().includes(search.toLowerCase()));
+      const matchCategory = !activeCategory || p.categoryId === activeCategory;
+      return matchSearch && matchCategory;
+    });
+  }, [products, search, activeCategory]);
 
   // HITUNG PAGE
   const indexOfLast = currentPage * itemsPerPage;
   const indexOfFirst = indexOfLast - itemsPerPage;
   const currentProducts = filteredProducts.slice(indexOfFirst, indexOfLast);
   const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+
+  // Reset page when search or category changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, activeCategory]);
 
   // ADD TO CART
   const addToCart = (product) => {
@@ -284,14 +179,28 @@ const Transaksi = () => {
 
         {/* KATEGORI */}
         <div className="trx-cat-row">
+          {/* Tombol Semua Kategori */}
+          <button
+            className={
+              "trx-cat-pill" +
+              (activeCategory === null ? " trx-cat-active" : "")
+            }
+            onClick={() => setActiveCategory(null)}
+          >
+            <span className="trx-cat-label">Semua</span>
+            <span className="trx-cat-icon">
+              <img src="/img/cat-lainnya.png" alt="Semua" />
+            </span>
+          </button>
+
           {categories.map((cat) => (
             <button
-              key={cat.label}
+              key={cat.id}
               className={
                 "trx-cat-pill" +
-                (cat.label === activeCategory ? " trx-cat-active" : "")
+                (cat.id === activeCategory ? " trx-cat-active" : "")
               }
-              onClick={() => setActiveCategory(cat.label)}
+              onClick={() => setActiveCategory(cat.id)}
             >
               <span className="trx-cat-label">{cat.label}</span>
               <span className="trx-cat-icon">
@@ -303,86 +212,142 @@ const Transaksi = () => {
 
         {/* GRID PRODUK */}
         <div className="trx-product-grid">
-          {currentProducts.map((p) => (
-            <button
-              key={p.id}
-              className="trx-product-card"
-              onClick={() => addToCart(p)}
-            >
-              <div className="trx-stock-bar">
-                <img
-                  src="/img/icon-box.png"
-                  alt="stok"
-                  className="trx-stock-icon-img"
-                />
-                <span className="trx-stock-text">{p.stock}</span>
+          {loading ? (
+            <div style={{
+              gridColumn: "1 / -1",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "16px",
+              padding: "60px 20px",
+              color: "#94a3b8"
+            }}>
+              <div className="loading-spinner" style={{
+                width: "48px",
+                height: "48px",
+                border: "4px solid #334155",
+                borderTop: "4px solid #f59e0b",
+                borderRadius: "50%",
+                animation: "spin 1s linear infinite"
+              }} />
+              <div>Memuat produk...</div>
+            </div>
+          ) : currentProducts.length === 0 ? (
+            <div style={{
+              gridColumn: "1 / -1",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "16px",
+              padding: "60px 20px",
+            }}>
+              <div style={{
+                width: "80px",
+                height: "80px",
+                borderRadius: "50%",
+                background: "linear-gradient(135deg, #334155 0%, #1e293b 100%)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: "36px",
+              }}>
+                📦
               </div>
+              <div style={{ fontSize: "16px", fontWeight: "600", color: "#94a3b8" }}>
+                {search ? "Produk Tidak Ditemukan" : "Belum Ada Produk"}
+              </div>
+              <div style={{ fontSize: "13px", color: "#64748b", textAlign: "center", maxWidth: "300px" }}>
+                {search
+                  ? `Tidak ada produk yang cocok dengan "${search}"`
+                  : "Produk belum tersedia untuk kategori ini. Tambahkan produk melalui Data Master."}
+              </div>
+            </div>
+          ) : (
+            currentProducts.map((p) => (
+              <button
+                key={p.id}
+                className="trx-product-card"
+                onClick={() => addToCart(p)}
+              >
+                <div className="trx-stock-bar">
+                  <img
+                    src="/img/icon-box.png"
+                    alt="stok"
+                    className="trx-stock-icon-img"
+                  />
+                  <span className="trx-stock-text">{p.stock}</span>
+                </div>
 
-              <div className="trx-product-image">
-                <img src={p.imageUrl} alt={p.name} />
-              </div>
+                <div className="trx-product-image">
+                  <img src={p.imageUrl} alt={p.name} onError={(e) => { e.target.src = "/img/placeholder.png"; }} />
+                </div>
 
-              <div className="trx-product-info">
-                <div className="trx-name">{p.name}</div>
-                <div className="trx-price">{formatRp(p.price)}</div>
-              </div>
-            </button>
-          ))}
+                <div className="trx-product-info">
+                  <div className="trx-name">{p.name}</div>
+                  <div className="trx-price">{formatRp(p.price)}</div>
+                </div>
+              </button>
+            ))
+          )}
         </div>
 
-        {/* PAGINATION */}
-        <div className="trx-pagination">
-          <div className="trx-page-info">
-            {indexOfFirst + 1}–{Math.min(indexOfLast, filteredProducts.length)}{" "}
-            dari {filteredProducts.length} item
+        {/* PAGINATION - hanya tampil jika ada data */}
+        {!loading && filteredProducts.length > 0 && (
+          <div className="trx-pagination">
+            <div className="trx-page-info">
+              {indexOfFirst + 1}–{Math.min(indexOfLast, filteredProducts.length)}{" "}
+              dari {filteredProducts.length} item
+            </div>
+
+            <div className="trx-page-buttons">
+              <button
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage(1)}
+              >
+                «
+              </button>
+              <button
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage((p) => p - 1)}
+              >
+                ‹
+              </button>
+
+              <span className="trx-page-number">{currentPage}</span>
+
+              <button
+                disabled={currentPage >= totalPages || totalPages === 0}
+                onClick={() => setCurrentPage((p) => p + 1)}
+              >
+                ›
+              </button>
+              <button
+                disabled={currentPage >= totalPages || totalPages === 0}
+                onClick={() => setCurrentPage(totalPages || 1)}
+              >
+                »
+              </button>
+            </div>
+
+            <div className="trx-page-size">
+              <select
+                value={itemsPerPage}
+                onChange={(e) => {
+                  setItemsPerPage(Number(e.target.value));
+                  setCurrentPage(1);
+                }}
+              >
+                <option value={10}>10</option>
+                <option value={20}>20</option>
+                <option value={30}>30</option>
+                <option value={40}>40</option>
+              </select>
+              <span>items per page</span>
+            </div>
           </div>
-
-          <div className="trx-page-buttons">
-            <button
-              disabled={currentPage === 1}
-              onClick={() => setCurrentPage(1)}
-            >
-              «
-            </button>
-            <button
-              disabled={currentPage === 1}
-              onClick={() => setCurrentPage((p) => p - 1)}
-            >
-              ‹
-            </button>
-
-            <span className="trx-page-number">{currentPage}</span>
-
-            <button
-              disabled={currentPage === totalPages}
-              onClick={() => setCurrentPage((p) => p + 1)}
-            >
-              ›
-            </button>
-            <button
-              disabled={currentPage === totalPages}
-              onClick={() => setCurrentPage(totalPages)}
-            >
-              »
-            </button>
-          </div>
-
-          <div className="trx-page-size">
-            <select
-              value={itemsPerPage}
-              onChange={(e) => {
-                setItemsPerPage(Number(e.target.value));
-                setCurrentPage(1);
-              }}
-            >
-              <option value={10}>10</option>
-              <option value={20}>20</option>
-              <option value={30}>30</option>
-              <option value={40}>40</option>
-            </select>
-            <span>items per page</span>
-          </div>
-        </div>
+        )}
       </div>
 
       {/* ========================================== */}

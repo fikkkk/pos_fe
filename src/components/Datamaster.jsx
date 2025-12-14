@@ -1106,9 +1106,45 @@ export default function DataMaster() {
                       <tr>
                         <td
                           colSpan={10}
-                          style={{ textAlign: "center", padding: "20px" }}
+                          style={{
+                            textAlign: "center",
+                            padding: "60px 20px",
+                            background: "linear-gradient(135deg, rgba(30, 41, 59, 0.5) 0%, rgba(15, 23, 42, 0.5) 100%)",
+                          }}
                         >
-                          Tidak ada data.
+                          <div style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            gap: "16px",
+                          }}>
+                            <div style={{
+                              width: "80px",
+                              height: "80px",
+                              borderRadius: "50%",
+                              background: "linear-gradient(135deg, #334155 0%, #1e293b 100%)",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              fontSize: "36px",
+                            }}>
+                              📋
+                            </div>
+                            <div style={{
+                              fontSize: "16px",
+                              fontWeight: "600",
+                              color: "#94a3b8",
+                            }}>
+                              Belum Ada Data
+                            </div>
+                            <div style={{
+                              fontSize: "13px",
+                              color: "#64748b",
+                              maxWidth: "300px",
+                            }}>
+                              Data {activeTab === "produk" ? "produk" : activeTab === "user" ? "user" : activeTab === "kategori" ? "kategori" : activeTab === "satuan" ? "satuan" : "promo"} belum tersedia. Klik tombol "Tambah" untuk menambahkan data baru.
+                            </div>
+                          </div>
                         </td>
                       </tr>
                     )}

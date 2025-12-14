@@ -316,7 +316,8 @@ export default function Dashboard() {
       />
 
       <main className="ds-main">
-        {/* TOPBAR DARK MODE */}
+        {/* TOPBAR HIDDEN - tanggal dipindah ke sidebar */}
+        {/* 
         <header className="ds-topbar">
           <div className="ds-topbar-left">
             <div className="ds-topbar-title-row">
@@ -331,9 +332,9 @@ export default function Dashboard() {
           </div>
 
           <div className="ds-topbar-right">
-            {/* ProfilePill removed */}
           </div>
         </header>
+        */}
 
         <section className="ds-inner">
           {/* ================= HALAMAN DASHBOARD ================= */}

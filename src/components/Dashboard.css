@@ -238,11 +238,10 @@ body {
 
 /* ===== Main ===== */
 .ds-main {
-  display: grid;
-  grid-template-rows: 72px minmax(0, 1fr);
+  display: flex;
+  flex-direction: column;
   min-height: 0;
   transition: transform .25s ease;
-  /* ⬅️ tambahkan baris ini */
 }
 
 .ds-topbar {
@@ -3655,8 +3654,8 @@ body {
 
 /* Card konten utama */
 .ds-main {
-  display: grid;
-  grid-template-rows: 80px minmax(0, 1fr);
+  display: flex;
+  flex-direction: column;
   min-height: 0;
 
   background: rgba(15, 23, 42, 0.96);
@@ -3957,8 +3956,8 @@ body {
 
 /* Card konten utama */
 .ds-main {
-  display: grid;
-  grid-template-rows: 80px minmax(0, 1fr);
+  display: flex;
+  flex-direction: column;
   min-height: 0;
 
   background: rgba(15, 23, 42, 0.97);
@@ -5096,4 +5095,24 @@ body {
 
 .dashboard.light .dropdown-item.logout svg {
   color: #dc2626;
+}
+
+/* ======================== SIDEBAR DATE ======================== */
+
+.ds-sidebar-date {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(251, 146, 60, 0.1) 100%);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: 12px;
+}
+
+.ds-date-text {
+  font-size: 12px;
+  font-weight: 600;
+  color: #fbbf24;
+  letter-spacing: 0.02em;
 }
