@@ -319,10 +319,6 @@ export default function Dashboard() {
               <span>Dashboard Statistik Bisnis</span>
             </div>
           </div>
-
-          <div className="ds-topbar-right">
-            <ProfilePill />
-          </div>
         </header>
 
         <section className="ds-inner">
