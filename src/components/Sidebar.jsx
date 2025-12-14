@@ -32,7 +32,7 @@ export default function Sidebar({ activeMenu, setActiveMenu, isDarkMode, toggleT
     { id: "dashboard", label: "Dashboard", icon: <FaThLarge /> },
     { id: "transaksi", label: "Transaksi", icon: <FaShoppingCart /> },
     { id: "datamaster", label: "Data Master", icon: <FaFileAlt /> },
-    { id: "laporan", label: "Laporan", icon: <FaChartPie /> },
+    { id: "laporan", label: "Laporan Manajemen", icon: <FaChartPie /> },
   ];
 
   const handleLogout = () => {

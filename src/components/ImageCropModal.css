@@ -112,6 +112,7 @@
 .zoom-slider {
     flex: 1;
     -webkit-appearance: none;
+    appearance: none;
     height: 6px;
     background: #e2e8f0;
     border-radius: 3px;
