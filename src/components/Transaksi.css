@@ -277,23 +277,25 @@
 
 .trx-right {
   background: #fff;
-  padding: 12px;
+  padding: 16px;
   display: flex;
   flex-direction: column;
 
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
-  overflow-x: hidden;
+  overflow: hidden;
 
-  /* ⬇️ kartu kanan dinaikkan & dipanjangkan */
-  height: calc(100% + 70px);
-  /* boleh ubah 90–120 kalau mau */
+  /* Proper full height within grid */
+  height: 100%;
+  min-height: 0;
   position: relative;
-  z-index: 99 !important;
-  margin-top: -82px;
-  /* angka ini bisa kamu adjust 1–2px */
-  overflow: visible !important;
+  z-index: 10;
+
+  /* Modern styling */
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
 
@@ -548,31 +550,43 @@
 
 /* ==================== SUMMARY & BUTTON ==================== */
 .trx-summary {
-  margin-top: 10px;
-  font-size: 11px;
-  border-top: 1px solid #eee;
-  padding-top: 8px;
+  margin-top: auto;
+  font-size: 12px;
+  border-top: 1px solid #e2e8f0;
+  padding: 12px 0 8px;
+  background: transparent;
 }
 
 .trx-row {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
+  color: #64748b;
 }
 
 .trx-total-row span:last-child {
-  font-weight: 600;
+  font-weight: 700;
   color: #22a047;
+  font-size: 14px;
 }
 
 .trx-bayar-btn {
-  margin-top: 8px;
-  background: #22a047;
+  margin-top: 10px;
+  background: linear-gradient(135deg, #22a047 0%, #16a34a 100%);
   color: #fff;
   border: none;
-  padding: 10px;
-  font-weight: 600;
+  padding: 14px;
+  font-weight: 700;
+  font-size: 14px;
   cursor: pointer;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(34, 160, 71, 0.3);
+}
+
+.trx-bayar-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(34, 160, 71, 0.4);
 }
 
 /* ==================== SCROLLBAR (HIDE, TETAP BISA SCROLL) ==================== */
@@ -760,6 +774,8 @@
 .dashboard.dark .trx-right {
   background: #1e293b;
   border-color: #334155;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
 .dashboard.dark .trx-title {
@@ -857,7 +873,8 @@
 .dashboard.light .trx-right {
   background: #ffffff;
   border: 1px solid #e2e8f0;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
 .dashboard.light .trx-title {
