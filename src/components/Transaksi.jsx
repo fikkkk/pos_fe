@@ -291,21 +291,7 @@ const Transaksi = () => {
               >
                 ‹
               </button>
-            <div className="trx-page-buttons">
-              <button
-                disabled={currentPage === 1}
-                onClick={() => setCurrentPage(1)}
-              >
-                «
-              </button>
-              <button
-                disabled={currentPage === 1}
-                onClick={() => setCurrentPage((p) => p - 1)}
-              >
-                ‹
-              </button>
 
-              <span className="trx-page-number">{currentPage}</span>
               <span className="trx-page-number">{currentPage}</span>
 
               <button
