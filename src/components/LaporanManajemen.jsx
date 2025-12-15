@@ -16,6 +16,9 @@ import {
     FaClock,
     FaReceipt,
     FaPercent,
+    FaSearch,
+    FaEye,
+    FaTimes,
 } from "react-icons/fa";
 import { api } from "../api";
 import "./LaporanManajemen.css";
@@ -181,6 +184,9 @@ export default function LaporanManajemen() {
     const [error, setError] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [selectedTransaction, setSelectedTransaction] = useState(null);
+    const [showDetailModal, setShowDetailModal] = useState(false);
 
     // Format currency
     const formatCurrency = (value) => {
@@ -399,6 +405,31 @@ export default function LaporanManajemen() {
         },
     ] : [];
 
+    // Filter transactions based on search query
+    const filteredTransactions = transactions.filter((t) => {
+        if (!searchQuery.trim()) return true;
+        const query = searchQuery.toLowerCase();
+        return (
+            (t.kasir || "").toLowerCase().includes(query) ||
+            (t.pelanggan || "").toLowerCase().includes(query) ||
+            (t.metodePembayaran || "").toLowerCase().includes(query) ||
+            String(t.total || "").includes(query) ||
+            new Date(t.tanggal).toLocaleDateString("id-ID").includes(query)
+        );
+    });
+
+    // Handle view transaction detail
+    const handleViewDetail = (transaction) => {
+        setSelectedTransaction(transaction);
+        setShowDetailModal(true);
+    };
+
+    // Close detail modal
+    const closeDetailModal = () => {
+        setShowDetailModal(false);
+        setSelectedTransaction(null);
+    };
+
     return (
         <div className="laporan-page">
             {/* Header */}
@@ -565,10 +596,21 @@ export default function LaporanManajemen() {
                     <div className="table-card">
                         <div className="table-card-header">
                             <h3>📋 Riwayat Transaksi</h3>
-                            <div className="table-actions">
-                                <button className="table-btn excel"><FaFileExcel /> Excel</button>
-                                <button className="table-btn pdf"><FaFilePdf /> PDF</button>
-                                <button className="table-btn print"><FaPrint /> Cetak</button>
+                            <div className="table-header-right">
+                                <div className="table-search">
+                                    <FaSearch className="search-icon" />
+                                    <input
+                                        type="text"
+                                        placeholder="Cari transaksi..."
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                    />
+                                </div>
+                                <div className="table-actions">
+                                    <button className="table-btn excel"><FaFileExcel /> Excel</button>
+                                    <button className="table-btn pdf"><FaFilePdf /> PDF</button>
+                                    <button className="table-btn print"><FaPrint /> Cetak</button>
+                                </div>
                             </div>
                         </div>
                         <div className="table-scroll-wrapper">
@@ -584,11 +626,12 @@ export default function LaporanManajemen() {
                                         <th>Diskon</th>
                                         <th>Total</th>
                                         <th>Status</th>
+                                        <th>Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {transactions.length > 0 ? (
-                                        transactions.map((t, i) => (
+                                    {filteredTransactions.length > 0 ? (
+                                        filteredTransactions.map((t, i) => (
                                             <tr key={t.id || i}>
                                                 <td>{(currentPage - 1) * 10 + i + 1}</td>
                                                 <td>
@@ -617,12 +660,21 @@ export default function LaporanManajemen() {
                                                         <FaCheckCircle /> Selesai
                                                     </span>
                                                 </td>
+                                                <td>
+                                                    <button
+                                                        className="detail-btn"
+                                                        onClick={() => handleViewDetail(t)}
+                                                        title="Lihat Detail"
+                                                    >
+                                                        <FaEye /> Detail
+                                                    </button>
+                                                </td>
                                             </tr>
                                         ))
                                     ) : (
                                         <tr>
-                                            <td colSpan="9" className="empty-row">
-                                                Tidak ada transaksi untuk periode ini
+                                            <td colSpan="10" className="empty-row">
+                                                {searchQuery ? "Tidak ditemukan transaksi yang cocok" : "Tidak ada transaksi untuk periode ini"}
                                             </td>
                                         </tr>
                                     )}
@@ -724,6 +776,101 @@ export default function LaporanManajemen() {
                     )}
                 </div>
             </div>
+
+            {/* Transaction Detail Modal */}
+            {showDetailModal && selectedTransaction && (
+                <div className="detail-modal-overlay" onClick={closeDetailModal}>
+                    <div className="detail-modal" onClick={(e) => e.stopPropagation()}>
+                        <div className="detail-modal-header">
+                            <h3>Detail Transaksi</h3>
+                            <button className="detail-close-btn" onClick={closeDetailModal}>
+                                <FaTimes />
+                            </button>
+                        </div>
+                        <div className="detail-modal-body">
+                            <div className="detail-info-grid">
+                                <div className="detail-info-item">
+                                    <span className="detail-label">Tanggal</span>
+                                    <span className="detail-value">
+                                        {new Date(selectedTransaction.tanggal).toLocaleString("id-ID", {
+                                            day: "2-digit",
+                                            month: "long",
+                                            year: "numeric",
+                                            hour: "2-digit",
+                                            minute: "2-digit",
+                                        })}
+                                    </span>
+                                </div>
+                                <div className="detail-info-item">
+                                    <span className="detail-label">Kasir</span>
+                                    <span className="detail-value">{selectedTransaction.kasir}</span>
+                                </div>
+                                <div className="detail-info-item">
+                                    <span className="detail-label">Pelanggan</span>
+                                    <span className="detail-value">{selectedTransaction.pelanggan || "-"}</span>
+                                </div>
+                                <div className="detail-info-item">
+                                    <span className="detail-label">Metode Pembayaran</span>
+                                    <span className={`payment-badge ${selectedTransaction.metodePembayaran?.toLowerCase()}`}>
+                                        {selectedTransaction.metodePembayaran}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div className="detail-items-section">
+                                <h4>Barang yang Dibeli</h4>
+                                <table className="detail-items-table">
+                                    <thead>
+                                        <tr>
+                                            <th>No</th>
+                                            <th>Nama Produk</th>
+                                            <th>Qty</th>
+                                            <th>Harga</th>
+                                            <th>Subtotal</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {selectedTransaction.items && selectedTransaction.items.length > 0 ? (
+                                            selectedTransaction.items.map((item, idx) => (
+                                                <tr key={idx}>
+                                                    <td>{idx + 1}</td>
+                                                    <td>{item.productName || item.name || "-"}</td>
+                                                    <td>{item.qty || item.quantity || 0}</td>
+                                                    <td>{formatFullCurrency(item.price || item.harga || 0)}</td>
+                                                    <td>{formatFullCurrency((item.qty || item.quantity || 0) * (item.price || item.harga || 0))}</td>
+                                                </tr>
+                                            ))
+                                        ) : (
+                                            <tr>
+                                                <td colSpan="5" className="empty-row">
+                                                    Data item tidak tersedia
+                                                </td>
+                                            </tr>
+                                        )}
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div className="detail-summary">
+                                <div className="summary-row">
+                                    <span>Subtotal</span>
+                                    <span>{formatFullCurrency(selectedTransaction.subtotal)}</span>
+                                </div>
+                                {selectedTransaction.diskon > 0 && (
+                                    <div className="summary-row discount">
+                                        <span>Diskon</span>
+                                        <span>-{formatFullCurrency(selectedTransaction.diskon)}</span>
+                                    </div>
+                                )}
+                                <div className="summary-row total">
+                                    <span>Total</span>
+                                    <span>{formatFullCurrency(selectedTransaction.total)}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

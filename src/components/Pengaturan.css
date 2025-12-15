@@ -7,6 +7,30 @@
     flex-direction: column;
     gap: 24px;
     animation: pageSlideIn 0.4s ease-out;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 8px;
+    padding-bottom: 24px;
+}
+
+/* Custom Scrollbar */
+.pengaturan-page::-webkit-scrollbar {
+    width: 8px;
+}
+
+.pengaturan-page::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 4px;
+}
+
+.pengaturan-page::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #6366f1 0%, #8b5cf6 100%);
+    border-radius: 4px;
+}
+
+.pengaturan-page::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #4f46e5 0%, #7c3aed 100%);
 }
 
 @keyframes pageSlideIn {
@@ -634,3 +658,14 @@
 .dashboard.dark .password-form label {
     color: #94a3b8;
 }
+
+.dashboard.dark .pengaturan-page::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.dashboard.dark .pengaturan-page::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #6366f1 0%, #8b5cf6 100%);
+
+    .dashboard.dark .pengaturan-page::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(180deg, #818cf8 0%, #a78bfa 100%);
+    }

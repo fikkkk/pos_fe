@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import "./DataMaster.css";
-import { FaSearch, FaPlus, FaTrash, FaCheckCircle, FaTimes, FaBox, FaHistory } from "react-icons/fa";
+import { FaSearch, FaPlus, FaTrash, FaCheckCircle, FaTimes, FaBox, FaHistory, FaTruck } from "react-icons/fa";
 import { api } from "../api";
 import AddProductModal from "./AddProductModal";
 import EditProductModal from "./EditProductModal";
@@ -16,6 +16,8 @@ import EditPromoModal from "./EditPromoModal";
 import AddStockModal from "./AddStockModal";
 import StockHistoryModal from "./StockHistoryModal";
 import ActivityLogModal from "./ActivityLogModal";
+import AddSupplierModal from "./AddSupplierModal";
+import EditSupplierModal from "./EditSupplierModal";
 
 export default function DataMaster() {
   const [activeTab, setActiveTab] = useState("produk");
@@ -56,6 +58,12 @@ export default function DataMaster() {
   const [showAddPromoModal, setShowAddPromoModal] = useState(false);
   const [showEditPromoModal, setShowEditPromoModal] = useState(false);
   const [selectedPromo, setSelectedPromo] = useState(null);
+
+  // 🔹 STATE untuk SUPPLIER
+  const [suppliers, setSuppliers] = useState([]);
+  const [showAddSupplierModal, setShowAddSupplierModal] = useState(false);
+  const [showEditSupplierModal, setShowEditSupplierModal] = useState(false);
+  const [selectedSupplier, setSelectedSupplier] = useState(null);
 
   // 🔹 STATE untuk STOCK
   const [showAddStockModal, setShowAddStockModal] = useState(false);
@@ -118,6 +126,13 @@ export default function DataMaster() {
         const res = await api.get("/admin/promo");
         setPromos(res.data);
         // Note: Backend promo search not verified, client side filter could be used if needed
+      } else if (activeTab === "supplier") {
+        const searchQuery = search.trim();
+        const endpoint = searchQuery
+          ? `/admin/suppliers/search?q=${encodeURIComponent(searchQuery)}`
+          : "/admin/suppliers";
+        const res = await api.get(endpoint);
+        setSuppliers(res.data);
       }
     } catch (err) {
       console.error("Error fetching data:", err);
@@ -203,6 +218,16 @@ export default function DataMaster() {
     });
   };
 
+  const handleDeleteSupplier = (id) => {
+    setDeleteModal({
+      show: true,
+      id,
+      type: "supplier",
+      title: "Hapus Supplier",
+      message: "Apakah Anda yakin ingin menghapus supplier ini? Produk yang terhubung dengan supplier ini mungkin akan terpengaruh.",
+    });
+  };
+
   // 🔹 CONFIRM DELETE ACTION
   const confirmDelete = async () => {
     if (!deleteModal.id || !deleteModal.type) return;
@@ -256,6 +281,9 @@ export default function DataMaster() {
       } else if (deleteModal.type === "promo") {
         await api.delete(`/admin/promo/${deleteModal.id}`);
         showNotification("Promo berhasil dihapus!", "success");
+      } else if (deleteModal.type === "supplier") {
+        await api.delete(`/admin/suppliers/${deleteModal.id}`);
+        showNotification("Supplier berhasil dihapus!", "success");
       }
 
       fetchData(); // Refresh data
@@ -310,6 +338,10 @@ export default function DataMaster() {
       dataToCopy = promos.map(p =>
         `${p.product?.name}\t${p.minQty}\t${p.bonusQty ? `Bonus ${p.bonusQty}` : p.discountPercent ? `Disc ${p.discountPercent}%` : `Potongan Rp${p.discountValue}`}`
       );
+    } else if (activeTab === "supplier") {
+      dataToCopy = suppliers.map(s =>
+        `${s.name}\t${s.phone || "-"}\t${s.email || "-"}\t${s.address || "-"}`
+      );
     }
     navigator.clipboard.writeText(dataToCopy.join("\n"));
     showNotification("Data berhasil disalin!", "success");
@@ -328,6 +360,8 @@ export default function DataMaster() {
         return productUnits;
       case "promo":
         return promos;
+      case "supplier":
+        return suppliers;
       default:
         return [];
     }
@@ -366,6 +400,8 @@ export default function DataMaster() {
         return "Cari Satuan...";
       case "promo":
         return "Cari Promo...";
+      case "supplier":
+        return "Cari Supplier...";
       default:
         return "Cari...";
     }
@@ -384,6 +420,8 @@ export default function DataMaster() {
         return "Tambah Satuan";
       case "promo":
         return "Tambah Promo";
+      case "supplier":
+        return "Tambah Supplier";
       default:
         return "Tambah";
     }
@@ -402,6 +440,8 @@ export default function DataMaster() {
         return "Total Satuan";
       case "promo":
         return "Total Promo";
+      case "supplier":
+        return "Total Supplier";
       default:
         return "Total";
     }
@@ -468,6 +508,18 @@ export default function DataMaster() {
             <th>Benefit Promo</th>
             <th>Periode</th>
             <th>Status</th>
+            <th>Aksi</th>
+          </tr>
+        );
+      case "supplier":
+        return (
+          <tr>
+            <th className="dm-no-head">No</th>
+            <th>Nama Supplier</th>
+            <th>Telepon</th>
+            <th>Email</th>
+            <th>Alamat</th>
+            <th>Dibuat Pada</th>
             <th>Aksi</th>
           </tr>
         );
@@ -770,6 +822,63 @@ export default function DataMaster() {
             </td>
           </tr>
         );
+      case "supplier":
+        return (
+          <tr key={item.id}>
+            <td className="dm-no-cell">{indexOfFirst + index + 1}</td>
+            <td>
+              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                <div style={{
+                  width: "36px",
+                  height: "36px",
+                  borderRadius: "10px",
+                  background: "linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "#fff",
+                  fontSize: "16px"
+                }}>
+                  <FaTruck />
+                </div>
+                <span style={{ fontWeight: 600, color: "#fff" }}>{item.name}</span>
+              </div>
+            </td>
+            <td style={{ color: "#e2e8f0" }}>{item.phone || "-"}</td>
+            <td style={{ color: "#e2e8f0" }}>{item.email || "-"}</td>
+            <td style={{ color: "#94a3b8", maxWidth: "200px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+              {item.address || "-"}
+            </td>
+            <td style={{ color: "#94a3b8" }}>
+              {item.createdAt
+                ? new Date(item.createdAt).toLocaleDateString("id-ID")
+                : "-"}
+            </td>
+            <td>
+              <div className="dm-action-group">
+                <button
+                  className="dm-action-card dm-action-edit"
+                  onClick={() => {
+                    setSelectedSupplier(item);
+                    setShowEditSupplierModal(true);
+                  }}
+                >
+                  <span className="dm-action-icon">✏️</span>
+                  <span className="dm-action-label">Edit</span>
+                </button>
+                <button
+                  className="dm-action-card dm-action-delete"
+                  onClick={() => handleDeleteSupplier(item.id)}
+                >
+                  <span className="dm-action-icon">
+                    <FaTrash />
+                  </span>
+                  <span className="dm-action-label">Hapus</span>
+                </button>
+              </div>
+            </td>
+          </tr>
+        );
       default:
         return null;
     }
@@ -889,6 +998,17 @@ export default function DataMaster() {
               <span className="dm-newtab-text">Promo Produk</span>
               <span className="dm-newtab-circle">
                 <span style={{ fontSize: "24px" }}>🏷️</span>
+              </span>
+            </button>
+
+            {/* TAB SUPPLIER */}
+            <button
+              className={"dm-newtab " + (activeTab === "supplier" ? "active" : "")}
+              onClick={() => setActiveTab("supplier")}
+            >
+              <span className="dm-newtab-text">Data Supplier</span>
+              <span className="dm-newtab-circle">
+                <FaTruck style={{ fontSize: "20px", color: "#8b5cf6" }} />
               </span>
             </button>
           </div>
@@ -1038,6 +1158,8 @@ export default function DataMaster() {
                 setShowAddUnitModal(true);
               } else if (activeTab === "promo") {
                 setShowAddPromoModal(true);
+              } else if (activeTab === "supplier") {
+                setShowAddSupplierModal(true);
               }
             }}
           >
@@ -1106,9 +1228,45 @@ export default function DataMaster() {
                       <tr>
                         <td
                           colSpan={10}
-                          style={{ textAlign: "center", padding: "20px" }}
+                          style={{
+                            textAlign: "center",
+                            padding: "60px 20px",
+                            background: "linear-gradient(135deg, rgba(30, 41, 59, 0.5) 0%, rgba(15, 23, 42, 0.5) 100%)",
+                          }}
                         >
-                          Tidak ada data.
+                          <div style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            gap: "16px",
+                          }}>
+                            <div style={{
+                              width: "80px",
+                              height: "80px",
+                              borderRadius: "50%",
+                              background: "linear-gradient(135deg, #334155 0%, #1e293b 100%)",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              fontSize: "36px",
+                            }}>
+                              📋
+                            </div>
+                            <div style={{
+                              fontSize: "16px",
+                              fontWeight: "600",
+                              color: "#94a3b8",
+                            }}>
+                              Belum Ada Data
+                            </div>
+                            <div style={{
+                              fontSize: "13px",
+                              color: "#64748b",
+                              maxWidth: "300px",
+                            }}>
+                              Data {activeTab === "produk" ? "produk" : activeTab === "user" ? "user" : activeTab === "kategori" ? "kategori" : activeTab === "satuan" ? "satuan" : "promo"} belum tersedia. Klik tombol "Tambah" untuk menambahkan data baru.
+                            </div>
+                          </div>
                         </td>
                       </tr>
                     )}
@@ -1319,6 +1477,29 @@ export default function DataMaster() {
             setActivityLogEntityType(null);
           }}
           entityType={activityLogEntityType}
+        />
+
+        {/* SUPPLIER MODALS */}
+        <AddSupplierModal
+          isOpen={showAddSupplierModal}
+          onClose={() => setShowAddSupplierModal(false)}
+          onSuccess={() => {
+            fetchData();
+            showNotification("Supplier berhasil ditambahkan!", "success");
+          }}
+        />
+
+        <EditSupplierModal
+          isOpen={showEditSupplierModal}
+          onClose={() => {
+            setShowEditSupplierModal(false);
+            setSelectedSupplier(null);
+          }}
+          onSuccess={() => {
+            fetchData();
+            showNotification("Supplier berhasil diperbarui!", "success");
+          }}
+          supplier={selectedSupplier}
         />
 
         {/* DELETE CONFIRMATION MODAL */}

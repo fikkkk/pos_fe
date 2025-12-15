@@ -7,6 +7,11 @@
     flex-direction: column;
     gap: 24px;
     animation: pageSlideIn 0.4s ease-out;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 8px;
+    padding-bottom: 24px;
 }
 
 @keyframes pageSlideIn {
@@ -50,6 +55,19 @@
     color: #fff;
     font-size: 1.5rem;
     box-shadow: 0 8px 24px rgba(245, 158, 11, 0.3);
+    animation: iconPulse 2s ease-in-out infinite;
+}
+
+@keyframes iconPulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
 }
 
 .akun-header-text {
@@ -194,10 +212,10 @@
 
 .profile-avatar-section {
     display: flex;
-    align-items: flex-end;
+    align-items: center;
     gap: 24px;
     padding: 0 32px 24px;
-    margin-top: -60px;
+    margin-top: -40px;
     position: relative;
 }
 
@@ -247,9 +265,39 @@
     transform: scale(1.1);
 }
 
+.avatar-delete-btn {
+    position: absolute;
+    bottom: 8px;
+    left: 8px;
+    width: 36px;
+    height: 36px;
+    background: #fff;
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: all 0.2s ease;
+}
+
+.avatar-delete-btn:hover {
+    background: #dc2626;
+    color: #fff;
+    transform: scale(1.1);
+}
+
+.avatar-delete-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
 .profile-info {
     flex: 1;
-    padding-bottom: 8px;
+    padding-top: 48px;
 }
 
 .profile-name {
@@ -561,5 +609,15 @@
 
 .dashboard.dark .avatar-upload-btn:hover {
     background: #f59e0b;
+    color: #fff;
+}
+
+.dashboard.dark .avatar-delete-btn {
+    background: #334155;
+    color: #cbd5e1;
+}
+
+.dashboard.dark .avatar-delete-btn:hover {
+    background: #dc2626;
     color: #fff;
 }

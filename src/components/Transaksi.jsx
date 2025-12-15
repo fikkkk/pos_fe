@@ -87,6 +87,11 @@ const Transaksi = () => {
   const currentProducts = filteredProducts.slice(indexOfFirst, indexOfLast);
   const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
 
+  // Reset page when search or category changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, activeCategory]);
+
   // ADD TO CART
   const addToCart = (product) => {
     setCart((prev) => {
@@ -286,7 +291,21 @@ const Transaksi = () => {
               >
                 ‹
               </button>
+            <div className="trx-page-buttons">
+              <button
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage(1)}
+              >
+                «
+              </button>
+              <button
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage((p) => p - 1)}
+              >
+                ‹
+              </button>
 
+              <span className="trx-page-number">{currentPage}</span>
               <span className="trx-page-number">{currentPage}</span>
 
               <button

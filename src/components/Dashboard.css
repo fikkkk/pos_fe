@@ -240,6 +240,8 @@ body {
 .ds-main {
   display: flex;
   flex-direction: column;
+  display: flex;
+  flex-direction: column;
   min-height: 0;
   height: 100%;
   overflow: hidden;
@@ -3975,6 +3977,8 @@ body {
 .ds-main {
   display: flex;
   flex-direction: column;
+  display: flex;
+  flex-direction: column;
   min-height: 0;
   height: 100%;
   overflow: hidden;
@@ -4281,8 +4285,8 @@ body {
 
 /* Card konten utama */
 .ds-main {
-  display: grid;
-  grid-template-rows: 80px minmax(0, 1fr);
+  display: flex;
+  flex-direction: column;
   min-height: 0;
 
   background: rgba(15, 23, 42, 0.97);
