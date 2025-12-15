@@ -430,6 +430,124 @@ export default function LaporanManajemen() {
         setSelectedTransaction(null);
     };
 
+    // Export to Excel (CSV format)
+    const handleExportExcel = () => {
+        const data = filteredTransactions.map((t, i) => ({
+            No: i + 1,
+            Tanggal: new Date(t.tanggal).toLocaleString("id-ID"),
+            Kasir: t.kasir,
+            Pelanggan: t.pelanggan || "-",
+            Metode: t.metodePembayaran,
+            Subtotal: t.subtotal,
+            Diskon: t.diskon || 0,
+            Total: t.total,
+            Status: t.status,
+        }));
+
+        if (data.length === 0) {
+            alert("Tidak ada data untuk diexport");
+            return;
+        }
+
+        // Create CSV content
+        const headers = Object.keys(data[0]).join(",");
+        const rows = data.map(row => Object.values(row).join(",")).join("\n");
+        const csv = `${headers}\n${rows}`;
+
+        // Download CSV
+        const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `laporan_${dateFrom}_${dateTo}.csv`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    };
+
+    // Export to PDF (using print dialog)
+    const handleExportPDF = () => {
+        const printContent = `
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>Laporan Penjualan</title>
+                <style>
+                    body { font-family: Arial, sans-serif; padding: 20px; }
+                    h1 { color: #1e293b; font-size: 18px; margin-bottom: 5px; }
+                    .period { color: #64748b; font-size: 12px; margin-bottom: 20px; }
+                    .summary { display: flex; gap: 20px; margin-bottom: 20px; }
+                    .summary-item { background: #f1f5f9; padding: 15px; border-radius: 8px; }
+                    .summary-label { font-size: 11px; color: #64748b; }
+                    .summary-value { font-size: 16px; font-weight: bold; color: #1e293b; }
+                    table { width: 100%; border-collapse: collapse; font-size: 11px; }
+                    th, td { border: 1px solid #e2e8f0; padding: 8px; text-align: left; }
+                    th { background: #f8fafc; font-weight: 600; }
+                    tr:nth-child(even) { background: #f8fafc; }
+                    .text-right { text-align: right; }
+                    @media print { body { padding: 0; } }
+                </style>
+            </head>
+            <body>
+                <h1>Laporan Penjualan</h1>
+                <p class="period">Periode: ${dateFrom} s/d ${dateTo}</p>
+                
+                <div class="summary">
+                    <div class="summary-item">
+                        <div class="summary-label">Total Penjualan</div>
+                        <div class="summary-value">${formatFullCurrency(summary?.totalPenjualan || 0)}</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-label">Total Transaksi</div>
+                        <div class="summary-value">${formatNumber(summary?.totalTransaksi || 0)}</div>
+                    </div>
+                </div>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Tanggal</th>
+                            <th>Kasir</th>
+                            <th>Pelanggan</th>
+                            <th>Metode</th>
+                            <th class="text-right">Total</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${filteredTransactions.map((t, i) => `
+                            <tr>
+                                <td>${i + 1}</td>
+                                <td>${new Date(t.tanggal).toLocaleString("id-ID", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })}</td>
+                                <td>${t.kasir}</td>
+                                <td>${t.pelanggan || "-"}</td>
+                                <td>${t.metodePembayaran}</td>
+                                <td class="text-right">${formatFullCurrency(t.total)}</td>
+                                <td>${t.status}</td>
+                            </tr>
+                        `).join("")}
+                    </tbody>
+                </table>
+            </body>
+            </html>
+        `;
+
+        const printWindow = window.open("", "_blank");
+        printWindow.document.write(printContent);
+        printWindow.document.close();
+        printWindow.focus();
+        setTimeout(() => {
+            printWindow.print();
+        }, 250);
+    };
+
+    // Handle Print
+    const handlePrint = () => {
+        handleExportPDF();
+    };
+
     return (
         <div className="laporan-page">
             {/* Header */}
@@ -607,9 +725,9 @@ export default function LaporanManajemen() {
                                     />
                                 </div>
                                 <div className="table-actions">
-                                    <button className="table-btn excel"><FaFileExcel /> Excel</button>
-                                    <button className="table-btn pdf"><FaFilePdf /> PDF</button>
-                                    <button className="table-btn print"><FaPrint /> Cetak</button>
+                                    <button className="table-btn excel" onClick={handleExportExcel}><FaFileExcel /> Excel</button>
+                                    <button className="table-btn pdf" onClick={handleExportPDF}><FaFilePdf /> PDF</button>
+                                    <button className="table-btn print" onClick={handlePrint}><FaPrint /> Cetak</button>
                                 </div>
                             </div>
                         </div>

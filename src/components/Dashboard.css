@@ -1637,38 +1637,23 @@ body {
   }
 }
 
-/* 1) Matikan judul kanan bawaan header gabungan */
+/* 1) SHOW judul kanan di header untuk alignment yang sejajar */
 .panel-header--chart .ph-righttitle {
-  display: none !important;
+  display: block !important;
+  font-weight: 700;
+  color: #f59e0b;
+  font-size: 16px;
 }
 
 /* 2) Pastikan kolom kanan (grafik pertahun) start di titik yang sama dgn kolom kiri */
 .panel-combo .pc-body .pc-col:nth-child(2) {
   margin-top: 0 !important;
   position: relative;
-  /* anchor utk judul absolut */
 }
 
-/* 3) Taruh judul 'Penjualan Pertahun' di level yang sama dengan judul kiri */
+/* 3) Hide mini-title di dalam body karena sudah ada di header */
 .panel-combo .pc-col:nth-child(2) .mini-title {
-  display: block !important;
-  /* override default .mini-title {display:none} */
-  position: absolute;
-  top: -44px;
-  /* sejajarkan dengan 'Penjualan Perbulan' */
-  left: 0;
-  margin: 0;
-  line-height: 1;
-  font-weight: 800;
-  color: #2f3f59;
-  font-size: 18px;
-}
-
-/* (opsional) kalau masih beda 1–2px, geser halus: -42 / -46 */
-@media (max-width:1200px) {
-  .panel-combo .pc-col:nth-child(2) .mini-title {
-    top: -42px;
-  }
+  display: none !important;
 }
 
 .white-scrim {
@@ -5949,4 +5934,230 @@ body {
 .logout-btn-confirm:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+}
+
+/* ========================================
+   TODAY OVERVIEW SECTION
+   ======================================== */
+
+.ds-today-section {
+  margin-bottom: 24px;
+}
+
+.ds-section-header {
+  margin-bottom: 16px;
+}
+
+.ds-section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.ds-section-title svg {
+  font-size: 18px;
+}
+
+/* Today Stats Cards */
+.ds-today-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.ds-today-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 20px;
+  border-radius: 16px;
+  background: var(--bg-card);
+  box-shadow: var(--shadow-sm);
+  transition: all 0.3s ease;
+}
+
+.ds-today-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.ds-today-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: #fff;
+}
+
+.ds-today-card.green .ds-today-icon {
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+}
+
+.ds-today-card.blue .ds-today-icon {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+}
+
+.ds-today-card.orange .ds-today-icon {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+}
+
+.ds-today-card.purple .ds-today-icon {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+}
+
+.ds-today-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ds-today-value {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.ds-today-label {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* Today Grid (Chart + Low Stock) */
+.ds-today-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 20px;
+}
+
+/* Hourly Chart */
+.ds-hourly-chart {
+  background: var(--bg-card);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+}
+
+.ds-chart-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+}
+
+.ds-hourly-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  height: 160px;
+  padding-top: 10px;
+}
+
+.ds-hour-bar {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  height: 100%;
+}
+
+.ds-bar-fill {
+  width: 100%;
+  max-width: 40px;
+  background: linear-gradient(180deg, #f59e0b 0%, #fbbf24 100%);
+  border-radius: 6px 6px 0 0;
+  transition: height 0.5s ease;
+  cursor: pointer;
+  min-height: 4px;
+}
+
+.ds-bar-fill:hover {
+  background: linear-gradient(180deg, #ea580c 0%, #f59e0b 100%);
+}
+
+.ds-hour-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* Low Stock Widget */
+.ds-low-stock {
+  background: var(--bg-card);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+}
+
+.ds-low-stock-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ds-low-stock-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  background: var(--bg);
+  border-radius: 10px;
+}
+
+.ds-product-name {
+  font-size: 13px;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.ds-stock-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+.ds-stock-badge.warning {
+  background: rgba(245, 158, 11, 0.15);
+  color: #d97706;
+}
+
+.ds-stock-badge.critical {
+  background: rgba(239, 68, 68, 0.15);
+  color: #dc2626;
+}
+
+.ds-low-stock-empty {
+  text-align: center;
+  padding: 30px;
+  color: #22c55e;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .ds-today-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .ds-today-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .ds-today-cards {
+    grid-template-columns: 1fr;
+  }
 }
