@@ -2,21 +2,104 @@
    DATA MASTER PAGE - MODERN REDESIGN
 ==========================*/
 .dm-page {
-  width: calc(100% + 44px);
-  /* Tambahkan lebar untuk kompensasi padding parent */
-  height: 100%;
-  padding: 0;
-  box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  background: transparent;
-  overflow: hidden;
-  margin-left: -22px;
-  /* Offset padding kiri dari ds-inner */
-  margin-right: -22px;
-  /* Offset padding kanan dari ds-inner */
-  margin-top: -18px;
-  /* Offset padding atas dari ds-inner */
+  height: 100%;
+  overflow: visible;
+  animation: dmPageSlideIn 0.4s ease-out;
+  gap: 16px;
+  padding-top: 4px;
+}
+
+@keyframes dmPageSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==========================
+   PAGE HEADER - Modern Style with Icon
+==========================*/
+.dm-page-header {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 8px 0 16px 0;
+  flex-shrink: 0;
+  overflow: visible;
+}
+
+.dm-header-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.dm-header-icon {
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  border-radius: 16px;
+  color: #fff;
+  font-size: 1.5rem;
+  box-shadow: 0 8px 24px rgba(245, 158, 11, 0.3);
+  animation: dmIconPulse 2s ease-in-out infinite;
+}
+
+@keyframes dmIconPulse {
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.dm-header-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.dm-page-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+  background: linear-gradient(135deg, #1e293b 0%, #475569 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.dm-page-subtitle {
+  font-size: 0.9rem;
+  color: #64748b;
+  margin: 0;
+}
+
+/* Dark Mode Header */
+.dashboard.dark .dm-page-title {
+  background: linear-gradient(135deg, #e2e8f0 0%, #94a3b8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.dashboard.dark .dm-page-subtitle {
+  color: #94a3b8;
 }
 
 /* ==========================
@@ -29,9 +112,10 @@
   background: transparent;
   border: none;
   box-shadow: none;
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: hidden;
   padding-bottom: 0;
+  min-height: 0;
+  gap: 8px;
 }
 
 /* ==========================
@@ -52,7 +136,8 @@
   align-items: center;
   gap: 24px;
   flex-wrap: wrap;
-  padding-right: 24px;
+  padding: 8px 0;
+  overflow: visible;
 }
 
 /* TAB - Modern Card Style */
@@ -143,6 +228,7 @@
   flex-wrap: wrap;
   padding: 10px 0;
   background: transparent;
+  overflow: visible;
 }
 
 .dm-search-field {
@@ -275,7 +361,7 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  overflow: visible;
+  overflow: hidden;
   background: transparent;
   border-radius: 0;
   min-height: 0;
@@ -520,9 +606,9 @@
   background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
   border: 1px solid #334155;
   border-radius: 16px;
-  margin: 8px 0 24px 0;
   flex-shrink: 0;
   z-index: 100;
+  flex-wrap: wrap;
 }
 
 .dm-page-info {

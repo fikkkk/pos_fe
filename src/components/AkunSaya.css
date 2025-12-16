@@ -9,9 +9,15 @@
     animation: pageSlideIn 0.4s ease-out;
     height: 100%;
     overflow-y: auto;
-    overflow-x: hidden;
-    padding: 8px;
-    padding-bottom: 24px;
+
+    /* Jangan di-hidden, karena akan meng-clip shadow */
+    overflow-x: visible;
+
+    /* Kasih ruang untuk shadow (shadow blur 24px + scrollbar) */
+    padding: 16px 44px 24px 16px;
+
+    /* Reservasi ruang scrollbar (browser modern) */
+    scrollbar-gutter: stable;
 }
 
 @keyframes pageSlideIn {
@@ -34,8 +40,9 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-bottom: 20px;
+    padding: 4px 0 20px 0;
     border-bottom: 1px solid rgba(59, 130, 246, 0.1);
+    overflow: visible;
 }
 
 .akun-header-content {

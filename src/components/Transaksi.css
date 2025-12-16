@@ -8,7 +8,7 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  overflow: hidden;
+  overflow: visible;
   animation: trxPageSlideIn 0.4s ease-out;
   gap: 16px;
   padding-top: 4px;
@@ -691,7 +691,6 @@
   width: 320px;
   min-width: 320px;
   max-width: 320px;
-  height: 100%;
   display: flex;
   flex-direction: column;
   background: #ffffff;
@@ -699,6 +698,11 @@
   border-radius: 16px;
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
   overflow: hidden;
+  align-self: flex-start;
+  position: sticky;
+  top: 0;
+  max-height: calc(100vh - 140px);
+  margin-top: -100px;
 }
 
 .dashboard.dark .trx-right {

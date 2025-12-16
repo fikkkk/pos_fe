@@ -88,7 +88,7 @@ export default function AddUnitModal({ isOpen, onClose, onSuccess }) {
                 multiplier: parseInt(formData.multiplier, 10),
             };
 
-            await api.post("/admin", payload);
+            await api.post("/admin/product-units", payload);
 
             resetForm();
             onSuccess();
