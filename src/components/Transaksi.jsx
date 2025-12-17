@@ -225,32 +225,15 @@ const Transaksi = () => {
                   className="trx-product-card"
                   onClick={() => addToCart(p)}
                 >
-                  <div className="trx-stock-bar">
-                    <img
-                      src="/img/icon-box.png"
-                      alt="stok"
-                      className="trx-stock-icon-img"
-                    />
-                    <span className="trx-stock-text">{p.stock}</span>
-                  </div>
-
-                  <div className="trx-product-image">
-                    {p.imageUrl ? (
-                      <img
-                        src={p.imageUrl}
-                        alt={p.name}
-                        onError={(e) => {
-                          e.target.onerror = null;
-                          e.target.style.display = 'none';
-                          e.target.parentNode.classList.add('no-image');
-                        }}
-                      />
-                    ) : (
-                      <div className="trx-placeholder-icon">📦</div>
-                    )}
-                  </div>
-
                   <div className="trx-product-info">
+                    <div className="trx-stock-bar">
+                      <img
+                        src="/img/icon-box.png"
+                        alt="stok"
+                        className="trx-stock-icon-img"
+                      />
+                      <span className="trx-stock-text">{p.stock}</span>
+                    </div>
                     <div className="trx-name">{p.name}</div>
                     <div className="trx-price">{formatRp(p.price)}</div>
                   </div>
