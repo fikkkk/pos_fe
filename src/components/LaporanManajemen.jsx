@@ -176,6 +176,7 @@ export default function LaporanManajemen() {
     const [dailyChart, setDailyChart] = useState([]);
     const [paymentStats, setPaymentStats] = useState([]);
     const [transactions, setTransactions] = useState([]);
+    const [localTransactions, setLocalTransactions] = useState([]); // Transaksi dari localStorage
     const [productsData, setProductsData] = useState([]);
     const [cashierStats, setCashierStats] = useState([]);
 
@@ -187,6 +188,37 @@ export default function LaporanManajemen() {
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedTransaction, setSelectedTransaction] = useState(null);
     const [showDetailModal, setShowDetailModal] = useState(false);
+
+    // Load transaksi dari localStorage
+    useEffect(() => {
+        const loadLocalTransactions = () => {
+            try {
+                const stored = JSON.parse(localStorage.getItem("pos_transactions") || "[]");
+                // Convert format localStorage ke format yang sama dengan API
+                const formatted = stored.map((t, index) => ({
+                    id: t.id || `LOCAL-${index}`,
+                    tanggal: t.tanggal,
+                    kasir: userInfo?.name || userInfo?.email || "Kasir",
+                    pelanggan: "Umum",
+                    metodePembayaran: t.metodePembayaran,
+                    subtotal: t.subtotal,
+                    diskon: 0,
+                    total: t.total,
+                    items: t.items,
+                    isLocal: true, // penanda transaksi lokal
+                }));
+                setLocalTransactions(formatted);
+            } catch (err) {
+                console.error("Error loading local transactions:", err);
+            }
+        };
+        loadLocalTransactions();
+
+        // Listen for storage changes (jika transaksi baru ditambahkan)
+        const handleStorageChange = () => loadLocalTransactions();
+        window.addEventListener("storage", handleStorageChange);
+        return () => window.removeEventListener("storage", handleStorageChange);
+    }, [userInfo]);
 
     // Format currency
     const formatCurrency = (value) => {
@@ -349,6 +381,26 @@ export default function LaporanManajemen() {
         setSelectedCashier("all");
         setPaymentFilter("");
         setCurrentPage(1);
+
+        // Refresh transaksi lokal dari localStorage
+        try {
+            const stored = JSON.parse(localStorage.getItem("pos_transactions") || "[]");
+            const formatted = stored.map((t, index) => ({
+                id: t.id || `LOCAL-${index}`,
+                tanggal: t.tanggal,
+                kasir: userInfo?.name || userInfo?.email || "Kasir",
+                pelanggan: "Umum",
+                metodePembayaran: t.metodePembayaran,
+                subtotal: t.subtotal,
+                diskon: 0,
+                total: t.total,
+                items: t.items,
+                isLocal: true,
+            }));
+            setLocalTransactions(formatted);
+        } catch (err) {
+            console.error("Error refreshing local transactions:", err);
+        }
     };
 
     const maxChartValue = Math.max(...dailyChart.map((d) => d.total || 0), 1);
@@ -364,49 +416,109 @@ export default function LaporanManajemen() {
         (a, b) => a + (b.jumlahTransaksi || 0), 0
     );
 
-    // Summary card configs
-    const summaryCards = summary ? [
+    // Hitung summary dari transaksi lokal
+    const localSummary = React.useMemo(() => {
+        // Filter transaksi lokal berdasarkan tanggal
+        const filteredLocal = localTransactions.filter((t) => {
+            const transDate = new Date(t.tanggal).toISOString().split("T")[0];
+            return transDate >= dateFrom && transDate <= dateTo;
+        });
+
+        return {
+            totalPenjualanKotor: filteredLocal.reduce((sum, t) => sum + (t.subtotal || t.total || 0), 0),
+            totalTransaksi: filteredLocal.length,
+            totalDiskon: 0,
+            totalPajak: filteredLocal.reduce((sum, t) => sum + ((t.total || 0) * 0.11 / 1.11), 0), // estimasi pajak 11%
+            totalPenjualanBersih: filteredLocal.reduce((sum, t) => sum + (t.total || 0), 0),
+        };
+    }, [localTransactions, dateFrom, dateTo]);
+
+    // Gabungkan summary API dengan summary lokal
+    const combinedSummary = React.useMemo(() => {
+        if (!summary && localTransactions.length === 0) return null;
+
+        const apiSummary = summary || {
+            totalPenjualanKotor: 0,
+            totalTransaksi: 0,
+            totalDiskon: 0,
+            totalPajak: 0,
+            totalPenjualanBersih: 0,
+            waktuRataRataTransaksi: "00:00:00",
+        };
+
+        return {
+            totalPenjualanKotor: apiSummary.totalPenjualanKotor + localSummary.totalPenjualanKotor,
+            totalTransaksi: apiSummary.totalTransaksi + localSummary.totalTransaksi,
+            totalDiskon: apiSummary.totalDiskon + localSummary.totalDiskon,
+            totalPajak: apiSummary.totalPajak + localSummary.totalPajak,
+            totalPenjualanBersih: apiSummary.totalPenjualanBersih + localSummary.totalPenjualanBersih,
+            waktuRataRataTransaksi: apiSummary.waktuRataRataTransaksi || "00:00:00",
+        };
+    }, [summary, localSummary, localTransactions.length]);
+
+    // Summary card configs - menggunakan combinedSummary
+    const summaryCards = combinedSummary ? [
         {
             icon: <FaMoneyBillWave />,
             label: "Penjualan Kotor",
-            value: formatFullCurrency(summary.totalPenjualanKotor),
+            value: formatFullCurrency(combinedSummary.totalPenjualanKotor),
             color: "blue",
             highlight: true,
         },
         {
             icon: <FaReceipt />,
             label: "Total Transaksi",
-            value: formatNumber(summary.totalTransaksi),
+            value: formatNumber(combinedSummary.totalTransaksi),
             color: "green",
         },
         {
             icon: <FaPercent />,
             label: "Total Diskon",
-            value: `-${formatFullCurrency(summary.totalDiskon)}`,
+            value: `-${formatFullCurrency(combinedSummary.totalDiskon)}`,
             color: "red",
         },
         {
             icon: <FaArrowUp />,
             label: "Total Pajak",
-            value: formatFullCurrency(summary.totalPajak),
+            value: formatFullCurrency(combinedSummary.totalPajak),
             color: "purple",
         },
         {
             icon: <FaArrowDown />,
             label: "Penjualan Bersih",
-            value: formatFullCurrency(summary.totalPenjualanBersih),
+            value: formatFullCurrency(combinedSummary.totalPenjualanBersih),
             color: "emerald",
         },
         {
             icon: <FaClock />,
             label: "Waktu Rata-rata",
-            value: summary.waktuRataRataTransaksi || "00:00:00",
+            value: combinedSummary.waktuRataRataTransaksi || "00:00:00",
             color: "orange",
         },
     ] : [];
 
+    // Gabungkan transaksi dari API dan localStorage
+    const allTransactions = React.useMemo(() => {
+        // Gabungkan kedua sumber data
+        const combined = [...transactions, ...localTransactions];
+
+        // Filter berdasarkan tanggal
+        const filtered = combined.filter((t) => {
+            const transDate = new Date(t.tanggal).toISOString().split("T")[0];
+            const isInDateRange = transDate >= dateFrom && transDate <= dateTo;
+
+            // Filter berdasarkan metode pembayaran jika ada
+            const matchPayment = !paymentFilter || t.metodePembayaran === paymentFilter;
+
+            return isInDateRange && matchPayment;
+        });
+
+        // Urutkan berdasarkan tanggal terbaru
+        return filtered.sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
+    }, [transactions, localTransactions, dateFrom, dateTo, paymentFilter]);
+
     // Filter transactions based on search query
-    const filteredTransactions = transactions.filter((t) => {
+    const filteredTransactions = allTransactions.filter((t) => {
         if (!searchQuery.trim()) return true;
         const query = searchQuery.toLowerCase();
         return (
@@ -536,7 +648,7 @@ export default function LaporanManajemen() {
             {/* Scrollable Content */}
             <div className="laporan-content">
                 {/* Summary Cards */}
-                {summary && (
+                {combinedSummary && (
                     <div className="summary-grid">
                         {summaryCards.map((card, i) => (
                             <div key={i} className={`summary-card ${card.color} ${card.highlight ? "highlight" : ""}`}>
@@ -656,9 +768,21 @@ export default function LaporanManajemen() {
                                                 </td>
                                                 <td className="total">{formatFullCurrency(t.total)}</td>
                                                 <td>
-                                                    <span className="status-badge success">
-                                                        <FaCheckCircle /> Selesai
-                                                    </span>
+                                                    <div style={{ display: "flex", gap: "6px", alignItems: "center", flexWrap: "wrap" }}>
+                                                        <span className="status-badge success">
+                                                            <FaCheckCircle /> Selesai
+                                                        </span>
+                                                        {t.isLocal && (
+                                                            <span className="status-badge local" style={{
+                                                                background: "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)",
+                                                                color: "#fff",
+                                                                fontSize: "0.7rem",
+                                                                padding: "2px 8px"
+                                                            }}>
+                                                                Lokal
+                                                            </span>
+                                                        )}
+                                                    </div>
                                                 </td>
                                                 <td>
                                                     <button
