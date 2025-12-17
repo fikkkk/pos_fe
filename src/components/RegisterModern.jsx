@@ -18,7 +18,7 @@ export default function RegisterModern({
   setDarkMode,
   goBackToLogin,
 }) {
-  // Step: 1 = Email, 2 = OTP, 3 = Password
+  // Step: 1 = Identitas (Nama, Email, Password), 2 = OTP
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -26,21 +26,31 @@ export default function RegisterModern({
   // Form data
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
-  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
 
   const otpRefs = useRef([]);
 
-  // ========== STEP 1: Kirim Email ==========
-  const handleEmailSubmit = async (e) => {
+  // ========== STEP 1: Kirim Data Identitas ==========
+  const handleIdentitySubmit = async (e) => {
     e.preventDefault();
     setError("");
 
     if (!fullName.trim() || !email.trim()) {
       setError("Lengkapi nama dan email terlebih dahulu.");
+      return;
+    }
+
+    if (password.length < 8) {
+      setError("Kata sandi minimal 8 karakter.");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError("Kata sandi dan konfirmasi tidak sama.");
       return;
     }
 
@@ -50,7 +60,7 @@ export default function RegisterModern({
       await api.post("/auth", {
         email: email.trim(),
         username: fullName.trim(),
-        password: "temp_" + Date.now(), // temporary, akan diupdate di step 3
+        password: password,
       });
       setStep(2);
     } catch (err) {
@@ -95,7 +105,9 @@ export default function RegisterModern({
         email: email.trim(),
         otp: otpCode,
       });
-      setStep(3);
+
+      alert("Akun berhasil dibuat! Silakan login.");
+      goBackToLogin();
     } catch (err) {
       console.error(err);
       const raw = err?.response?.data?.message;
@@ -106,39 +118,62 @@ export default function RegisterModern({
     }
   };
 
-  // ========== STEP 3: Buat Password ==========
-  const handlePasswordSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
+  // Password Strength Indicator Component
+  const PasswordStrengthIndicator = ({ password }) => {
+    const checks = [
+      { label: "Minimal 8 karakter", valid: password.length >= 8 },
+      { label: "Huruf besar (A-Z)", valid: /[A-Z]/.test(password) },
+      { label: "Huruf kecil (a-z)", valid: /[a-z]/.test(password) },
+      { label: "Angka (0-9)", valid: /[0-9]/.test(password) },
+    ];
 
-    if (password.length < 8) {
-      setError("Kata sandi minimal 8 karakter.");
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      setError("Kata sandi dan konfirmasi tidak sama.");
-      return;
-    }
-
-    try {
-      setLoading(true);
-      // Update password (atau buat akun final)
-      await api.post("/auth/set-password", {
-        email: email.trim(),
-        password: password,
-      });
-
-      alert("Akun berhasil dibuat! Silakan login.");
-      goBackToLogin();
-    } catch (err) {
-      console.error(err);
-      const raw = err?.response?.data?.message;
-      let msg = Array.isArray(raw) ? raw.join(" ") : raw || "Gagal membuat akun.";
-      setError(msg);
-    } finally {
-      setLoading(false);
-    }
+    return (
+      <div style={{
+        marginTop: "8px",
+        marginBottom: "12px",
+        padding: "12px",
+        borderRadius: "8px",
+        background: darkMode ? "rgba(55, 65, 81, 0.5)" : "rgba(243, 244, 246, 0.8)",
+      }}>
+        <p style={{
+          fontSize: "12px",
+          fontWeight: "600",
+          color: darkMode ? "#d1d5db" : "#374151",
+          marginBottom: "8px",
+        }}>
+          Kekuatan Password:
+        </p>
+        {checks.map((check, index) => (
+          <div key={index} style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+            fontSize: "12px",
+            color: check.valid
+              ? "#22c55e"
+              : darkMode ? "#9ca3af" : "#6b7280",
+            marginBottom: "4px",
+          }}>
+            <span style={{
+              width: "16px",
+              height: "16px",
+              borderRadius: "50%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              background: check.valid
+                ? "rgba(34, 197, 94, 0.2)"
+                : darkMode ? "rgba(107, 114, 128, 0.2)" : "rgba(156, 163, 175, 0.2)",
+              border: `1.5px solid ${check.valid ? "#22c55e" : darkMode ? "#6b7280" : "#9ca3af"}`,
+              fontSize: "10px",
+            }}>
+              {check.valid ? "✓" : ""}
+            </span>
+            {check.label}
+          </div>
+        ))}
+      </div>
+    );
   };
 
   // OTP Input Handlers
@@ -158,7 +193,7 @@ export default function RegisterModern({
     }
   };
 
-  // Step Indicator Component
+  // Step Indicator Component (2 steps)
   const StepIndicator = () => (
     <div style={{
       display: "flex",
@@ -167,7 +202,7 @@ export default function RegisterModern({
       gap: "8px",
       marginBottom: "24px",
     }}>
-      {[1, 2, 3].map((s) => (
+      {[1, 2].map((s) => (
         <div key={s} style={{ display: "flex", alignItems: "center", gap: "8px" }}>
           <div style={{
             width: "32px",
@@ -186,9 +221,9 @@ export default function RegisterModern({
           }}>
             {step > s ? <FaCheckCircle size={14} /> : s}
           </div>
-          {s < 3 && (
+          {s < 2 && (
             <div style={{
-              width: "40px",
+              width: "60px",
               height: "3px",
               borderRadius: "2px",
               background: step > s
@@ -204,9 +239,8 @@ export default function RegisterModern({
 
   // Step Labels
   const stepLabels = {
-    1: { title: "Verifikasi Email", subtitle: "Masukkan nama dan email untuk memulai pendaftaran." },
-    2: { title: "Kode OTP", subtitle: `Masukkan kode 6 digit yang dikirim ke ${email}` },
-    3: { title: "Buat Password", subtitle: "Buat kata sandi yang aman untuk akun kamu." },
+    1: { title: "Buat Identitas", subtitle: "Lengkapi data diri untuk membuat akun POS Nuka." },
+    2: { title: "Verifikasi OTP", subtitle: `Masukkan kode 6 digit yang dikirim ke ${email}` },
   };
 
   // ========== RENDER ==========
@@ -220,7 +254,7 @@ export default function RegisterModern({
               <span></span><span></span><span></span>
             </div>
             <p className="lp-loading-text">
-              {step === 1 ? "Mengirim OTP..." : step === 2 ? "Memverifikasi..." : "Membuat akun..."}
+              {step === 1 ? "Membuat akun..." : "Memverifikasi..."}
             </p>
           </div>
         </div>
@@ -242,7 +276,6 @@ export default function RegisterModern({
             <div className="lp-dots">
               <span className={`dot ${step === 1 ? "active" : ""}`} />
               <span className={`dot ${step === 2 ? "active" : ""}`} />
-              <span className={`dot ${step === 3 ? "active" : ""}`} />
             </div>
           </div>
         </div>
@@ -250,7 +283,7 @@ export default function RegisterModern({
         {/* RIGHT */}
         <div className="lp-right">
           <div className="lp-top-bar">
-            <span className="lp-badge">Step {step} dari 3</span>
+            <span className="lp-badge">Step {step} dari 2</span>
             <button
               type="button"
               className="lp-dark-toggle"
@@ -268,9 +301,9 @@ export default function RegisterModern({
 
             {error && <p className="lp-error">{error}</p>}
 
-            {/* ========== STEP 1: Email ========== */}
+            {/* ========== STEP 1: Identitas ========== */}
             {step === 1 && (
-              <form className="lp-form" onSubmit={handleEmailSubmit}>
+              <form className="lp-form" onSubmit={handleIdentitySubmit}>
                 <div className="lp-field">
                   <label htmlFor="fullName">Nama Lengkap*</label>
                   <div className="lp-field-input">
@@ -301,8 +334,53 @@ export default function RegisterModern({
                   </div>
                 </div>
 
+                <div className="lp-field">
+                  <label htmlFor="password">Kata Sandi*</label>
+                  <div className="lp-field-input">
+                    <FaLock className="lp-icon" />
+                    <input
+                      id="password"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Minimal 8 karakter"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                    />
+                    <button
+                      type="button"
+                      className="lp-eye-btn"
+                      onClick={() => setShowPassword((v) => !v)}
+                    >
+                      {showPassword ? <FaEyeSlash /> : <FaEye />}
+                    </button>
+                  </div>
+                  <PasswordStrengthIndicator password={password} />
+                </div>
+
+                <div className="lp-field">
+                  <label htmlFor="confirmPassword">Ulangi Kata Sandi*</label>
+                  <div className="lp-field-input">
+                    <FaLock className="lp-icon" />
+                    <input
+                      id="confirmPassword"
+                      type={showConfirm ? "text" : "password"}
+                      placeholder="Ketik ulang kata sandi"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      required
+                    />
+                    <button
+                      type="button"
+                      className="lp-eye-btn"
+                      onClick={() => setShowConfirm((v) => !v)}
+                    >
+                      {showConfirm ? <FaEyeSlash /> : <FaEye />}
+                    </button>
+                  </div>
+                </div>
+
                 <button type="submit" className="lp-btn-primary" disabled={loading}>
-                  Kirim Kode OTP
+                  Daftar & Kirim OTP
                 </button>
               </form>
             )}
@@ -330,7 +408,7 @@ export default function RegisterModern({
                 </div>
 
                 <button type="submit" className="lp-btn-primary" disabled={loading}>
-                  Verifikasi OTP
+                  Verifikasi & Buat Akun
                 </button>
 
                 <button
@@ -345,60 +423,7 @@ export default function RegisterModern({
                     marginTop: "8px",
                   }}
                 >
-                  ← Kembali ke email
-                </button>
-              </form>
-            )}
-
-            {/* ========== STEP 3: Password ========== */}
-            {step === 3 && (
-              <form className="lp-form" onSubmit={handlePasswordSubmit}>
-                <div className="lp-field">
-                  <label htmlFor="password">Kata Sandi*</label>
-                  <div className="lp-field-input">
-                    <FaLock className="lp-icon" />
-                    <input
-                      id="password"
-                      type={showPassword ? "text" : "password"}
-                      placeholder="Minimal 8 karakter"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      required
-                    />
-                    <button
-                      type="button"
-                      className="lp-eye-btn"
-                      onClick={() => setShowPassword((v) => !v)}
-                    >
-                      {showPassword ? <FaEyeSlash /> : <FaEye />}
-                    </button>
-                  </div>
-                </div>
-
-                <div className="lp-field">
-                  <label htmlFor="confirmPassword">Ulangi Kata Sandi*</label>
-                  <div className="lp-field-input">
-                    <FaLock className="lp-icon" />
-                    <input
-                      id="confirmPassword"
-                      type={showConfirm ? "text" : "password"}
-                      placeholder="Ketik ulang kata sandi"
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      required
-                    />
-                    <button
-                      type="button"
-                      className="lp-eye-btn"
-                      onClick={() => setShowConfirm((v) => !v)}
-                    >
-                      {showConfirm ? <FaEyeSlash /> : <FaEye />}
-                    </button>
-                  </div>
-                </div>
-
-                <button type="submit" className="lp-btn-primary" disabled={loading}>
-                  Buat Akun
+                  ← Kembali ke data identitas
                 </button>
               </form>
             )}

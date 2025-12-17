@@ -66,7 +66,7 @@ export default function ForgotPassword({ darkMode, setDarkMode, goBackToLogin })
     }
   };
 
-  // ========== STEP 2: Verifikasi OTP ==========
+  // ========== STEP 2: Verifikasi OTP (hanya validasi lokal) ==========
   const handleOtpSubmit = async (e) => {
     e.preventDefault();
     setError("");
@@ -77,29 +77,9 @@ export default function ForgotPassword({ darkMode, setDarkMode, goBackToLogin })
       return;
     }
 
-    try {
-      setLoading(true);
-      // Verifikasi OTP dulu
-      await api.post("/auth/verify-reset-otp", {
-        email: email.trim(),
-        otp: otpCode,
-      });
-      setStep(3);
-    } catch (err) {
-      console.error(err);
-      const raw = err?.response?.data?.message;
-      let msg = Array.isArray(raw) ? raw.join(" ") : raw || "Kode OTP tidak valid.";
-
-      if (msg.toLowerCase().includes("otp") &&
-        (msg.toLowerCase().includes("salah") || msg.toLowerCase().includes("invalid") || msg.toLowerCase().includes("expired"))) {
-        setError("Kode OTP salah atau sudah kadaluarsa.");
-        return;
-      }
-
-      setError(msg);
-    } finally {
-      setLoading(false);
-    }
+    // Langsung lanjut ke Step 3 tanpa verifikasi API
+    // OTP akan diverifikasi saat reset-password
+    setStep(3);
   };
 
   // ========== STEP 3: Buat Password Baru ==========
@@ -135,6 +115,64 @@ export default function ForgotPassword({ darkMode, setDarkMode, goBackToLogin })
     } finally {
       setLoading(false);
     }
+  };
+
+  // Password Strength Indicator Component
+  const PasswordStrengthIndicator = ({ password }) => {
+    const checks = [
+      { label: "Minimal 8 karakter", valid: password.length >= 8 },
+      { label: "Huruf besar (A-Z)", valid: /[A-Z]/.test(password) },
+      { label: "Huruf kecil (a-z)", valid: /[a-z]/.test(password) },
+      { label: "Angka (0-9)", valid: /[0-9]/.test(password) },
+    ];
+
+    return (
+      <div style={{
+        marginTop: "8px",
+        marginBottom: "12px",
+        padding: "12px",
+        borderRadius: "8px",
+        background: darkMode ? "rgba(55, 65, 81, 0.5)" : "rgba(243, 244, 246, 0.8)",
+      }}>
+        <p style={{
+          fontSize: "12px",
+          fontWeight: "600",
+          color: darkMode ? "#d1d5db" : "#374151",
+          marginBottom: "8px",
+        }}>
+          Kekuatan Password:
+        </p>
+        {checks.map((check, index) => (
+          <div key={index} style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+            fontSize: "12px",
+            color: check.valid
+              ? "#22c55e"
+              : darkMode ? "#9ca3af" : "#6b7280",
+            marginBottom: "4px",
+          }}>
+            <span style={{
+              width: "16px",
+              height: "16px",
+              borderRadius: "50%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              background: check.valid
+                ? "rgba(34, 197, 94, 0.2)"
+                : darkMode ? "rgba(107, 114, 128, 0.2)" : "rgba(156, 163, 175, 0.2)",
+              border: `1.5px solid ${check.valid ? "#22c55e" : darkMode ? "#6b7280" : "#9ca3af"}`,
+              fontSize: "10px",
+            }}>
+              {check.valid ? "✓" : ""}
+            </span>
+            {check.label}
+          </div>
+        ))}
+      </div>
+    );
   };
 
   // OTP Input Handlers
@@ -380,6 +418,7 @@ export default function ForgotPassword({ darkMode, setDarkMode, goBackToLogin })
                       {showNew ? <FaEyeSlash /> : <FaEye />}
                     </button>
                   </div>
+                  <PasswordStrengthIndicator password={newPassword} />
                 </div>
 
                 <div className="lp-field">
