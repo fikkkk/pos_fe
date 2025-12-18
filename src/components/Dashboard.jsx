@@ -17,6 +17,9 @@ import {
   FaReceipt,
   FaMoneyBillWave,
   FaUsers,
+  FaExclamationTriangle,
+  FaClock,
+  FaShoppingCart,
 } from "react-icons/fa";
 import "./Dashboard.css";
 import { api } from "../api";
@@ -97,6 +100,29 @@ export default function Dashboard() {
   const [latestProducts, setLatestProducts] = useState([]);
   const [allProducts, setAllProducts] = useState([]);
   const [transactions, setTransactions] = useState([]);
+
+  // ========== TODAY STATS ==========
+  const [todayStats, setTodayStats] = useState({
+    totalPenjualan: 0,
+    totalTransaksi: 0,
+    rataRata: 0,
+    itemTerjual: 0,
+  });
+  const [hourlyData, setHourlyData] = useState([]);
+  const [lowStockProducts, setLowStockProducts] = useState([]);
+
+  const sampleHourlyData = [
+    { hour: "08:00", value: 150000 },
+    { hour: "09:00", value: 280000 },
+    { hour: "10:00", value: 420000 },
+    { hour: "11:00", value: 350000 },
+    { hour: "12:00", value: 580000 },
+    { hour: "13:00", value: 320000 },
+    { hour: "14:00", value: 450000 },
+    { hour: "15:00", value: 280000 },
+    { hour: "16:00", value: 190000 },
+    { hour: "17:00", value: 120000 },
+  ];
 
   // Sample data untuk testing grafik
   const sampleMonthlyStats = [
@@ -181,6 +207,20 @@ export default function Dashboard() {
         setTopProductsPie(pieRes.data ?? []);
         setLatestProducts(latestRes.data ?? []);
         setAllProducts(prodRes.data ?? []);
+
+        // Set today stats (sample data)
+        setTodayStats({
+          totalPenjualan: 3140000,
+          totalTransaksi: 28,
+          rataRata: 112143,
+          itemTerjual: 156,
+        });
+        setHourlyData(sampleHourlyData);
+
+        // Low stock products (< 10 units)
+        const products = prodRes.data ?? [];
+        const lowStock = products.filter((p) => p.stock < 10).slice(0, 5);
+        setLowStockProducts(lowStock);
       } catch (err) {
         console.error("Error fetch dashboard:", err);
         // Use sample data on error
@@ -188,6 +228,13 @@ export default function Dashboard() {
         setYearlyStats(sampleYearlyStats);
         setPaymentStats(samplePaymentStats);
         setTransactions(sampleTransactions);
+        setHourlyData(sampleHourlyData);
+        setTodayStats({
+          totalPenjualan: 3140000,
+          totalTransaksi: 28,
+          rataRata: 112143,
+          itemTerjual: 156,
+        });
       }
     }
 
@@ -406,6 +453,104 @@ export default function Dashboard() {
                 </div>
               </div>
 
+              {/* ========== TODAY'S OVERVIEW ========== */}
+              <div className="ds-today-section">
+                <div className="ds-section-header">
+                  <div className="ds-section-title">
+                    <FaClock style={{ color: "#f59e0b" }} />
+                    <span>Hari Ini — {today}</span>
+                  </div>
+                </div>
+
+                {/* Today Stats Cards */}
+                <div className="ds-today-cards">
+                  <div className="ds-today-card green">
+                    <div className="ds-today-icon"><FaMoneyBillWave /></div>
+                    <div className="ds-today-info">
+                      <span className="ds-today-value">{formatRp(todayStats.totalPenjualan)}</span>
+                      <span className="ds-today-label">Penjualan Hari Ini</span>
+                    </div>
+                  </div>
+                  <div className="ds-today-card blue">
+                    <div className="ds-today-icon"><FaReceipt /></div>
+                    <div className="ds-today-info">
+                      <span className="ds-today-value">{formatNumber(todayStats.totalTransaksi)}</span>
+                      <span className="ds-today-label">Transaksi</span>
+                    </div>
+                  </div>
+                  <div className="ds-today-card orange">
+                    <div className="ds-today-icon"><FaShoppingCart /></div>
+                    <div className="ds-today-info">
+                      <span className="ds-today-value">{formatRp(todayStats.rataRata)}</span>
+                      <span className="ds-today-label">Rata-rata/Transaksi</span>
+                    </div>
+                  </div>
+                  <div className="ds-today-card purple">
+                    <div className="ds-today-icon"><FaBoxes /></div>
+                    <div className="ds-today-info">
+                      <span className="ds-today-value">{formatNumber(todayStats.itemTerjual)}</span>
+                      <span className="ds-today-label">Item Terjual</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Hourly Chart + Low Stock */}
+                <div className="ds-today-grid">
+                  {/* Hourly Sales Chart */}
+                  <div className="ds-hourly-chart">
+                    <div className="ds-chart-title">Penjualan Per Jam</div>
+                    <div className="ds-hourly-bars">
+                      {hourlyData.length > 0 ? hourlyData.map((h, i) => {
+                        const maxVal = Math.max(...hourlyData.map(d => d.value), 1);
+                        const pct = maxVal > 0 ? (h.value / maxVal) * 100 : 0;
+                        return (
+                          <div key={i} className="ds-hour-bar">
+                            <div className="ds-bar-fill" style={{ height: `${pct}%` }} title={formatRp(h.value)} />
+                            <span className="ds-hour-label">{h.hour.split(":")[0]}</span>
+                          </div>
+                        );
+                      }) : (
+                        <div style={{ textAlign: "center", color: "#6b7a90", fontSize: 13, padding: "40px" }}>
+                          Belum ada data penjualan hari ini
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Low Stock Widget */}
+                  <div className="ds-low-stock">
+                    <div className="ds-chart-title">
+                      <FaExclamationTriangle style={{ color: "#ef4444" }} />
+                      <span>Stok Menipis (&lt;10)</span>
+                    </div>
+                    <div className="ds-low-stock-list">
+                      {lowStockProducts.length > 0 ? (
+                        lowStockProducts.map((p, i) => (
+                          <div key={i} className="ds-low-stock-item">
+                            <span className="ds-product-name">{p.name}</span>
+                            <span className={`ds-stock-badge ${p.stock < 5 ? "critical" : "warning"}`}>
+                              {p.stock} unit
+                            </span>
+                          </div>
+                        ))
+                      ) : (
+                        <div className="ds-low-stock-empty">
+                          ✓ Semua stok aman
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* ========== YEARLY STATS ========== */}
+              <div className="ds-section-header" style={{ marginTop: "24px" }}>
+                <div className="ds-section-title">
+                  <FaChartBar style={{ color: "#3b82f6" }} />
+                  <span>Statistik Tahunan</span>
+                </div>
+              </div>
+
               <div className="ds-cards">
                 {statCards.map((s, idx) => (
                   <div key={idx} className={`ds-card ${s.color}`}>
@@ -537,209 +682,63 @@ export default function Dashboard() {
                 </div>
               </div>
 
-              {/* Produk terbaru + semua produk */}
+              {/* Produk Terbaru */}
               <div className="panel-single">
                 <div className="panel-header panel-header--chart">
                   <div className="ph-leftwrap">
                     <div className="ph-title">Produk Terbaru</div>
                   </div>
-
-                  <div className="ph-righttitle">Semua Data Produk</div>
                 </div>
 
                 <div className="ps-body">
-                  <div
-                    className="pj-grid"
+                  <p
                     style={{
-                      display: "grid",
-                      gridTemplateColumns: "minmax(420px,480px) 1fr",
-                      gap: "24px",
+                      margin: "0 0 10px 0",
+                      color: "#6b7a90",
+                      fontSize: 12,
                     }}
                   >
-                    {/* Produk Terbaru */}
-                    <div
-                      className="pj-left"
-                      style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        minHeight: 0,
-                      }}
-                    >
-                      <p
-                        style={{
-                          margin: "0 0 10px 0",
-                          color: "#6b7a90",
-                          fontSize: 12,
-                        }}
-                      >
-                        Produk terbaru diperbarui setiap{" "}
-                        <b>2 minggu sekali</b>.
-                      </p>
+                    Produk terbaru diperbarui setiap{" "}
+                    <b>2 minggu sekali</b>.
+                  </p>
 
-                      <div
-                        className="table-wrap"
-                        ref={leftWrapRef}
-                        style={{ flex: 1, minHeight: 0 }}
-                      >
-                        <table className="pt-table">
-                          <thead>
-                            <tr>
-                              <th className="col-no">No</th>
-                              <th className="col-img">Gambar</th>
-                              <th>Nama Barang</th>
-                              <th>Stok</th>
-                            </tr>
-                          </thead>
+                  <div
+                    className="table-wrap"
+                    ref={leftWrapRef}
+                    style={{ minHeight: 0 }}
+                  >
+                    <table className="pt-table">
+                      <thead>
+                        <tr>
+                          <th className="col-no">No</th>
+                          <th className="col-img">Gambar</th>
+                          <th>Nama Barang</th>
+                          <th>Stok</th>
+                        </tr>
+                      </thead>
 
-                          <tbody>
-                            {latestProducts.map((p, i) => (
-                              <tr
-                                key={p.id}
-                                style={
-                                  rowHLeft
-                                    ? { height: `${rowHLeft}px` }
-                                    : undefined
-                                }
-                              >
-                                <td className="col-no">{i + 1}</td>
-
-                                <td className="col-img">
-                                  <div className="img-pill">IMG</div>
-                                </td>
-
-                                <td>{p.name}</td>
-                                <td>{p.stock}</td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-
-                    {/* Semua Produk */}
-                    <div
-                      className="pj-right"
-                      style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        minHeight: 0,
-                      }}
-                    >
-                      <div className="mini-title" style={{ marginBottom: 10 }}>
-                        Semua Data Produk
-                      </div>
-
-                      <div
-                        className="pt-toolbar"
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "space-between",
-                          marginBottom: 10,
-                        }}
-                      >
-                        <div>
-                          <button
-                            className="btn btn-gray"
-                            onClick={copySemuaProduk}
+                      <tbody>
+                        {latestProducts.map((p, i) => (
+                          <tr
+                            key={p.id}
+                            style={
+                              rowHLeft
+                                ? { height: `${rowHLeft}px` }
+                                : undefined
+                            }
                           >
-                            Copy
-                          </button>
+                            <td className="col-no">{i + 1}</td>
 
-                          <button
-                            className="btn btn-gray"
-                            onClick={excelSemuaProduk}
-                            style={{ marginLeft: 8 }}
-                          >
-                            Excel
-                          </button>
-                        </div>
+                            <td className="col-img">
+                              <div className="img-pill">IMG</div>
+                            </td>
 
-                        <div
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 10,
-                          }}
-                        >
-                          <span style={{ fontSize: 12, color: "#6b7a90" }}>
-                            Search
-                          </span>
-
-                          <div className="tc-right" style={{ gap: 6 }}>
-                            <FaSearch />
-
-                            <input
-                              value={qProduk}
-                              onChange={(e) => setQProduk(e.target.value)}
-                              placeholder="Cari Produk"
-                            />
-                          </div>
-                        </div>
-                      </div>
-
-                      <div
-                        className="table-wrap"
-                        ref={rightWrapRef}
-                        style={{ flex: 1, minHeight: 0 }}
-                      >
-                        <table className="pt-table">
-                          <thead>
-                            <tr>
-                              <th className="col-no">No</th>
-                              <th>Kode Produk</th>
-                              <th>Nama Produk</th>
-                              <th>Harga Satuan</th>
-                              <th>Satuan</th>
-                              <th>Stok</th>
-                              <th>Supplier</th>
-                            </tr>
-                          </thead>
-
-                          <tbody>
-                            {produkRows10.map((r, idx) => (
-                              <tr
-                                key={r.id ?? idx}
-                                style={
-                                  rowHRight
-                                    ? { height: `${rowHRight}px` }
-                                    : undefined
-                                }
-                              >
-                                <td className="col-no">{idx + 1}</td>
-                                <td>{r.code ?? r.id}</td>
-                                <td>{r.name}</td>
-                                <td>{formatRp(r.price)}</td>
-                                <td>{r.unit ?? "-"}</td>
-                                <td>{r.stock}</td>
-                                <td>{r.supplier?.name ?? "-"}</td>
-                              </tr>
-                            ))}
-
-                            {Array.from({
-                              length: Math.max(0, 10 - produkRows10.length),
-                            }).map((_, i) => (
-                              <tr
-                                key={`empty-${i}`}
-                                style={
-                                  rowHRight
-                                    ? { height: `${rowHRight}px` }
-                                    : undefined
-                                }
-                              >
-                                <td className="col-no">&nbsp;</td>
-                                <td>&nbsp;</td>
-                                <td>&nbsp;</td>
-                                <td>&nbsp;</td>
-                                <td>&nbsp;</td>
-                                <td>&nbsp;</td>
-                                <td>&nbsp;</td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
+                            <td>{p.name}</td>
+                            <td>{p.stock}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
                   </div>
                 </div>
               </div>

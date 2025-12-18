@@ -236,19 +236,28 @@ export default function DataMaster() {
     try {
       if (deleteModal.type === "product") {
         // ⚡ FRONTEND CASCADE DELETE (Workaround for Backend Constraints)
-        // 1. Ambil semua unit & promo (karena endpoint by-product rusak/tidak tersedia)
-        //    NOTE: Ini tidak efisien untuk data besar, tapi satu-satunya cara tanpa ubah BE.
-        const [unitsRes, promosRes] = await Promise.all([
+        // 1. Ambil semua unit, promo, dan stock history
+        const [unitsRes, promosRes, stockHistoryRes] = await Promise.all([
           api.get("/admin/product-units/all").catch(() => ({ data: [] })),
-          api.get("/admin/promo").catch(() => ({ data: [] }))
+          api.get("/admin/promo").catch(() => ({ data: [] })),
+          api.get("/admin/stock-history").catch(() => ({ data: [] }))
         ]);
 
         const relatedUnits = unitsRes.data.filter(u => u.productId === deleteModal.id);
         const relatedPromos = promosRes.data.filter(p => p.productId === deleteModal.id);
+        const relatedHistory = stockHistoryRes.data.filter(h => h.productId === deleteModal.id);
 
-        // 2. Delete Units
+        // 2. Delete Stock History
+        for (const history of relatedHistory) {
+          try {
+            await api.delete(`/admin/stock-history/${history.id}`);
+          } catch (e) {
+            console.warn(`Gagal hapus stock history ${history.id}`, e);
+          }
+        }
+
+        // 3. Delete Units
         for (const unit of relatedUnits) {
-          // Gunakan try-catch per item agar satu gagal tidak stop semua
           try {
             await api.delete(`/admin/unitId/${unit.id}`);
           } catch (e) {
@@ -256,7 +265,7 @@ export default function DataMaster() {
           }
         }
 
-        // 3. Delete Promos
+        // 4. Delete Promos
         for (const promo of relatedPromos) {
           try {
             await api.delete(`/admin/promo/${promo.id}`);
@@ -265,7 +274,7 @@ export default function DataMaster() {
           }
         }
 
-        // 4. Akhirnya hapus produk
+        // 5. Akhirnya hapus produk
         await api.delete(`/admin/products/${deleteModal.id}`);
         showNotification("Produk berhasil dihapus!", "success");
 
@@ -290,8 +299,18 @@ export default function DataMaster() {
       setDeleteModal({ show: false, id: null, type: null, title: "", message: "" });
     } catch (err) {
       console.error("Error deleting:", err);
-      // Tampilkan pesan error detail dari backend jika ada
-      const errorMsg = err.response?.data?.message || err.message || "Gagal menghapus data.";
+      // Tampilkan pesan error yang lebih informatif
+      let errorMsg = err.response?.data?.message || err.message || "Gagal menghapus data.";
+
+      // Jika error constraint (produk punya transaksi)
+      if (errorMsg.toLowerCase().includes("constraint") ||
+        errorMsg.toLowerCase().includes("foreign key") ||
+        errorMsg.toLowerCase().includes("internal server")) {
+        if (deleteModal.type === "product") {
+          errorMsg = "Produk tidak dapat dihapus karena sudah memiliki riwayat transaksi. Anda dapat menonaktifkan produk sebagai gantinya.";
+        }
+      }
+
       showNotification(errorMsg, "error");
     } finally {
       setIsDeleting(false);
