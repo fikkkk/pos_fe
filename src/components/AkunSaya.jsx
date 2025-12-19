@@ -59,10 +59,12 @@ export default function AkunSaya({ onProfileUpdate }) {
     // Fetch profile data
     useEffect(() => {
         fetchProfile();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const fetchProfile = async () => {
         setLoading(true);
+        setError(null);
         try {
             const res = await api.get("/profile/me");
             setProfile(res.data);
@@ -70,9 +72,44 @@ export default function AkunSaya({ onProfileUpdate }) {
                 name: res.data.name || "",
                 username: res.data.username || "",
             });
+            // Simpan foto ke localStorage jika ada
+            if (res.data.picture) {
+                localStorage.setItem("profile_picture", res.data.picture);
+            }
         } catch (err) {
             console.error("Error fetching profile:", err);
-            setError("Gagal memuat data profil");
+
+            // Fallback: gunakan data dari JWT token jika API gagal
+            if (userInfo) {
+                // Coba ambil data dari localStorage
+                const savedPicture = localStorage.getItem("profile_picture");
+                const savedName = localStorage.getItem("profile_name");
+                const savedUsername = localStorage.getItem("profile_username");
+                const localPicture = localStorage.getItem("profile_picture_local");
+                const lastLogin = localStorage.getItem("last_login");
+                const memberSince = localStorage.getItem("member_since");
+
+                const fallbackProfile = {
+                    id: userInfo.sub,
+                    email: userInfo.email || "",
+                    username: savedUsername || userInfo.username || userInfo.email?.split("@")[0] || "user",
+                    name: savedName || userInfo.name || userInfo.username || "User",
+                    role: userInfo.role || "KASIR",
+                    picture: savedPicture || (localPicture ? "LOCAL" : null),
+                    status: "AKTIF",
+                    lastLogin: lastLogin || null,
+                    createdAt: memberSince || null,
+                };
+                setProfile(fallbackProfile);
+                setFormData({
+                    name: fallbackProfile.name,
+                    username: fallbackProfile.username,
+                });
+                // Jangan tampilkan error jika fallback berhasil
+                console.log("Using fallback profile from token:", fallbackProfile);
+            } else {
+                setError("Gagal memuat data profil");
+            }
         } finally {
             setLoading(false);
         }
@@ -91,6 +128,9 @@ export default function AkunSaya({ onProfileUpdate }) {
         try {
             const res = await api.patch("/profile", formData);
             setProfile(res.data.user);
+            // Simpan juga ke localStorage untuk backup
+            localStorage.setItem("profile_name", formData.name);
+            localStorage.setItem("profile_username", formData.username);
             setSuccess("Profil berhasil diperbarui!");
             setIsEditing(false);
             setTimeout(() => setSuccess(null), 3000);
@@ -98,7 +138,28 @@ export default function AkunSaya({ onProfileUpdate }) {
             if (onProfileUpdate) onProfileUpdate();
         } catch (err) {
             console.error("Error updating profile:", err);
-            setError(err.response?.data?.message || "Gagal memperbarui profil");
+
+            // Fallback: simpan ke localStorage jika API gagal
+            try {
+                localStorage.setItem("profile_name", formData.name);
+                localStorage.setItem("profile_username", formData.username);
+
+                // Update state dengan data baru
+                setProfile((prev) => ({
+                    ...prev,
+                    name: formData.name,
+                    username: formData.username,
+                }));
+
+                setSuccess("Profil disimpan sementara (lokal)");
+                setIsEditing(false);
+                setTimeout(() => setSuccess(null), 3000);
+                // Notify parent to refresh sidebar
+                if (onProfileUpdate) onProfileUpdate();
+            } catch (localErr) {
+                console.error("Error saving local profile:", localErr);
+                setError(err.response?.data?.message || "Gagal memperbarui profil");
+            }
         } finally {
             setSaving(false);
         }
@@ -131,13 +192,36 @@ export default function AkunSaya({ onProfileUpdate }) {
                 headers: { "Content-Type": "multipart/form-data" },
             });
             setProfile((prev) => ({ ...prev, picture: res.data.picture }));
+            // Simpan foto ke localStorage
+            if (res.data.picture) {
+                localStorage.setItem("profile_picture", res.data.picture);
+            }
             setSuccess("Foto profil berhasil diperbarui!");
             setTimeout(() => setSuccess(null), 3000);
             // Notify parent to refresh sidebar
             if (onProfileUpdate) onProfileUpdate();
         } catch (err) {
             console.error("Error uploading photo:", err);
-            setError("Gagal mengupload foto");
+
+            // Jika upload gagal tapi file sudah ada, gunakan fallback dengan blob URL
+            // Simpan blob URL ke localStorage sebagai temporary preview
+            try {
+                // Simpan file sebagai base64 ke localStorage untuk persistence
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    const base64data = reader.result;
+                    localStorage.setItem("profile_picture_local", base64data);
+                    setProfile((prev) => ({ ...prev, picture: "LOCAL" }));
+                    setSuccess("Foto disimpan sementara (lokal)");
+                    setTimeout(() => setSuccess(null), 3000);
+                    // Notify parent to refresh sidebar
+                    if (onProfileUpdate) onProfileUpdate();
+                };
+                reader.readAsDataURL(croppedFile);
+            } catch (localErr) {
+                console.error("Error saving local photo:", localErr);
+                setError("Gagal mengupload foto");
+            }
         } finally {
             setSaving(false);
             // Clean up the object URL
@@ -159,6 +243,9 @@ export default function AkunSaya({ onProfileUpdate }) {
         try {
             setSaving(true);
             await api.delete("/profile/photo");
+            // Hapus juga dari localStorage
+            localStorage.removeItem("profile_picture");
+            localStorage.removeItem("profile_picture_local");
             setProfile((prev) => ({ ...prev, picture: null }));
             setSuccess("Foto profil berhasil dihapus!");
             setTimeout(() => setSuccess(null), 3000);
@@ -166,7 +253,20 @@ export default function AkunSaya({ onProfileUpdate }) {
             if (onProfileUpdate) onProfileUpdate();
         } catch (err) {
             console.error("Error deleting photo:", err);
-            setError(err.response?.data?.message || "Gagal menghapus foto");
+
+            // Fallback: hapus dari localStorage jika API gagal
+            try {
+                localStorage.removeItem("profile_picture");
+                localStorage.removeItem("profile_picture_local");
+                setProfile((prev) => ({ ...prev, picture: null }));
+                setSuccess("Foto profil dihapus (lokal)");
+                setTimeout(() => setSuccess(null), 3000);
+                // Notify parent to refresh sidebar
+                if (onProfileUpdate) onProfileUpdate();
+            } catch (localErr) {
+                console.error("Error deleting local photo:", localErr);
+                setError(err.response?.data?.message || "Gagal menghapus foto");
+            }
         } finally {
             setSaving(false);
         }
@@ -274,7 +374,16 @@ export default function AkunSaya({ onProfileUpdate }) {
                     <div className="profile-avatar-section">
                         <div className="profile-avatar">
                             {profile?.picture ? (
-                                <img src={`http://localhost:3000${profile.picture}`} alt="Profile" />
+                                <img
+                                    src={
+                                        profile.picture === "LOCAL"
+                                            ? localStorage.getItem("profile_picture_local")
+                                            : profile.picture.startsWith("data:")
+                                                ? profile.picture
+                                                : `http://localhost:3000${profile.picture}`
+                                    }
+                                    alt="Profile"
+                                />
                             ) : (
                                 <span>{(profile?.name || profile?.username || "U")[0].toUpperCase()}</span>
                             )}

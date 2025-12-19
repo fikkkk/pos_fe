@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { FaSearch, FaTrash, FaPlus, FaMinus, FaShoppingCart, FaCashRegister, FaSpinner, FaTimes, FaMoneyBillWave, FaQrcode, FaCreditCard, FaWallet, FaCheckCircle } from "react-icons/fa";
+import { FaSearch, FaTrash, FaPlus, FaMinus, FaShoppingCart, FaCashRegister, FaSpinner, FaTimes, FaMoneyBillWave, FaQrcode, FaCreditCard, FaWallet, FaCheckCircle, FaExclamationTriangle } from "react-icons/fa";
 import { api } from "../api";
 import "./transaksi.css";
 
@@ -10,21 +10,38 @@ const formatRp = (n) =>
     maximumFractionDigits: 0,
   });
 
-// ====================================
-// KATEGORI
-// ====================================
-const categories = [
-  { label: "Semua", icon: "/img/cat-lainnya.png" },
-  { label: "Makanan", icon: "/img/cat-makanan.png" },
-  { label: "Sembako", icon: "/img/cat-sembako.png" },
-  { label: "Perawatan Tubuh", icon: "/img/cat-perawatan.png" },
-  { label: "Produk Bayi", icon: "/img/cat-bayi.png" },
-  { label: "Frozen Food", icon: "/img/cat-frozen.png" },
-  { label: "Minuman", icon: "/img/cat-minuman.png" },
-  { label: "Kebutuhan Rumah Tangga", icon: "/img/cat-rumah.png" },
-  { label: "Peralatan / Alat", icon: "/img/cat-alat.png" },
-  { label: "Obat & Kesehatan", icon: "/img/cat-obat.png" },
-];
+// Mapping icon default untuk kategori (fallback jika tidak ada gambar)
+const defaultCategoryIcons = {
+  "semua": "/img/cat-lainnya.png",
+  "makanan": "/img/cat-makanan.png",
+  "sembako": "/img/cat-sembako.png",
+  "perawatan tubuh": "/img/cat-perawatan.png",
+  "produk bayi": "/img/cat-bayi.png",
+  "frozen food": "/img/cat-frozen.png",
+  "minuman": "/img/cat-minuman.png",
+  "kebutuhan rumah tangga": "/img/cat-rumah.png",
+  "kebutuhan rumah": "/img/cat-rumah.png",
+  "peralatan / alat": "/img/cat-alat.png",
+  "alat": "/img/cat-alat.png",
+  "obat & kesehatan": "/img/cat-obat.png",
+  "bumbu dapur": "/img/cat-lainnya.png",
+  "lainnya": "/img/cat-lainnya.png",
+};
+
+// Helper untuk mendapatkan icon kategori
+const getCategoryIcon = (categoryName, categoryId) => {
+  // Cek di mapping default dulu
+  const lowerName = categoryName?.toLowerCase() || "";
+  if (defaultCategoryIcons[lowerName]) {
+    return defaultCategoryIcons[lowerName];
+  }
+  // Jika ada categoryId, coba ambil dari API image
+  if (categoryId) {
+    return `/admin/category/${categoryId}/image`;
+  }
+  // Fallback ke icon default
+  return "/img/cat-lainnya.png";
+};
 
 // METODE PEMBAYARAN
 const paymentMethods = [
@@ -53,6 +70,7 @@ const Transaksi = () => {
 
   // STATE untuk data dari API
   const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]); // Kategori dari database
   const [promos, setPromos] = useState([]); // State untuk promo produk
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -69,18 +87,38 @@ const Transaksi = () => {
   const [paymentSuccess, setPaymentSuccess] = useState(false);
   const [paymentError, setPaymentError] = useState(null);
 
-  // Fetch produk dan promo dari backend
+  // STOCK ALERT POPUP STATE
+  const [showStockAlert, setShowStockAlert] = useState(false);
+  const [stockAlertProduct, setStockAlertProduct] = useState(null);
+
+  // Fetch produk, kategori, dan promo dari backend
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       setError(null);
       try {
-        // Fetch products dan promos secara paralel
-        const [productsRes, promosRes] = await Promise.all([
+        // Fetch products, categories, dan promos secara paralel
+        const [productsRes, categoriesRes, promosRes] = await Promise.all([
           api.get("/admin/products"),
+          api.get("/admin/categories").catch(() => ({ data: [] })), // Categories
           api.get("/admin/promo").catch(() => ({ data: [] })), // Promo optional
         ]);
         setProducts(productsRes.data || []);
+
+        // Set categories dari API dengan format yang sesuai
+        const apiCategories = (categoriesRes.data || []).map((cat) => ({
+          id: cat.id,
+          label: cat.name,
+          icon: getCategoryIcon(cat.name, cat.id),
+        }));
+
+        // Tambahkan "Semua" di awal
+        setCategories([
+          { id: null, label: "Semua", icon: "/img/cat-lainnya.png" },
+          ...apiCategories,
+        ]);
+
+        console.log("Categories from API:", apiCategories);
 
         // Debug: log raw promo data
         console.log("Raw promos from API:", promosRes.data);
@@ -166,6 +204,24 @@ const Transaksi = () => {
 
   // ADD TO CART
   const addToCart = (product) => {
+    // Cek apakah stock habis
+    if (product.stock <= 0) {
+      setStockAlertProduct(product);
+      setShowStockAlert(true);
+      return;
+    }
+
+    // Cek apakah sudah ada di cart
+    const existInCart = cart.find((c) => c.id === product.id);
+    if (existInCart) {
+      // Cek apakah qty + 1 melebihi stock
+      if (existInCart.qty >= product.stock) {
+        setStockAlertProduct({ ...product, currentQty: existInCart.qty });
+        setShowStockAlert(true);
+        return;
+      }
+    }
+
     setCart((prev) => {
       const exist = prev.find((c) => c.id === product.id);
       if (exist) {
@@ -180,6 +236,16 @@ const Transaksi = () => {
 
   // QTY plus/minus
   const changeQty = (id, delta) => {
+    // Jika menambah qty, cek stock dulu
+    if (delta > 0) {
+      const item = cart.find((c) => c.id === id);
+      if (item && item.qty >= item.stock) {
+        setStockAlertProduct({ ...item, currentQty: item.qty });
+        setShowStockAlert(true);
+        return;
+      }
+    }
+
     setCart((prev) =>
       prev
         .map((c) =>
@@ -193,6 +259,15 @@ const Transaksi = () => {
   const setQty = (id, value) => {
     const n = parseInt(value, 10);
     if (isNaN(n) || n <= 0) return;
+
+    // Cek apakah qty melebihi stock
+    const item = cart.find((c) => c.id === id);
+    if (item && n > item.stock) {
+      setStockAlertProduct({ ...item, currentQty: item.qty, requestedQty: n });
+      setShowStockAlert(true);
+      return;
+    }
+
     setCart((prev) =>
       prev.map((c) => (c.id === id ? { ...c, qty: n } : c))
     );
@@ -1217,6 +1292,246 @@ const Transaksi = () => {
                 </div>
               </>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* ==========================================
+          STOCK ALERT POPUP MODAL
+       ========================================== */}
+      {showStockAlert && stockAlertProduct && (
+        <div className="trx-popup-overlay" onClick={() => setShowStockAlert(false)}>
+          <div
+            className="trx-stock-alert-modal"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              background: "linear-gradient(135deg, #1e293b 0%, #0f172a 100%)",
+              borderRadius: "20px",
+              padding: "0",
+              maxWidth: "400px",
+              width: "90%",
+              boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)",
+              animation: "popIn 0.3s ease-out",
+              overflow: "hidden",
+            }}
+          >
+            {/* HEADER */}
+            <div style={{
+              background: "linear-gradient(135deg, #ef4444 0%, #dc2626 100%)",
+              padding: "24px",
+              display: "flex",
+              alignItems: "center",
+              gap: "16px",
+            }}>
+              <div style={{
+                background: "rgba(255,255,255,0.2)",
+                borderRadius: "50%",
+                width: "60px",
+                height: "60px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: "1.8rem",
+              }}>
+                <FaExclamationTriangle style={{ color: "#fff" }} />
+              </div>
+              <div>
+                <h3 style={{
+                  margin: 0,
+                  color: "#fff",
+                  fontSize: "1.3rem",
+                  fontWeight: "700",
+                }}>
+                  Stock Tidak Mencukupi
+                </h3>
+                <p style={{
+                  margin: "4px 0 0 0",
+                  color: "rgba(255,255,255,0.8)",
+                  fontSize: "0.9rem",
+                }}>
+                  Jumlah yang diminta melebihi stock tersedia
+                </p>
+              </div>
+            </div>
+
+            {/* CONTENT */}
+            <div style={{ padding: "24px" }}>
+              {/* Product Info */}
+              <div style={{
+                background: "rgba(255,255,255,0.05)",
+                borderRadius: "12px",
+                padding: "16px",
+                marginBottom: "20px",
+                border: "1px solid rgba(255,255,255,0.1)",
+              }}>
+                <div style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "12px",
+                }}>
+                  <div style={{
+                    width: "50px",
+                    height: "50px",
+                    borderRadius: "10px",
+                    background: "linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: "1.5rem",
+                  }}>
+                    📦
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{
+                      color: "#fff",
+                      fontWeight: "600",
+                      fontSize: "1rem",
+                      marginBottom: "4px",
+                    }}>
+                      {stockAlertProduct.name}
+                    </div>
+                    <div style={{
+                      color: "#94a3b8",
+                      fontSize: "0.85rem",
+                    }}>
+                      {formatRp(stockAlertProduct.price)}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Stock Status */}
+              <div style={{
+                display: "grid",
+                gridTemplateColumns: stockAlertProduct.stock === 0 ? "1fr" : "1fr 1fr",
+                gap: "12px",
+                marginBottom: "20px",
+              }}>
+                {stockAlertProduct.stock === 0 ? (
+                  <div style={{
+                    background: "linear-gradient(135deg, #ef4444 0%, #dc2626 100%)",
+                    borderRadius: "12px",
+                    padding: "16px",
+                    textAlign: "center",
+                  }}>
+                    <div style={{
+                      fontSize: "2.5rem",
+                      fontWeight: "800",
+                      color: "#fff",
+                      marginBottom: "4px",
+                    }}>
+                      HABIS
+                    </div>
+                    <div style={{
+                      color: "rgba(255,255,255,0.8)",
+                      fontSize: "0.85rem",
+                    }}>
+                      Stock Kosong
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <div style={{
+                      background: "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)",
+                      borderRadius: "12px",
+                      padding: "16px",
+                      textAlign: "center",
+                    }}>
+                      <div style={{
+                        fontSize: "1.8rem",
+                        fontWeight: "800",
+                        color: "#fff",
+                        marginBottom: "4px",
+                      }}>
+                        {stockAlertProduct.stock}
+                      </div>
+                      <div style={{
+                        color: "rgba(255,255,255,0.8)",
+                        fontSize: "0.8rem",
+                      }}>
+                        Sisa Stock
+                      </div>
+                    </div>
+                    <div style={{
+                      background: "linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)",
+                      borderRadius: "12px",
+                      padding: "16px",
+                      textAlign: "center",
+                    }}>
+                      <div style={{
+                        fontSize: "1.8rem",
+                        fontWeight: "800",
+                        color: "#fff",
+                        marginBottom: "4px",
+                      }}>
+                        {stockAlertProduct.currentQty || 0}
+                      </div>
+                      <div style={{
+                        color: "rgba(255,255,255,0.8)",
+                        fontSize: "0.8rem",
+                      }}>
+                        Sudah di Keranjang
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+
+              {/* Info Message */}
+              <div style={{
+                background: "rgba(239, 68, 68, 0.1)",
+                border: "1px solid rgba(239, 68, 68, 0.3)",
+                borderRadius: "10px",
+                padding: "12px 16px",
+                display: "flex",
+                alignItems: "center",
+                gap: "10px",
+              }}>
+                <span style={{ fontSize: "1.2rem" }}>💡</span>
+                <span style={{
+                  color: "#fca5a5",
+                  fontSize: "0.85rem",
+                }}>
+                  {stockAlertProduct.stock === 0
+                    ? "Produk ini sudah habis. Silakan pilih produk lain atau tunggu restock."
+                    : `Anda hanya dapat menambahkan maksimal ${stockAlertProduct.stock} item untuk produk ini.`
+                  }
+                </span>
+              </div>
+            </div>
+
+            {/* FOOTER */}
+            <div style={{
+              padding: "16px 24px 24px",
+              display: "flex",
+              gap: "12px",
+            }}>
+              <button
+                onClick={() => setShowStockAlert(false)}
+                style={{
+                  flex: 1,
+                  background: "linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)",
+                  color: "#fff",
+                  border: "none",
+                  borderRadius: "12px",
+                  padding: "14px",
+                  fontSize: "1rem",
+                  fontWeight: "600",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "8px",
+                  transition: "all 0.2s ease",
+                  boxShadow: "0 4px 15px rgba(99, 102, 241, 0.4)",
+                }}
+                onMouseOver={(e) => e.currentTarget.style.transform = "translateY(-2px)"}
+                onMouseOut={(e) => e.currentTarget.style.transform = "translateY(0)"}
+              >
+                <FaTimes />
+                Tutup
+              </button>
+            </div>
           </div>
         </div>
       )}
