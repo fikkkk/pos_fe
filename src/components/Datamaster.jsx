@@ -135,8 +135,19 @@ export default function DataMaster() {
         setSuppliers(res.data);
       }
     } catch (err) {
-      console.error("Error fetching data:", err);
-      setError("Gagal memuat data. Silakan coba lagi.");
+      console.error("[DataMaster] Error fetching data:", {
+        tab: activeTab,
+        status: err?.response?.status,
+        message: err?.response?.data?.message || err.message,
+      });
+      const statusCode = err?.response?.status;
+      if (statusCode === 401) {
+        setError("Sesi telah berakhir. Silakan login ulang.");
+      } else if (statusCode === 403) {
+        setError("Anda tidak memiliki akses. Halaman ini khusus untuk Admin.");
+      } else {
+        setError("Gagal memuat data. Silakan coba lagi.");
+      }
     } finally {
       setLoading(false);
     }

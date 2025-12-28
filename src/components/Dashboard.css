@@ -3,10 +3,11 @@
 
 :root {
   /* Light Mode (default) */
-  --bg: #e9f1f6;
+  --bg: #f1f5f9;
   --bg-card: #ffffff;
   --bg-panel: #ffffff;
-  --line: #d7e0e7;
+  --line: #cbd5e1;
+  --line-strong: #94a3b8;
   --brand: #32446B;
   --side: #e7a21a;
   --side-active: #ffd46b;
@@ -14,11 +15,12 @@
   --green: #2ba84a;
   --orange: #f19f00;
   --red: #de4f4f;
-  --text-primary: #2f3f59;
-  --text-secondary: #5f6f84;
-  --text-muted: #7b8aa0;
-  --shadow-sm: 0 2px 10px rgba(0, 0, 0, .04);
-  --shadow-md: 0 4px 14px rgba(0, 0, 0, .12);
+  --text-primary: #1e293b;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  --shadow-sm: 0 2px 10px rgba(0, 0, 0, .06);
+  --shadow-md: 0 4px 14px rgba(0, 0, 0, .1);
+  --border-width: 2px;
 }
 
 /* Dark Mode Variables */
@@ -26,13 +28,15 @@
   --bg: #0f172a;
   --bg-card: #1e293b;
   --bg-panel: #1e293b;
-  --line: #334155;
+  --line: #475569;
+  --line-strong: #64748b;
   --brand: #60a5fa;
   --text-primary: #f1f5f9;
   --text-secondary: #94a3b8;
   --text-muted: #64748b;
   --shadow-sm: 0 2px 10px rgba(0, 0, 0, .3);
   --shadow-md: 0 4px 14px rgba(0, 0, 0, .4);
+  --border-width: 1px;
 }
 
 /* ===== Global ===== */
@@ -5826,4 +5830,107 @@ body {
 
 .dashboard.dark .table-footer {
   border-top-color: var(--line);
+}
+
+/* ============================================
+   LIGHT MODE - STRONGER BORDERS & CONTRAST
+   ============================================ */
+
+.dashboard.light {
+  background: #f1f5f9;
+}
+
+.dashboard.light .ds-sidebar {
+  background: #ffffff;
+  border-right: 2px solid #cbd5e1;
+  box-shadow: 2px 0 12px rgba(0, 0, 0, 0.08);
+}
+
+.dashboard.light .ds-main {
+  background: #f1f5f9;
+}
+
+.dashboard.light .ds-inner {
+  background: #f1f5f9;
+}
+
+.dashboard.light .panel-combo,
+.dashboard.light .ds-panel,
+.dashboard.light .panel-single {
+  border: 2px solid #cbd5e1;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+.dashboard.light .panel-header {
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.dashboard.light .ds-card {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.dashboard.light .ds-topbar {
+  border-bottom: 2px solid #cbd5e1;
+  background: #ffffff;
+}
+
+/* Sidebar tetap menggunakan stylenya sendiri, tidak perlu override */
+
+/* Table borders */
+.dashboard.light .pt-table th,
+.dashboard.light .dm-table th {
+  border-bottom: 2px solid #cbd5e1;
+}
+
+.dashboard.light .pt-table td,
+.dashboard.light .dm-table td {
+  border-bottom: 1px solid #e2e8f0;
+}
+
+/* Input & button borders */
+.dashboard.light input,
+.dashboard.light select,
+.dashboard.light .tc-right {
+  border: 2px solid #cbd5e1;
+}
+
+.dashboard.light input:focus,
+.dashboard.light select:focus,
+.dashboard.light .tc-right:focus-within {
+  border-color: #f59e0b;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15);
+}
+
+/* Cards & containers */
+.dashboard.light .akun-card,
+.dashboard.light .akun-profile-card,
+.dashboard.light .pengaturan-card {
+  border: 2px solid #cbd5e1;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+}
+
+/* Pagination */
+.dashboard.light .dm-pagination {
+  border: 2px solid #334155;
+}
+
+/* Tabs */
+.dashboard.light .dm-newtab {
+  border: 2px solid #cbd5e1;
+}
+
+.dashboard.light .dm-newtab.active {
+  border-color: transparent;
+}
+
+/* Buttons */
+.dashboard.light .dm-top-btn,
+.dashboard.light .btn {
+  border: 2px solid #cbd5e1;
+}
+
+.dashboard.light .dm-top-btn:hover,
+.dashboard.light .btn:hover {
+  border-color: #f59e0b;
 }

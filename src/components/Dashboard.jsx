@@ -27,6 +27,7 @@ import Datamaster from "./Datamaster";
 import LaporanManajemen from "./LaporanManajemen";
 import AkunSaya from "./AkunSaya";
 import Pengaturan from "./Pengaturan";
+import Member from "./Member";
 
 // New Components
 import LoginNotification from "./LoginNotification";
@@ -61,6 +62,24 @@ export default function Dashboard() {
   const [showWelcomeToast, setShowWelcomeToast] = useState(true);
   // Profile update key - increment to trigger Sidebar refresh
   const [profileUpdateKey, setProfileUpdateKey] = useState(0);
+  // User data from localStorage
+  const [loggedInUser, setLoggedInUser] = useState({ username: "User", role: "" });
+
+  // Read user data from localStorage on mount
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      try {
+        const parsed = JSON.parse(storedUser);
+        setLoggedInUser({
+          username: parsed.username || parsed.name || "User",
+          role: parsed.role || "",
+        });
+      } catch (e) {
+        console.error("Error parsing user data:", e);
+      }
+    }
+  }, []);
 
   // Callback when profile is updated in AkunSaya
   const handleProfileUpdate = () => {
@@ -357,7 +376,8 @@ export default function Dashboard() {
       <LoginNotification
         show={showWelcomeToast}
         onClose={() => setShowWelcomeToast(false)}
-        userName="Admin"
+        userName={loggedInUser.username}
+        userRole={loggedInUser.role}
       />
 
       <Sidebar
@@ -756,6 +776,9 @@ export default function Dashboard() {
 
           {/* ================= HALAMAN LAPORAN ================= */}
           {activeMenu === "laporan" && <LaporanManajemen />}
+
+          {/* ================= HALAMAN MEMBER ================= */}
+          {activeMenu === "member" && <Member />}
 
           {/* ================= HALAMAN AKUN SAYA ================= */}
           {activeMenu === "akun" && <AkunSaya onProfileUpdate={handleProfileUpdate} />}

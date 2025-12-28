@@ -150,7 +150,13 @@ export default function RegisterModern({
             <button
               type="button"
               className="lp-dark-toggle"
-              onClick={() => setDarkMode((v) => !v)}
+              onClick={() => {
+                setDarkMode((v) => {
+                  const newValue = !v;
+                  localStorage.setItem("theme", newValue ? "dark" : "light");
+                  return newValue;
+                });
+              }}
             >
               {darkMode ? (
                 <>

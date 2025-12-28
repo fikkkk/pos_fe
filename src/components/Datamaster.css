@@ -383,23 +383,24 @@
   box-sizing: border-box;
 }
 
-/* Hide scrollbar but keep functionality */
+/* Custom Scrollbar - Orange gradient */
 .dm-table-wrapper::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 10px;
+  height: 10px;
 }
 
 .dm-table-wrapper::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: transparent;
+  border-radius: 4px;
 }
 
 .dm-table-wrapper::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 3px;
+  background: linear-gradient(180deg, #f59e0b 0%, #ea580c 100%);
+  border-radius: 4px;
 }
 
 .dm-table-wrapper::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: linear-gradient(180deg, #fbbf24 0%, #f97316 100%);
 }
 
 /* ==========================
@@ -799,11 +800,15 @@
 }
 
 .dashboard.dark .dm-table-wrapper::-webkit-scrollbar-track {
-  background: #1e293b;
+  background: transparent;
 }
 
 .dashboard.dark .dm-table-wrapper::-webkit-scrollbar-thumb {
-  background: #475569;
+  background: linear-gradient(180deg, #f59e0b 0%, #ea580c 100%);
+}
+
+.dashboard.dark .dm-table-wrapper::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #fbbf24 0%, #f97316 100%);
 }
 
 /* Table */

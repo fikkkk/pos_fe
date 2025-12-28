@@ -138,8 +138,14 @@ export default function AkunSaya({ onProfileUpdate }) {
             if (onProfileUpdate) onProfileUpdate();
         } catch (err) {
             console.error("Error updating profile:", err);
+            console.error("Error response:", err.response?.data);
+            console.error("Error status:", err.response?.status);
 
-            // Fallback: simpan ke localStorage jika API gagal
+            // Show actual error message to user
+            const errorMsg = err.response?.data?.message || err.message || "Gagal memperbarui profil";
+            setError(`API Error: ${errorMsg} (Status: ${err.response?.status || 'unknown'})`);
+
+            // Still save to localStorage as fallback
             try {
                 localStorage.setItem("profile_name", formData.name);
                 localStorage.setItem("profile_username", formData.username);
@@ -151,9 +157,9 @@ export default function AkunSaya({ onProfileUpdate }) {
                     username: formData.username,
                 }));
 
-                setSuccess("Profil disimpan sementara (lokal)");
+                setSuccess("Profil disimpan sementara (lokal) - Backend error, silakan restart backend");
                 setIsEditing(false);
-                setTimeout(() => setSuccess(null), 3000);
+                setTimeout(() => setSuccess(null), 5000);
                 // Notify parent to refresh sidebar
                 if (onProfileUpdate) onProfileUpdate();
             } catch (localErr) {
@@ -413,7 +419,7 @@ export default function AkunSaya({ onProfileUpdate }) {
                         </div>
 
                         <div className="profile-info">
-                            <h2 className="profile-name">{profile?.name || profile?.username || "User"}</h2>
+                            <h2 className="profile-name">{profile?.username || profile?.name || "User"}</h2>
                             <p className="profile-email">{profile?.email}</p>
                             <div className="profile-badges">
                                 <span className={`role-badge ${getRoleBadgeClass(profile?.role)}`}>

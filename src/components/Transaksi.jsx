@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { FaSearch, FaTrash, FaPlus, FaMinus, FaShoppingCart, FaCashRegister, FaSpinner, FaTimes, FaMoneyBillWave, FaQrcode, FaCreditCard, FaWallet, FaCheckCircle, FaExclamationTriangle } from "react-icons/fa";
+import { FaSearch, FaTrash, FaPlus, FaMinus, FaShoppingCart, FaCashRegister, FaSpinner, FaTimes, FaMoneyBillWave, FaQrcode, FaCreditCard, FaWallet, FaCheckCircle, FaExclamationTriangle, FaStar, FaIdCard, FaUserCheck } from "react-icons/fa";
 import { api } from "../api";
 import "./transaksi.css";
 
@@ -64,6 +64,18 @@ const getItemTotal = (item) => {
 // MAIN COMPONENT
 // ====================================
 const Transaksi = () => {
+  // Get user role from localStorage
+  const getUserRole = () => {
+    try {
+      const user = JSON.parse(localStorage.getItem("user") || "{}");
+      return user.role || "KASIR";
+    } catch {
+      return "KASIR";
+    }
+  };
+  const userRole = getUserRole();
+  const isAdminOrSuperAdmin = userRole === "ADMIN" || userRole === "SUPERADMIN";
+
   const [activeCategory, setActiveCategory] = useState("Semua");
   const [search, setSearch] = useState("");
   const [cart, setCart] = useState([]);
@@ -87,6 +99,14 @@ const Transaksi = () => {
   const [paymentSuccess, setPaymentSuccess] = useState(false);
   const [paymentError, setPaymentError] = useState(null);
 
+  // MEMBER & REDEEM POINTS STATE
+  const [memberLookup, setMemberLookup] = useState("");
+  const [memberData, setMemberData] = useState(null);
+  const [memberLookupLoading, setMemberLookupLoading] = useState(false);
+  const [memberError, setMemberError] = useState("");
+  const [redeemPoints, setRedeemPoints] = useState(0);
+  const POINT_VALUE = 100; // 1 poin = Rp100
+
   // STOCK ALERT POPUP STATE
   const [showStockAlert, setShowStockAlert] = useState(false);
   const [stockAlertProduct, setStockAlertProduct] = useState(null);
@@ -97,11 +117,22 @@ const Transaksi = () => {
       setLoading(true);
       setError(null);
       try {
+        // Use different endpoints based on user role
+        // KASIR uses /kasir/products, ADMIN uses /admin/products
+        const productsEndpoint = isAdminOrSuperAdmin ? "/admin/products" : "/kasir/products";
+        const categoriesEndpoint = "/admin/categories"; // Categories are public for display
+        const promoEndpoint = "/admin/promo"; // Promos for display
+
+        console.log("[Transaksi] Fetching with role:", userRole, "using endpoint:", productsEndpoint);
+
         // Fetch products, categories, dan promos secara paralel
         const [productsRes, categoriesRes, promosRes] = await Promise.all([
-          api.get("/admin/products"),
-          api.get("/admin/categories").catch(() => ({ data: [] })), // Categories
-          api.get("/admin/promo").catch(() => ({ data: [] })), // Promo optional
+          api.get(productsEndpoint).catch((err) => {
+            console.error("[Transaksi] Failed to fetch products:", err?.response?.data || err.message);
+            return { data: [] };
+          }),
+          api.get(categoriesEndpoint).catch(() => ({ data: [] })), // Categories
+          api.get(promoEndpoint).catch(() => ({ data: [] })), // Promo optional
         ]);
         setProducts(productsRes.data || []);
 
@@ -146,7 +177,7 @@ const Transaksi = () => {
     };
 
     fetchData();
-  }, []);
+  }, [isAdminOrSuperAdmin, userRole]);
 
   // Fungsi untuk mendapatkan promo yang berlaku untuk produk
   const getApplicablePromo = (productId, qty) => {
@@ -356,6 +387,50 @@ const Transaksi = () => {
     return cash - total;
   }, [cashInput, total]);
 
+  // MEMBER LOOKUP
+  const handleMemberLookup = async () => {
+    if (!memberLookup.trim()) {
+      setMemberError("Masukkan No HP atau Kode Member");
+      return;
+    }
+    setMemberLookupLoading(true);
+    setMemberError("");
+    try {
+      const isCode = memberLookup.toUpperCase().startsWith("MBR");
+      const res = await api.post("/kasir/members/lookup", {
+        memberCode: isCode ? memberLookup.trim() : undefined,
+        phone: !isCode ? memberLookup.trim() : undefined,
+      });
+      setMemberData(res.data);
+      setRedeemPoints(0); // Reset redeem points
+    } catch (err) {
+      setMemberError(err?.response?.data?.message || "Member tidak ditemukan");
+      setMemberData(null);
+    } finally {
+      setMemberLookupLoading(false);
+    }
+  };
+
+  // Clear member
+  const clearMember = () => {
+    setMemberData(null);
+    setMemberLookup("");
+    setRedeemPoints(0);
+    setMemberError("");
+  };
+
+  // Calculate points discount
+  const pointsDiscount = useMemo(() => redeemPoints * POINT_VALUE, [redeemPoints]);
+
+  // Effective total after points discount
+  const effectiveTotal = useMemo(() => Math.max(0, total - pointsDiscount), [total, pointsDiscount]);
+
+  // Recalculate kembalian with points discount
+  const kembalianWithPoints = useMemo(() => {
+    const cash = parseInt(cashInput.replace(/\D/g, ""), 10) || 0;
+    return cash - effectiveTotal;
+  }, [cashInput, effectiveTotal]);
+
   // OPEN/CLOSE PAYMENT POPUP
   const openPaymentPopup = () => {
     if (cart.length === 0) return;
@@ -364,6 +439,7 @@ const Transaksi = () => {
     setCashInput("");
     setPaymentSuccess(false);
     setPaymentError(null);
+    // Note: Member data is NOT reset here - only reset after payment success
   };
 
   const closePaymentPopup = () => {
@@ -372,6 +448,7 @@ const Transaksi = () => {
     setCashInput("");
     setPaymentSuccess(false);
     setPaymentError(null);
+    // Note: Member data is NOT reset here - only reset after payment success
   };
 
   // PROCESS PAYMENT & UPDATE STOCK
@@ -381,7 +458,7 @@ const Transaksi = () => {
       return;
     }
 
-    if (selectedPayment === "TUNAI" && kembalian < 0) {
+    if (selectedPayment === "TUNAI" && kembalianWithPoints < 0) {
       setPaymentError("Uang yang diberikan kurang");
       return;
     }
@@ -406,15 +483,29 @@ const Transaksi = () => {
           quantity: item.qty,
         }));
 
-        await api.post("/kasir/orders", {
+        console.log("[Transaksi] Creating order with items:", orderItems);
+        console.log("[Transaksi] User role for order:", userRole);
+
+        const orderResponse = await api.post("/kasir/orders", {
           items: orderItems,
           paymentMethod: selectedPayment,
           taxPercent: 11, // pajak 11%
           discountPercent: 0,
+          // Member & Redeem Points
+          memberCode: memberData?.memberCode || undefined,
+          redeemPoints: redeemPoints > 0 ? redeemPoints : undefined,
+          paidAmount: selectedPayment === "TUNAI" ? parseInt(cashInput.replace(/\D/g, ""), 10) || 0 : undefined,
         });
+
+        console.log("[Transaksi] Order created successfully:", orderResponse.data);
       } catch (orderErr) {
-        // Jika gagal buat order (misal bukan role KASIR), simpan ke localStorage saja
-        console.warn("Order creation skipped (not KASIR role or endpoint issue):", orderErr);
+        // Log detailed error for debugging
+        console.error("[Transaksi] Order creation failed:", {
+          status: orderErr?.response?.status,
+          message: orderErr?.response?.data?.message || orderErr.message,
+          role: userRole,
+        });
+        // Order gagal tapi transaksi tetap disimpan ke localStorage sebagai backup
       }
 
       // 3. Simpan transaksi ke localStorage sebagai backup/riwayat lokal
@@ -469,16 +560,21 @@ const Transaksi = () => {
   // FINISH PAYMENT - untuk menutup popup setelah sukses
   const finishPayment = () => {
     clearCart();
+    // Reset member state after successful payment
+    setMemberLookup("");
+    setMemberData(null);
+    setMemberError("");
+    setRedeemPoints(0);
     closePaymentPopup();
   };
 
-  // Quick cash buttons
+  // Quick cash buttons - based on effectiveTotal (after points discount)
   const quickCashAmounts = [
-    total,
-    Math.ceil(total / 10000) * 10000,
-    Math.ceil(total / 50000) * 50000,
-    Math.ceil(total / 100000) * 100000,
-  ].filter((v, i, arr) => arr.indexOf(v) === i && v >= total).slice(0, 4);
+    effectiveTotal,
+    Math.ceil(effectiveTotal / 10000) * 10000,
+    Math.ceil(effectiveTotal / 50000) * 50000,
+    Math.ceil(effectiveTotal / 100000) * 100000,
+  ].filter((v, i, arr) => arr.indexOf(v) === i && v >= effectiveTotal).slice(0, 4);
 
   return (
     <div className="trx-page">
@@ -1208,7 +1304,218 @@ const Transaksi = () => {
                 {/* TOTAL DISPLAY */}
                 <div className="trx-popup-total">
                   <span className="trx-popup-total-label">Total Pembayaran</span>
-                  <span className="trx-popup-total-value">{formatRp(total)}</span>
+                  <span className="trx-popup-total-value">{formatRp(effectiveTotal)}</span>
+                  {pointsDiscount > 0 && (
+                    <span style={{ fontSize: "0.8rem", opacity: 0.9 }}>
+                      (Sudah termasuk potongan poin {formatRp(pointsDiscount)})
+                    </span>
+                  )}
+                </div>
+
+                {/* MEMBER SECTION - Gunakan Poin */}
+                <div className="trx-popup-section" style={{ background: "linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, rgba(59, 130, 246, 0.05) 100%)" }}>
+                  <h4 style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    <FaIdCard style={{ color: "#8b5cf6" }} /> Gunakan Poin Member
+                  </h4>
+
+                  {!memberData ? (
+                    <>
+                      {/* Lookup Input */}
+                      <div style={{ display: "flex", gap: "10px", marginBottom: "12px" }}>
+                        <input
+                          type="text"
+                          placeholder="Masukkan No HP atau Kode Member..."
+                          value={memberLookup}
+                          onChange={(e) => setMemberLookup(e.target.value)}
+                          onKeyDown={(e) => e.key === "Enter" && handleMemberLookup()}
+                          style={{
+                            flex: 1,
+                            padding: "12px 16px",
+                            border: "2px solid #e2e8f0",
+                            borderRadius: "12px",
+                            fontSize: "14px",
+                            outline: "none",
+                          }}
+                        />
+                        <button
+                          onClick={handleMemberLookup}
+                          disabled={memberLookupLoading}
+                          style={{
+                            padding: "12px 20px",
+                            background: "linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)",
+                            color: "#fff",
+                            border: "none",
+                            borderRadius: "12px",
+                            fontWeight: "700",
+                            cursor: memberLookupLoading ? "not-allowed" : "pointer",
+                            opacity: memberLookupLoading ? 0.7 : 1,
+                          }}
+                        >
+                          {memberLookupLoading ? <FaSpinner className="trx-btn-spinner" /> : "Cari"}
+                        </button>
+                      </div>
+                      {memberError && (
+                        <div style={{ color: "#ef4444", fontSize: "13px", marginTop: "8px" }}>
+                          {memberError}
+                        </div>
+                      )}
+                      <p style={{ fontSize: "12px", color: "#94a3b8", margin: 0 }}>
+                        *Opsional - Masukkan data member untuk menggunakan poin
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      {/* Member Found - Show Info */}
+                      <div style={{
+                        background: "linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)",
+                        border: "2px solid #86efac",
+                        borderRadius: "16px",
+                        padding: "16px",
+                        marginBottom: "16px",
+                      }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                            <div style={{
+                              width: "48px",
+                              height: "48px",
+                              borderRadius: "50%",
+                              background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              color: "#fff",
+                              fontWeight: "700",
+                              fontSize: "18px",
+                            }}>
+                              <FaUserCheck />
+                            </div>
+                            <div>
+                              <div style={{ fontWeight: "700", color: "#166534", fontSize: "1rem" }}>
+                                {memberData.customer?.name || "Member"}
+                              </div>
+                              <div style={{ fontSize: "12px", color: "#16a34a", fontFamily: "monospace" }}>
+                                {memberData.memberCode}
+                              </div>
+                            </div>
+                          </div>
+                          <button
+                            onClick={clearMember}
+                            style={{
+                              background: "transparent",
+                              border: "none",
+                              color: "#dc2626",
+                              cursor: "pointer",
+                              padding: "8px",
+                            }}
+                          >
+                            <FaTimes />
+                          </button>
+                        </div>
+
+                        {/* Points Display */}
+                        <div style={{
+                          marginTop: "12px",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "8px",
+                          padding: "10px 14px",
+                          background: "linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)",
+                          borderRadius: "10px",
+                        }}>
+                          <FaStar style={{ color: "#f59e0b", fontSize: "18px" }} />
+                          <span style={{ fontWeight: "700", color: "#b45309", fontSize: "1.1rem" }}>
+                            {(memberData.points || 0).toLocaleString()} poin
+                          </span>
+                          <span style={{ fontSize: "12px", color: "#92400e", marginLeft: "auto" }}>
+                            = {formatRp((memberData.points || 0) * POINT_VALUE)}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Redeem Points Slider */}
+                      {memberData.points > 0 && (
+                        <div style={{ marginBottom: "16px" }}>
+                          <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
+                            <span style={{ fontWeight: "600", color: "#475569" }}>Tukar Poin:</span>
+                            <span style={{ fontWeight: "700", color: "#8b5cf6" }}>
+                              {redeemPoints} poin = {formatRp(pointsDiscount)}
+                            </span>
+                          </div>
+                          <input
+                            type="range"
+                            min="0"
+                            max={Math.min(memberData.points, Math.ceil(total / POINT_VALUE))}
+                            value={redeemPoints}
+                            onChange={(e) => setRedeemPoints(Number(e.target.value))}
+                            style={{
+                              width: "100%",
+                              height: "8px",
+                              background: "linear-gradient(90deg, #8b5cf6 0%, #7c3aed 100%)",
+                              borderRadius: "4px",
+                              cursor: "pointer",
+                              accentColor: "#8b5cf6",
+                            }}
+                          />
+                          <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11px", color: "#94a3b8", marginTop: "4px" }}>
+                            <span>0</span>
+                            <span>{Math.min(memberData.points, Math.ceil(total / POINT_VALUE))} poin max</span>
+                          </div>
+
+                          {/* Quick Redeem Buttons */}
+                          <div style={{ display: "flex", gap: "8px", marginTop: "12px" }}>
+                            <button
+                              onClick={() => setRedeemPoints(0)}
+                              style={{
+                                flex: 1,
+                                padding: "8px",
+                                background: redeemPoints === 0 ? "#8b5cf6" : "#e2e8f0",
+                                color: redeemPoints === 0 ? "#fff" : "#64748b",
+                                border: "none",
+                                borderRadius: "8px",
+                                fontWeight: "600",
+                                fontSize: "12px",
+                                cursor: "pointer",
+                              }}
+                            >
+                              Tidak Pakai
+                            </button>
+                            <button
+                              onClick={() => setRedeemPoints(Math.min(memberData.points, Math.ceil(total / POINT_VALUE)))}
+                              style={{
+                                flex: 1,
+                                padding: "8px",
+                                background: redeemPoints === Math.min(memberData.points, Math.ceil(total / POINT_VALUE)) ? "#8b5cf6" : "#e2e8f0",
+                                color: redeemPoints === Math.min(memberData.points, Math.ceil(total / POINT_VALUE)) ? "#fff" : "#64748b",
+                                border: "none",
+                                borderRadius: "8px",
+                                fontWeight: "600",
+                                fontSize: "12px",
+                                cursor: "pointer",
+                              }}
+                            >
+                              Pakai Semua
+                            </button>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Point Discount Summary */}
+                      {pointsDiscount > 0 && (
+                        <div style={{
+                          padding: "12px 16px",
+                          background: "linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)",
+                          borderRadius: "12px",
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          color: "#fff",
+                        }}>
+                          <span style={{ fontWeight: "600" }}>💎 Potongan dari Poin</span>
+                          <span style={{ fontWeight: "800", fontSize: "1.1rem" }}>-{formatRp(pointsDiscount)}</span>
+                        </div>
+                      )}
+                    </>
+                  )}
                 </div>
 
                 {/* PAYMENT METHODS */}
@@ -1252,9 +1559,9 @@ const Transaksi = () => {
                       ))}
                     </div>
                     {cashInput && (
-                      <div className={`trx-change-display ${kembalian >= 0 ? 'positive' : 'negative'}`}>
+                      <div className={`trx-change-display ${kembalianWithPoints >= 0 ? 'positive' : 'negative'}`}>
                         <span>Kembalian:</span>
-                        <span className="trx-change-value">{formatRp(kembalian)}</span>
+                        <span className="trx-change-value">{formatRp(kembalianWithPoints)}</span>
                       </div>
                     )}
                   </div>
