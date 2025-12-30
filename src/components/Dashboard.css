@@ -3,11 +3,10 @@
 
 :root {
   /* Light Mode (default) */
-  --bg: #f1f5f9;
+  --bg: #e9f1f6;
   --bg-card: #ffffff;
   --bg-panel: #ffffff;
-  --line: #cbd5e1;
-  --line-strong: #94a3b8;
+  --line: #d7e0e7;
   --brand: #32446B;
   --side: #e7a21a;
   --side-active: #ffd46b;
@@ -15,12 +14,11 @@
   --green: #2ba84a;
   --orange: #f19f00;
   --red: #de4f4f;
-  --text-primary: #1e293b;
-  --text-secondary: #475569;
-  --text-muted: #64748b;
-  --shadow-sm: 0 2px 10px rgba(0, 0, 0, .06);
-  --shadow-md: 0 4px 14px rgba(0, 0, 0, .1);
-  --border-width: 2px;
+  --text-primary: #2f3f59;
+  --text-secondary: #5f6f84;
+  --text-muted: #7b8aa0;
+  --shadow-sm: 0 2px 10px rgba(0, 0, 0, .04);
+  --shadow-md: 0 4px 14px rgba(0, 0, 0, .12);
 }
 
 /* Dark Mode Variables */
@@ -28,15 +26,13 @@
   --bg: #0f172a;
   --bg-card: #1e293b;
   --bg-panel: #1e293b;
-  --line: #475569;
-  --line-strong: #64748b;
+  --line: #334155;
   --brand: #60a5fa;
   --text-primary: #f1f5f9;
   --text-secondary: #94a3b8;
   --text-muted: #64748b;
   --shadow-sm: 0 2px 10px rgba(0, 0, 0, .3);
   --shadow-md: 0 4px 14px rgba(0, 0, 0, .4);
-  --border-width: 1px;
 }
 
 /* ===== Global ===== */
@@ -1641,38 +1637,23 @@ body {
   }
 }
 
-/* 1) Matikan judul kanan bawaan header gabungan */
+/* 1) SHOW judul kanan di header untuk alignment yang sejajar */
 .panel-header--chart .ph-righttitle {
-  display: none !important;
+  display: block !important;
+  font-weight: 700;
+  color: #f59e0b;
+  font-size: 16px;
 }
 
 /* 2) Pastikan kolom kanan (grafik pertahun) start di titik yang sama dgn kolom kiri */
 .panel-combo .pc-body .pc-col:nth-child(2) {
   margin-top: 0 !important;
   position: relative;
-  /* anchor utk judul absolut */
 }
 
-/* 3) Taruh judul 'Penjualan Pertahun' di level yang sama dengan judul kiri */
+/* 3) Hide mini-title di dalam body karena sudah ada di header */
 .panel-combo .pc-col:nth-child(2) .mini-title {
-  display: block !important;
-  /* override default .mini-title {display:none} */
-  position: absolute;
-  top: -44px;
-  /* sejajarkan dengan 'Penjualan Perbulan' */
-  left: 0;
-  margin: 0;
-  line-height: 1;
-  font-weight: 800;
-  color: #2f3f59;
-  font-size: 18px;
-}
-
-/* (opsional) kalau masih beda 1–2px, geser halus: -42 / -46 */
-@media (max-width:1200px) {
-  .panel-combo .pc-col:nth-child(2) .mini-title {
-    top: -42px;
-  }
+  display: none !important;
 }
 
 .white-scrim {
@@ -5832,105 +5813,351 @@ body {
   border-top-color: var(--line);
 }
 
-/* ============================================
-   LIGHT MODE - STRONGER BORDERS & CONTRAST
-   ============================================ */
+/* ========================================
+   LOGOUT CONFIRMATION MODAL
+   ======================================== */
 
-.dashboard.light {
-  background: #f1f5f9;
+.logout-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: fadeIn 0.2s ease;
 }
 
-.dashboard.light .ds-sidebar {
-  background: #ffffff;
-  border-right: 2px solid #cbd5e1;
-  box-shadow: 2px 0 12px rgba(0, 0, 0, 0.08);
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
-.dashboard.light .ds-main {
-  background: #f1f5f9;
+.logout-modal-content {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 32px;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+  animation: slideUp 0.3s ease;
 }
 
-.dashboard.light .ds-inner {
-  background: #f1f5f9;
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.dashboard.light .panel-combo,
-.dashboard.light .ds-panel,
-.dashboard.light .panel-single {
-  border: 2px solid #cbd5e1;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+.logout-modal-icon {
+  width: 70px;
+  height: 70px;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(234, 88, 12, 0.2) 100%);
+  border: 2px solid #f59e0b;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
 }
 
-.dashboard.light .panel-header {
-  border-bottom: 2px solid #e2e8f0;
+.logout-modal-icon svg {
+  font-size: 32px;
+  color: #f59e0b;
 }
 
-.dashboard.light .ds-card {
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-  border: 2px solid rgba(255, 255, 255, 0.3);
+.logout-modal-title {
+  color: #f1f5f9;
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 12px;
 }
 
-.dashboard.light .ds-topbar {
-  border-bottom: 2px solid #cbd5e1;
-  background: #ffffff;
+.logout-modal-message {
+  color: #94a3b8;
+  font-size: 14px;
+  margin: 0 0 28px;
+  line-height: 1.6;
 }
 
-/* Sidebar tetap menggunakan stylenya sendiri, tidak perlu override */
-
-/* Table borders */
-.dashboard.light .pt-table th,
-.dashboard.light .dm-table th {
-  border-bottom: 2px solid #cbd5e1;
+.logout-modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
 }
 
-.dashboard.light .pt-table td,
-.dashboard.light .dm-table td {
-  border-bottom: 1px solid #e2e8f0;
+.logout-btn-cancel,
+.logout-btn-confirm {
+  padding: 12px 28px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
 }
 
-/* Input & button borders */
-.dashboard.light input,
-.dashboard.light select,
-.dashboard.light .tc-right {
-  border: 2px solid #cbd5e1;
+.logout-btn-cancel {
+  background: rgba(100, 116, 139, 0.2);
+  border: 1px solid #64748b;
+  color: #94a3b8;
 }
 
-.dashboard.light input:focus,
-.dashboard.light select:focus,
-.dashboard.light .tc-right:focus-within {
-  border-color: #f59e0b;
-  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15);
+.logout-btn-cancel:hover {
+  background: rgba(100, 116, 139, 0.3);
+  color: #f1f5f9;
 }
 
-/* Cards & containers */
-.dashboard.light .akun-card,
-.dashboard.light .akun-profile-card,
-.dashboard.light .pengaturan-card {
-  border: 2px solid #cbd5e1;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+.logout-btn-confirm {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: #fff;
+  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
 }
 
-/* Pagination */
-.dashboard.light .dm-pagination {
-  border: 2px solid #334155;
+.logout-btn-confirm:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
 }
 
-/* Tabs */
-.dashboard.light .dm-newtab {
-  border: 2px solid #cbd5e1;
+/* ========================================
+   TODAY OVERVIEW SECTION
+   ======================================== */
+
+.ds-today-section {
+  margin-bottom: 24px;
 }
 
-.dashboard.light .dm-newtab.active {
-  border-color: transparent;
+.ds-section-header {
+  margin-bottom: 16px;
 }
 
-/* Buttons */
-.dashboard.light .dm-top-btn,
-.dashboard.light .btn {
-  border: 2px solid #cbd5e1;
+.ds-section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
 }
 
-.dashboard.light .dm-top-btn:hover,
-.dashboard.light .btn:hover {
-  border-color: #f59e0b;
+.ds-section-title svg {
+  font-size: 18px;
+}
+
+/* Today Stats Cards */
+.ds-today-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.ds-today-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 20px;
+  border-radius: 16px;
+  background: var(--bg-card);
+  box-shadow: var(--shadow-sm);
+  transition: all 0.3s ease;
+}
+
+.ds-today-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.ds-today-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: #fff;
+}
+
+.ds-today-card.green .ds-today-icon {
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+}
+
+.ds-today-card.blue .ds-today-icon {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+}
+
+.ds-today-card.orange .ds-today-icon {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+}
+
+.ds-today-card.purple .ds-today-icon {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+}
+
+.ds-today-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ds-today-value {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.ds-today-label {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* Today Grid (Chart + Low Stock) */
+.ds-today-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 20px;
+}
+
+/* Hourly Chart */
+.ds-hourly-chart {
+  background: var(--bg-card);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+}
+
+.ds-chart-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+}
+
+.ds-hourly-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  height: 160px;
+  padding-top: 10px;
+}
+
+.ds-hour-bar {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  height: 100%;
+}
+
+.ds-bar-fill {
+  width: 100%;
+  max-width: 40px;
+  background: linear-gradient(180deg, #f59e0b 0%, #fbbf24 100%);
+  border-radius: 6px 6px 0 0;
+  transition: height 0.5s ease;
+  cursor: pointer;
+  min-height: 4px;
+}
+
+.ds-bar-fill:hover {
+  background: linear-gradient(180deg, #ea580c 0%, #f59e0b 100%);
+}
+
+.ds-hour-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* Low Stock Widget */
+.ds-low-stock {
+  background: var(--bg-card);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+}
+
+.ds-low-stock-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ds-low-stock-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  background: var(--bg);
+  border-radius: 10px;
+}
+
+.ds-product-name {
+  font-size: 13px;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.ds-stock-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+.ds-stock-badge.warning {
+  background: rgba(245, 158, 11, 0.15);
+  color: #d97706;
+}
+
+.ds-stock-badge.critical {
+  background: rgba(239, 68, 68, 0.15);
+  color: #dc2626;
+}
+
+.ds-low-stock-empty {
+  text-align: center;
+  padding: 30px;
+  color: #22c55e;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .ds-today-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .ds-today-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .ds-today-cards {
+    grid-template-columns: 1fr;
+  }
 }
