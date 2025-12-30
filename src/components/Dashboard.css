@@ -1,85 +1,118 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
 
 
-:root{
-  --bg:#e9f1f6; --line:#d7e0e7; --brand:#32446B; --side:#e7a21a; --side-active:#ffd46b;
-  --blue:#1560d9; --green:#2ba84a; --orange:#f19f00; --red:#de4f4f;
+:root {
+  /* Light Mode (default) */
+  --bg: #e9f1f6;
+  --bg-card: #ffffff;
+  --bg-panel: #ffffff;
+  --line: #d7e0e7;
+  --brand: #32446B;
+  --side: #e7a21a;
+  --side-active: #ffd46b;
+  --blue: #1560d9;
+  --green: #2ba84a;
+  --orange: #f19f00;
+  --red: #de4f4f;
+  --text-primary: #2f3f59;
+  --text-secondary: #5f6f84;
+  --text-muted: #7b8aa0;
+  --shadow-sm: 0 2px 10px rgba(0, 0, 0, .04);
+  --shadow-md: 0 4px 14px rgba(0, 0, 0, .12);
+}
+
+/* Dark Mode Variables */
+.dashboard.dark {
+  --bg: #0f172a;
+  --bg-card: #1e293b;
+  --bg-panel: #1e293b;
+  --line: #334155;
+  --brand: #60a5fa;
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --shadow-sm: 0 2px 10px rgba(0, 0, 0, .3);
+  --shadow-md: 0 4px 14px rgba(0, 0, 0, .4);
 }
 
 /* ===== Global ===== */
-html,body{
-  height:100%;
-  margin:0;
-  overflow:hidden;
+html,
+body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
   font-family: "Poppins", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
 
 /* ===== Sidebar (NEW STYLE) ===== */
-.ds-sidebar{
-  background:#ffffff;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  border-right:1px solid var(--line);
-  position:relative;
-  z-index:5;
+.ds-sidebar {
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-right: 1px solid var(--line);
+  position: relative;
+  z-index: 5;
 
   /* shadow tipis di sisi kanan */
   box-shadow: 2px 0 8px rgba(0, 0, 0, 0.06);
 
   /* ⬇️ TURUNKAN sidebar supaya mulai di bawah white bar */
-  margin-top: 80px;                 /* sama dengan tinggi ds-topbar */
-  height: calc(100vh - 80px);       /* sisa tinggi sampai bawah layar */
+  margin-top: 80px;
+  /* sama dengan tinggi ds-topbar */
+  height: calc(100vh - 80px);
+  /* sisa tinggi sampai bawah layar */
 }
 
 
 /* header user di atas */
-.ds-side-header{
-  position:relative;
-  height:80px;
-  width:100%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+.ds-side-header {
+  position: relative;
+  height: 80px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.ds-side-header::after{
-  content:"";
-  position:absolute;
-  bottom:0;
-  left:18px;
-  right:18px;
-  height:1px;
-  background:#e2e6ee;
+.ds-side-header::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 18px;
+  right: 18px;
+  height: 1px;
+  background: #e2e6ee;
 }
 
-.side-user{
-  width:46px;
-  height:46px;
-  border-radius:16px;
-  background:#ffffff;
+.side-user {
+  width: 46px;
+  height: 46px;
+  border-radius: 16px;
+  background: #ffffff;
 
   /* ⭐ Samakan shadow dengan icon nav bar */
-  box-shadow:0 4px 12px rgba(0,0,0,.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, .08);
 
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  color:#FF983D;
-  font-size:22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FF983D;
+  font-size: 22px;
   position: relative;
   transition: background .18s ease, color .18s ease,
-              box-shadow .18s ease, transform .18s ease;
+    box-shadow .18s ease, transform .18s ease;
 }
 
-.side-user:hover{
+.side-user:hover {
   transform: translateX(2px);
-  box-shadow:0 8px 20px rgba(0,0,0,.16);   /* ⭐ Hover sama seperti nav item */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, .16);
+  /* ⭐ Hover sama seperti nav item */
 }
 
 /* ✅ bubble teks "Profil" */
-.side-user::after{
+.side-user::after {
   content: "Profil";
   position: absolute;
   left: 68px;
@@ -88,7 +121,7 @@ html,body{
   padding: 8px 14px;
   background: #ffffff;
   border-radius: 999px;
-  box-shadow: 0 10px 24px rgba(0,0,0,.16);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, .16);
   font-size: 12px;
   font-weight: 600;
   color: #5b6a86;
@@ -98,54 +131,58 @@ html,body{
   transition: opacity .18s ease, transform .18s ease;
 }
 
-.side-user:hover::after{
+.side-user:hover::after {
   opacity: 1;
   transform: translateY(-50%) translateX(0);
 }
 
 
-.side-user:hover{
-  transform: translateX(2px);                 /* geser dikit ke kanan */
-  box-shadow: 0 8px 20px rgba(0,0,0,.16);     /* shadow sama seperti .ds-nav-item:hover .ico */
+.side-user:hover {
+  transform: translateX(2px);
+  /* geser dikit ke kanan */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, .16);
+  /* shadow sama seperti .ds-nav-item:hover .ico */
 }
 
 
 /* kolom icon */
-.ds-nav{
-  padding:20px 0 12px;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:18px;
+.ds-nav {
+  padding: 20px 0 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
 }
 
 /* item menu: hanya icon */
-.ds-nav-item{
-  position:relative;
-  width:56px;
-  height:56px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  cursor:pointer;
-  background:transparent;
+.ds-nav-item {
+  position: relative;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background: transparent;
 }
 
-.ds-nav-item:hover{
-  background:transparent; /* override style lama */
+.ds-nav-item:hover {
+  background: transparent;
+  /* override style lama */
 }
 
-.ds-nav-item .ico{
-  width:44px;
-  height:44px;
-  border-radius:16px;
-  background:#ffffff;
-  box-shadow:0 4px 12px rgba(0,0,0,.08);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:20px;
-  color:#FF983D;  /* warna icon sidebar */
+.ds-nav-item .ico {
+  width: 44px;
+  height: 44px;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, .08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: #FF983D;
+  /* warna icon sidebar */
   transition:
     background .18s ease,
     color .18s ease,
@@ -153,365 +190,1157 @@ html,body{
     transform .18s ease;
 }
 
-.ds-nav-item:hover .ico{
-  transform:translateX(2px);
-  box-shadow:0 8px 20px rgba(0,0,0,.16);
+.ds-nav-item:hover .ico {
+  transform: translateX(2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, .16);
 }
 
 /* state aktif: icon jadi orange solid + bar vertikal */
-.ds-nav-item.active .ico{
-  background:#FF983D;
-  color:#ffffff;
+.ds-nav-item.active .ico {
+  background: #FF983D;
+  color: #ffffff;
 }
 
-.ds-nav-item.active::before{
-  content:"";
-  position:absolute;
-  right:-3px;
-  width:3px;
-  height:32px;
-  border-radius:999px;
-  background:#FF983D;
+.ds-nav-item.active::before {
+  content: "";
+  position: absolute;
+  right: -3px;
+  width: 3px;
+  height: 32px;
+  border-radius: 999px;
+  background: #FF983D;
 }
 
 /* bubble teks saat hover / focus */
-.ds-nav-item::after{
-  content:attr(data-label);
-  position:absolute;
-  left:68px;
-  padding:8px 14px;
-  background:#ffffff;
-  border-radius:999px;
-  box-shadow:0 10px 24px rgba(0,0,0,.16);
-  font-size:12px;
-  font-weight:600;
-  color:#5b6a86;
-  white-space:nowrap;
-  pointer-events:none;
-  opacity:0;
-  transform:translateX(-8px);
-  transition:opacity .18s ease, transform .18s ease;
+.ds-nav-item::after {
+  content: attr(data-label);
+  position: absolute;
+  left: 68px;
+  padding: 8px 14px;
+  background: #ffffff;
+  border-radius: 999px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, .16);
+  font-size: 12px;
+  font-weight: 600;
+  color: #5b6a86;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateX(-8px);
+  transition: opacity .18s ease, transform .18s ease;
 }
 
 .ds-nav-item:hover::after,
-.ds-nav-item:focus-visible::after{
-  opacity:1;
-  transform:translateX(0);
+.ds-nav-item:focus-visible::after {
+  opacity: 1;
+  transform: translateX(0);
 }
 
 /* ===== Main ===== */
-.ds-main{
-  display:grid;
-  grid-template-rows:72px minmax(0,1fr);
-  min-height:0;
-  transition: transform .25s ease;   /* ⬅️ tambahkan baris ini */
+.ds-main {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+  overflow: visible;
+  transition: transform .25s ease;
 }
 
-.ds-topbar{
+.ds-topbar {
   position: relative;
   height: 80px;
-  display:flex;
-  align-items:flex-start; 
-  justify-content:space-between;
-  padding:8px 28px 0;
+  min-height: 80px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 8px 28px 0;
   background: var(--bg);
-  border-bottom:1px solid var(--line);
-
-  z-index: 20;              /* headernya sendiri cukup tinggi */
+  border-bottom: 1px solid var(--line);
+  z-index: 20;
 }
 
-.ds-topbar .left .brand{font-weight:700;font-size:28px;letter-spacing:.5px;}
-.ds-topbar .left .date{display:flex;align-items:center;gap:8px;color:#6b7a8e;font-size:12px;margin-top:2px;}
-.ds-topbar .left{
-  display:flex;
-  align-items:flex-start; 
-  gap:25px;
+.ds-topbar .left .brand {
+  font-weight: 700;
+  font-size: 28px;
+  letter-spacing: .5px;
+}
+
+.ds-topbar .left .date {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #6b7a8e;
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+.ds-topbar .left {
+  display: flex;
+  align-items: flex-start;
+  gap: 25px;
 
   /* ⬇️ pindahkan logo + judul ke area di atas sidebar (lingkaran hijau) */
   position: relative;
-  margin-left: -75px;   /* kalau terlalu kiri/kanan boleh ubah  -150 / -170 */
+  margin-left: -75px;
+  /* kalau terlalu kiri/kanan boleh ubah  -150 / -170 */
 }
 
 
-.ds-topbar .logo-cart{
-  font-size:60px;      /* ⬅️ perbesar di sini */
-  color:var(--orange);
-  display:flex;
-  align-items:center;
-  justify-content:center;
+.ds-topbar .logo-cart {
+  font-size: 60px;
+  /* ⬅️ perbesar di sini */
+  color: var(--orange);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.ds-topbar .brand-block{
-  display:flex;
-  flex-direction:column;
+.ds-topbar .brand-block {
+  display: flex;
+  flex-direction: column;
 }
 
 
 /* ===== Isi yang scroll ===== */
-.ds-inner{padding:18px 22px 24px;overflow-y:auto;min-height:0;-webkit-overflow-scrolling:touch;scrollbar-width:none;scroll-behavior:smooth;}
-.ds-inner::-webkit-scrollbar{display:none;width:0;height:0;}
-.ds-section-title{display:flex;align-items:center;gap:10px;font-weight:700;color:#6b7a8e;margin-bottom:10px;}
+.ds-inner {
+  flex: 1;
+  padding: 48px 32px 24px 32px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-height: 0;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  max-width: 100%;
+  width: 100%;
+  box-sizing: border-box;
+
+  /* Hide scrollbar but keep scroll functionality */
+  scrollbar-width: none;
+  /* Firefox */
+  -ms-overflow-style: none;
+  /* IE and Edge */
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.ds-inner::-webkit-scrollbar {
+  display: none;
+}
+
+.ds-section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  color: #6b7a8e;
+  margin-bottom: 10px;
+}
+
+/* ==================== MODERN PAGE HEADER ==================== */
+.ds-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 16px;
+  margin-bottom: 16px;
+  flex-shrink: 0;
+}
+
+.ds-header-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.ds-header-icon {
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  border-radius: 16px;
+  color: #fff;
+  font-size: 1.5rem;
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
+  animation: dsIconPulse 2s ease-in-out infinite;
+}
+
+@keyframes dsIconPulse {
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.ds-header-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ds-page-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+  background: linear-gradient(135deg, #1e293b 0%, #475569 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.ds-page-subtitle {
+  font-size: 0.9rem;
+  color: #64748b;
+  margin: 0;
+}
+
+/* Dark Mode Header */
+.dashboard.dark .ds-page-title {
+  background: linear-gradient(135deg, #e2e8f0 0%, #94a3b8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.dashboard.dark .ds-page-subtitle {
+  color: #94a3b8;
+}
 
 /* ===== Cards ===== */
-.ds-cards{display:grid;grid-template-columns:repeat(4,minmax(220px,1fr));gap:16px;margin-bottom:16px;}
-.ds-card{position:relative;border-radius:10px;padding:14px 16px 38px;color:#fff;box-shadow:0 4px 14px rgba(0,0,0,.12);}
-.ds-card .ds-card-value{font-size:22px;font-weight:800;}
-.ds-card .ds-card-sub{font-size:12px;opacity:.95;margin-top:6px;}
-.ds-card .ds-card-pill{position:absolute;right:14px;top:14px;width:32px;height:32px;border-radius:999px;background:rgba(255,255,255,.35);}
-.ds-card .ds-card-footer{position:absolute;left:16px;right:16px;bottom:10px;display:flex;align-items:center;justify-content:space-between;font-size:12px;opacity:.95;}
-.ds-card.blue{background:var(--blue);} .ds-card.green{background:var(--green);} .ds-card.orange{background:var(--orange);} .ds-card.red{background:var(--red);}
+.ds-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 20px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.ds-card {
+  position: relative;
+  border-radius: 16px;
+  padding: 20px 18px 44px;
+  color: #fff;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .15);
+  min-width: 0;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.ds-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0) 50%);
+  pointer-events: none;
+}
+
+.ds-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, .25);
+}
+
+.ds-card .ds-card-value {
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.ds-card .ds-card-sub {
+  font-size: 13px;
+  font-weight: 500;
+  opacity: 0.95;
+  margin-top: 4px;
+  letter-spacing: 0.3px;
+}
+
+.ds-card .ds-card-pill {
+  position: absolute;
+  right: 16px;
+  top: 16px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, background 0.3s ease;
+}
+
+.ds-card:hover .ds-card-pill {
+  transform: scale(1.1) rotate(5deg);
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.ds-card .ds-card-footer {
+  position: absolute;
+  left: 18px;
+  right: 18px;
+  bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  font-weight: 500;
+  opacity: 0.9;
+}
+
+.ds-card .ds-card-detail {
+  font-weight: 600;
+  opacity: 0.85;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.ds-card:hover .ds-card-detail {
+  opacity: 1;
+  transform: translateX(2px);
+}
+
+/* Modern gradient backgrounds */
+.ds-card.blue {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 50%, #1e40af 100%);
+}
+
+.ds-card.green {
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 50%, #15803d 100%);
+}
+
+.ds-card.orange {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 50%, #b45309 100%);
+}
+
+.ds-card.red {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 50%, #b91c1c 100%);
+}
 
 /* ===== Panels ===== */
-.ds-panels{display:grid;grid-template-columns:1.35fr 1fr;gap:16px;}
-.panel-combo{
-  background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,.04);
-  height:360px;display:flex;flex-direction:column;min-height:0;margin-top:16px;
+.ds-panels {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr;
+  gap: 16px;
 }
 
-/* === Header panel gabungan (kiri: perbulan + legend + filter, kanan: judul pertahun) === */
-.panel-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--line);font-weight:700;color:#5f6f84;}
-.panel-header--chart{display:grid;grid-template-columns:1fr auto;column-gap:16px;align-items:center;}
-.ph-leftwrap{display:grid;grid-template-columns:auto 1fr auto;align-items:center;column-gap:16px;}
-.ph-title{font-weight:800;color:#2f3f59;font-size:18px;}
-.legend--pills{display:flex;align-items:center;}
-.legend-text{font-weight:800;color:#2f3f59;font-size:14px;margin-left:8px;}
-.pill{width:36px;height:14px;border-radius:8px;display:inline-block;box-shadow:inset 0 1px 0 rgba(255,255,255,.45), inset 0 -1px 0 rgba(0,0,0,.08);border:1px solid rgba(0,0,0,.08);}
-.pill-2024{background:#f6b21c;} .pill-2025{background:#1560d9;}
-.ph-filter{justify-self:end;display:flex;align-items:center;gap:8px;}
-.filter-label{font-size:11px;color:#8a97a9;font-weight:700;line-height:1;}
-.chart-filter{font-size:12px;padding:6px 10px;border:1px solid var(--line);border-radius:8px;background:#fff;color:#5f6f84;outline:none;}
-.ph-righttitle{justify-self:end;font-weight:800;color:#2f3f59;font-size:18px;}
+.panel-combo {
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  height: 380px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  margin-top: 20px;
+  overflow: hidden;
+}
+
+/* === Header panel === */
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--line);
+  background: var(--bg-card);
+}
+
+.panel-header--chart {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ph-leftwrap {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.ph-title {
+  font-weight: 700;
+  color: var(--text-primary);
+  font-size: 16px;
+  margin: 0;
+}
+
+.legend--pills {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.legend-text {
+  font-weight: 600;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.pill {
+  width: 28px;
+  height: 10px;
+  border-radius: 5px;
+  display: inline-block;
+}
+
+.pill-2024 {
+  background: #f59e0b;
+}
+
+.pill-2025 {
+  background: #3b82f6;
+}
+
+.ph-filter {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.filter-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.chart-filter {
+  font-size: 13px;
+  padding: 8px 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.chart-filter:hover {
+  border-color: #f59e0b;
+}
+
+.ph-righttitle {
+  font-weight: 700;
+  color: var(--text-primary);
+  font-size: 16px;
+}
 
 /* === Body panel === */
-.pc-body{flex:1;min-height:0;display:grid;grid-template-columns:1.6fr 1fr;gap:16px;padding:12px;}
-.mini-title{display:none;} /* judul pertahun dipindah ke header */
-
-/* >>> BAWAH: sejajar dengan panel-combo, jarak lebih lega */
-.ds-panels--bottom{
-  grid-template-columns:0.9fr 2.1fr;
-  gap:18px;         
-  margin-top:22px;
-  padding:0;
+.pc-body {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 24px;
+  padding: 20px 24px;
+  background: var(--bg-card);
 }
-.ds-panel{
-  background:#fff;border-radius:10px;border:1px solid var(--line);box-shadow:0 2px 10px rgba(0,0,0,.04);
-  display:flex;flex-direction:column;min-height:0;height:auto;
+
+.pc-col {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
-.ds-panel.tall{height:auto;}
-.panel-body{flex:1;min-height:0;padding:16px;overflow:visible;}
 
-/* ===== Donut ===== */
-.donut-wrap{position:relative;display:grid;grid-template-rows:auto auto;justify-items:center;align-content:start;gap:14px;}
-.donut-box{position:relative;}
-.donut-center{position:absolute;inset:0;display:grid;place-items:center;text-align:center;pointer-events:none;}
-.dc-top{font-size:12px;color:#7b8aa0;}
-.dc-big{font-weight:800;color:#2f3f59;font-size:18px;}
-.dc-sub{font-size:12px;color:#7b8aa0;margin-top:2px;}
-.donut-legend{list-style:none;margin:0;padding:0;width:100%;display:grid;gap:8px;}
-.donut-legend li{display:flex;align-items:center;gap:10px;color:#4b5b71;font-size:13px;}
-.donut-legend .dot{width:12px;height:12px;border-radius:999px;}
-.dl-label{min-width:64px;font-weight:700;}
-.dl-count{margin-left:auto;color:#2f3f59;font-weight:800;}
-.donut-pct{font-size:12px;font-weight:800;fill:#2f3f59;paint-order:stroke;stroke:#fff;stroke-width:3px;}
+.mini-title {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+  display: block;
+}
 
-/* ===== Table (kecil & tanpa scroll internal) ===== */
-.ds-table-wrap{height:auto;overflow:visible;border-radius:8px;}
-.ds-table{width:100%;border-collapse:separate;border-spacing:0;font-size:11px;}
-.ds-table thead th{position:sticky;top:0;background:#f6f8fb;z-index:1;text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);color:#5a6b82;font-weight:700;}
-.ds-table tbody td{padding:8px 10px;border-bottom:1px solid var(--line);color:#334155;}
-.badge{padding:2px 8px;border-radius:999px;font-weight:700;font-size:11px;}
-.badge.paid{background:#e7f6ec;color:#1e7a35;}
-.badge.pending{background:#fff4e5;color:#9a5f00;}
-.table-shell{display:flex;flex-direction:column;height:auto;min-height:0;}
-.table-controls{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:12px;}
-.table-buttons{display:flex;gap:8px;}
-.btn{display:inline-flex;align-items:center;justify-content:center;padding:6px 10px;border:1px solid var(--line);border-radius:8px;background:#fff;font-weight:700;font-size:12px;cursor:pointer;}
-.btn:hover{background:#f6f8fb;}
-.btn-green{background:#e7f6ec;border-color:#cfe9d6;}
-.btn-green:hover{background:#dcf2e4;}
-.tc-right{display:flex;align-items:center;gap:6px;padding:4px 8px;border:1px solid var(--line);border-radius:8px;background:#fff;}
-.tc-right input{border:0;outline:none;font-size:12px;}
-.aksi-link{padding:4px 10px;border:1px solid var(--line);background:#fff;border-radius:8px;cursor:pointer;font-size:12px;font-weight:700;}
-.table-footer{display:flex;justify-content:space-between;align-items:center;padding-top:8px;}
-.table-footer .tf-right{display:flex;align-items:center;gap:8px;}
-.pager{gap:6px;}
-.pager .ellipsis{padding:0 4px;color:#6b7a8e;}
-.pager button{padding:6px 10px;border:1px solid var(--line);background:#fff;border-radius:8px;cursor:pointer;}
-.pager button.active{background:#1560d9;color:#fff;border-color:#1560d9;}
+/* judul pertahun dipindah ke header */
+
+/* >>> BOTTOM PANELS: Metode Pembayaran + Transaksi Terbaru */
+.ds-panels--bottom {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 20px;
+  margin-top: 24px;
+}
+
+.ds-panel {
+  background: var(--bg-card);
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.ds-panel .panel-body {
+  flex: 1;
+  min-height: 0;
+  padding: 20px;
+}
+
+.ds-panel .mini-title {
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--line);
+}
+
+/* ===== Donut Chart ===== */
+.donut-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.donut-box {
+  position: relative;
+}
+
+.donut-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  pointer-events: none;
+}
+
+.dc-top {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.dc-big {
+  font-weight: 700;
+  color: var(--text-primary);
+  font-size: 22px;
+  margin: 4px 0;
+}
+
+.dc-sub {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.donut-legend {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.donut-legend li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: transparent;
+  border-radius: 10px;
+  transition: all 0.2s ease;
+}
+
+.donut-legend li:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.donut-legend .dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.dl-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.dl-label {
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--text-primary);
+}
+
+.dl-sub {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.dl-count {
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.donut-pct {
+  font-size: 11px;
+  font-weight: 700;
+  fill: var(--text-primary);
+}
+
+/* ===== Modern Chart Styling ===== */
+.chart-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.chart-svg {
+  width: 100%;
+  height: auto;
+  flex: 1;
+}
+
+.chart-legend {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  padding: 12px 0;
+}
+
+.chart-legend .legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.chart-legend .legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.chart-legend .legend-text {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+/* Donut Modern Styling */
+.donut-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.donut-chart-container {
+  display: flex;
+  justify-content: center;
+}
+
+.donut-legend {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.donut-legend li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: transparent;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.donut-legend li:hover,
+.donut-legend li.active {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.donut-legend .dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.donut-legend .dl-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.donut-legend .dl-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.donut-legend .dl-sub {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.donut-legend .dl-count {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* ===== Table - Clean Style ===== */
+.ds-table-wrap {
+  height: auto;
+  overflow: visible;
+  border-radius: 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+}
+
+.ds-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.ds-table thead th {
+  position: sticky;
+  top: 0;
+  background: var(--bg);
+  z-index: 1;
+  text-align: left;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--line);
+  color: var(--text-secondary);
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.ds-table tbody tr {
+  transition: background 0.15s ease;
+}
+
+.ds-table tbody tr:hover {
+  background: var(--bg);
+}
+
+.ds-table tbody td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--line);
+  color: var(--text-primary);
+}
+
+.ds-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Badge Styles */
+.badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 11px;
+}
+
+.badge.paid {
+  background: rgba(34, 197, 94, 0.15);
+  color: #16a34a;
+}
+
+.badge.pending {
+  background: rgba(245, 158, 11, 0.15);
+  color: #d97706;
+}
+
+/* Dark mode table */
+.dashboard.dark .ds-table-wrap {
+  background: var(--bg-card);
+  border-color: var(--line);
+}
+
+.dashboard.dark .ds-table thead th {
+  background: var(--bg);
+  border-bottom-color: var(--line);
+  color: var(--text-secondary);
+}
+
+.dashboard.dark .ds-table tbody tr:hover {
+  background: var(--bg);
+}
+
+.dashboard.dark .ds-table tbody td {
+  border-bottom-color: var(--line);
+  color: var(--text-primary);
+}
+
+.table-shell {
+  display: flex;
+  flex-direction: column;
+  height: auto;
+  min-height: 0;
+}
+
+.table-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  gap: 12px;
+}
+
+.table-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  font-weight: 700;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background: #f6f8fb;
+}
+
+.btn-green {
+  background: #e7f6ec;
+  border-color: #cfe9d6;
+}
+
+.btn-green:hover {
+  background: #dcf2e4;
+}
+
+.tc-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.tc-right input {
+  border: 0;
+  outline: none;
+  font-size: 12px;
+}
+
+.aksi-link {
+  padding: 4px 10px;
+  border: 1px solid var(--line);
+  background: #fff;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.table-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 8px;
+}
+
+.table-footer .tf-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pager {
+  gap: 6px;
+}
+
+.pager .ellipsis {
+  padding: 0 4px;
+  color: #6b7a8e;
+}
+
+.pager button {
+  padding: 6px 10px;
+  border: 1px solid var(--line);
+  background: #fff;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.pager button.active {
+  background: #1560d9;
+  color: #fff;
+  border-color: #1560d9;
+}
 
 /* ===== Responsive ===== */
-@media (max-width:1200px){
-  .ds-cards{grid-template-columns:repeat(2,1fr);}
-  .ds-panels{grid-template-columns:1fr;}
-  .panel-combo{height:auto;}
-  .pc-body{grid-template-columns:1fr;}
-  .ds-panels--bottom{grid-template-columns:1fr;gap:18px;margin-top:18px;padding:0;}
+@media (max-width:1200px) {
+  .ds-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .ds-panels {
+    grid-template-columns: 1fr;
+  }
+
+  .panel-combo {
+    height: auto;
+  }
+
+  .pc-body {
+    grid-template-columns: 1fr;
+  }
+
+  .ds-panels--bottom {
+    grid-template-columns: 1fr;
+    gap: 18px;
+    margin-top: 18px;
+    padding: 0;
+  }
 }
-@media (max-width:768px){
-  .dashboard{grid-template-columns:10px 1fr;}
+
+@media (max-width:768px) {
+  .dashboard {
+    grid-template-columns: 10px 1fr;
+  }
 }
 
 /* === OVERRIDE: hilangkan garis abu-abu pembatas header di kartu
    Penjualan Perbulan & Penjualan Pertahun (panel gabungan) === */
-.panel-combo .panel-header{
+.panel-combo .panel-header {
   border-bottom: 0;
 }
 
 /* (opsional) beri sedikit jarak supaya header tidak terlalu rapat */
-.panel-combo .panel-header { padding-bottom: 10px; }
+.panel-combo .panel-header {
+  padding-bottom: 10px;
+}
 
 /* --- PANJANGKAN KARTU BAWAH + TAMPILKAN TITLE DI ATAS --- */
-.ds-panels--bottom .ds-panel{
-  min-height: 560px;            /* tinggi minimum kartu bawah (perpanjang) */
+.ds-panels--bottom .ds-panel {
+  min-height: 560px;
+  /* tinggi minimum kartu bawah (perpanjang) */
   display: flex;
 }
-.ds-panels--bottom {            /* beri jarak bawah global */
+
+.ds-panels--bottom {
+  /* beri jarak bawah global */
   margin-bottom: 18px;
 }
-.ds-panels--bottom .panel-body{
-  padding: 14px 16px 18px;      /* ruang atas/kanan/kiri/bawah yang proporsional */
+
+.ds-panels--bottom .panel-body {
+  padding: 14px 16px 18px;
+  /* ruang atas/kanan/kiri/bawah yang proporsional */
   display: flex;
   flex-direction: column;
   height: 100%;
 }
 
 /* Judul di atas isi kartu: tampil & dibesarkan */
-.ds-panels--bottom .mini-title{
-  display: block;               /* override: tadinya hidden */
+.ds-panels--bottom .mini-title {
+  display: block;
+  /* override: tadinya hidden */
   font-weight: 800;
   color: #2f3f59;
   font-size: 18px;
-  margin: 2px 0 12px;           /* jarak judul ke konten */
+  margin: 2px 0 12px;
+  /* jarak judul ke konten */
 }
 
 /* Pusatkan header & data hanya untuk tabel "Transaksi Terbaru" (panel kanan bawah) */
 .ds-panels--bottom .ds-panel:nth-child(2) .ds-table thead th,
-.ds-panels--bottom .ds-panel:nth-child(2) .ds-table tbody td{
+.ds-panels--bottom .ds-panel:nth-child(2) .ds-table tbody td {
   text-align: center !important;
 }
 
-.ds-panels--bottom .ds-panel:nth-child(2) .ds-table tbody td{
-  vertical-align: middle; /* tombol Detail juga pas di tengah */
+.ds-panels--bottom .ds-panel:nth-child(2) .ds-table tbody td {
+  vertical-align: middle;
+  /* tombol Detail juga pas di tengah */
 }
 
 /* Legend Metode Pembayaran: layout 3 kolom (dot | label+sub | count) */
-.donut-legend li{
+.donut-legend li {
   display: grid;
-  grid-template-columns: 14px 1fr auto; /* dot | teks | jumlah */
+  grid-template-columns: 14px 1fr auto;
+  /* dot | teks | jumlah */
   align-items: center;
   column-gap: 10px;
 }
 
 /* Blok teks (label + subteks) */
-.dl-text{
+.dl-text {
   display: flex;
   flex-direction: column;
   line-height: 1.1;
 }
 
 /* Label metode */
-.dl-label{
+.dl-label {
   font-weight: 800;
-  min-width: 0;          /* override aturan lama yang memaksa lebar tetap */
+  min-width: 0;
+  /* override aturan lama yang memaksa lebar tetap */
 }
 
 /* Subteks "Jumlah Transaksi Sebanyak" menempel ke tiap label */
-.dl-sub{
+.dl-sub {
   font-size: 12px;
   color: #7b8aa0;
   margin-top: 2px;
 }
 
 /* Jumlah di sisi kanan */
-.dl-count{
+.dl-count {
   margin-left: 0;
   font-weight: 800;
   color: #2f3f59;
 }
 
 /* Buat legend memenuhi tinggi sisa kartu & item tersebar merata */
-.donut-wrap{
-  grid-template-rows: auto 1fr;     /* chart di atas, legend ambil sisa tinggi */
+.donut-wrap {
+  grid-template-rows: auto 1fr;
+  /* chart di atas, legend ambil sisa tinggi */
   align-content: stretch;
 }
 
-.donut-legend{
-  display: flex;                     /* dari grid -> flex kolom */
+.donut-legend {
+  display: flex;
+  /* dari grid -> flex kolom */
   flex-direction: column;
-  justify-content: space-between;    /* sebar rata dari atas ke bawah */
+  justify-content: space-between;
+  /* sebar rata dari atas ke bawah */
   height: 100%;
-  gap: 0;                            /* biar jaraknya dikontrol oleh space-between */
+  gap: 0;
+  /* biar jaraknya dikontrol oleh space-between */
   margin-top: 6px;
 }
 
 /* Sedikit padding tiap baris agar tetap lega */
-.donut-legend li{
+.donut-legend li {
   padding: 6px 0;
 }
 
 /* Metode Pembayaran: donut + legend */
-.ds-panels--bottom .ds-panel:first-child .donut-wrap{
+.ds-panels--bottom .ds-panel:first-child .donut-wrap {
   grid-template-rows: auto auto;
-  gap: 8px;                 /* kurangi gap supaya legend lebih dekat ke donut (naik sedikit) */
+  gap: 8px;
+  /* kurangi gap supaya legend lebih dekat ke donut (naik sedikit) */
 }
 
 /* Legend: Cash / Debit / Kredit / Qris */
-.ds-panels--bottom .ds-panel:first-child .donut-legend{
+.ds-panels--bottom .ds-panel:first-child .donut-legend {
   display: flex;
   flex-direction: column;
   justify-content: initial !important;
-  gap: 6px;                 /* sebelumnya 16px → sekarang lebih bedempet */
-  padding: 4px 0 6px;       /* kurangi padding atas & bawah supaya naik sedikit */
+  gap: 6px;
+  /* sebelumnya 16px → sekarang lebih bedempet */
+  padding: 4px 0 6px;
+  /* kurangi padding atas & bawah supaya naik sedikit */
   height: auto;
 }
 
-.ds-panels--bottom .ds-panel:first-child .donut-legend li{
-  padding: 4px 0;           /* sebelumnya 8px → baris lebih rapat */
+.ds-panels--bottom .ds-panel:first-child .donut-legend li {
+  padding: 4px 0;
+  /* sebelumnya 8px → baris lebih rapat */
   min-height: 0;
 }
 
 /* === Keep card height auto (jangan ikut dipanjangin) === */
-.ds-panels--bottom .ds-panel{
+.ds-panels--bottom .ds-panel {
   height: auto !important;
 }
-.ds-panels--bottom .panel-body{
+
+.ds-panels--bottom .panel-body {
   flex: initial !important;
 }
 
 /* === Metode Pembayaran: atur jarak legend TANPA mempengaruhi tinggi card === */
-.ds-panels--bottom .ds-panel:first-child .donut-wrap{
-  grid-template-rows: auto auto;       /* donut + legend biasa (tidak dipaksa 1fr) */
-  margin-top: 15px;                     /* TURUNKAN SEDIKIT POSISI DONUT */
+.ds-panels--bottom .ds-panel:first-child .donut-wrap {
+  grid-template-rows: auto auto;
+  /* donut + legend biasa (tidak dipaksa 1fr) */
+  margin-top: 15px;
+  /* TURUNKAN SEDIKIT POSISI DONUT */
 }
 
-.ds-panels--bottom .ds-panel:first-child .donut-legend{
+.ds-panels--bottom .ds-panel:first-child .donut-legend {
   display: flex;
   flex-direction: column;
-  justify-content: initial !important;  /* matikan space-evenly yg bikin card ikut tinggi */
-  gap: 16px;                            /* jarak antar item (aman, tidak menambah tinggi card berlebih) */
+  justify-content: initial !important;
+  /* matikan space-evenly yg bikin card ikut tinggi */
+  gap: 16px;
+  /* jarak antar item (aman, tidak menambah tinggi card berlebih) */
   padding: 8px 0 10px;
-  height: auto;                         /* jangan ambil sisa tinggi */
+  height: auto;
+  /* jangan ambil sisa tinggi */
 }
 
-.ds-panels--bottom .ds-panel:first-child .donut-legend li{
-  padding: 8px 0;                       /* nafas tiap baris, tetap irit tinggi */
-  min-height: 0;                        /* netralkan min-height besar sebelumnya */
+.ds-panels--bottom .ds-panel:first-child .donut-legend li {
+  padding: 8px 0;
+  /* nafas tiap baris, tetap irit tinggi */
+  min-height: 0;
+  /* netralkan min-height besar sebelumnya */
 }
 
 /* Sembunyikan kontrol periode di grafik */
 .chart-overlay,
 .chart-overlay .filter-label,
-.chart-overlay .chart-filter{
+.chart-overlay .chart-filter {
   display: none !important;
 }
 
 /* === Filter Periode: muncul di pojok kanan atas grafik bulanan === */
-.chart-container { position: relative; }
+.chart-container {
+  position: relative;
+}
 
-.chart-overlay{
+.chart-overlay {
   position: absolute;
-  top: 6px;            /* di atas garis chart */
-  right: 10px;         /* pojok kanan */
+  top: 6px;
+  /* di atas garis chart */
+  right: 10px;
+  /* pojok kanan */
   display: flex !important;
   flex-direction: column;
   align-items: flex-end;
@@ -519,15 +1348,15 @@ html,body{
   z-index: 2;
 }
 
-.chart-overlay .filter-label{ 
+.chart-overlay .filter-label {
   display: block !important;
-  font-size: 11px; 
-  color: #8a97a9; 
-  font-weight: 700; 
+  font-size: 11px;
+  color: #8a97a9;
+  font-weight: 700;
   line-height: 1;
 }
 
-.chart-overlay .chart-filter{
+.chart-overlay .chart-filter {
   display: block !important;
   font-size: 12px;
   padding: 6px 10px;
@@ -539,14 +1368,16 @@ html,body{
 }
 
 /* Naikkan area overlay di Penjualan Perbulan agar berada di atas grafik */
-.chart-container{
+.chart-container {
   position: relative;
-  padding-top: 42px;     /* beri ruang di atas SVG utk label+select */
+  padding-top: 42px;
+  /* beri ruang di atas SVG utk label+select */
 }
 
-.chart-overlay{
+.chart-overlay {
   position: absolute;
-  top: 6px;              /* pojok kanan, di dalam ruang padding tadi */
+  top: 6px;
+  /* pojok kanan, di dalam ruang padding tadi */
   right: 10px;
   display: flex !important;
   flex-direction: column;
@@ -554,68 +1385,84 @@ html,body{
   gap: 6px;
   z-index: 2;
 }
-@media (max-width: 1200px){
-  .chart-container{ padding-top: 48px; }  /* sedikit ekstra di layar kecil */
+
+@media (max-width: 1200px) {
+  .chart-container {
+    padding-top: 48px;
+  }
+
+  /* sedikit ekstra di layar kecil */
 }
 
 /* === Samakan top chart: bulanan = tahunan === */
 /* Hilangkan padding atas di chart bulanan agar plot area naik sejajar */
-.pc-body .pc-col:first-child .chart-container{
-  padding-top: 0 !important;   /* override aturan sebelumnya */
+.pc-body .pc-col:first-child .chart-container {
+  padding-top: 0 !important;
+  /* override aturan sebelumnya */
   position: relative;
 }
 
 /* Taruh label + select di atas plot area (tidak menimpa grafik) */
-.pc-body .pc-col:first-child .chart-overlay{
+.pc-body .pc-col:first-child .chart-overlay {
   position: absolute;
-  top: -30px;                  /* angkat ke atas — sejajarkan dengan chart kanan */
+  top: -30px;
+  /* angkat ke atas — sejajarkan dengan chart kanan */
   right: 10px;
   z-index: 3;
 }
 
 /* (opsional) di layar lebih kecil, angkat sedikit lagi agar tetap rapi */
-@media (max-width: 1200px){
-  .pc-body .pc-col:first-child .chart-overlay{ top: -32px; }
+@media (max-width: 1200px) {
+  .pc-body .pc-col:first-child .chart-overlay {
+    top: -32px;
+  }
 }
 
 /* Naikkan lagi posisi "Pilih Periode" + select di grafik bulanan */
-.pc-body .pc-col:first-child .chart-overlay{
-  top: -40px;        /* sebelumnya -30 / -32; dinaikkan agar tak menimpa garis */
+.pc-body .pc-col:first-child .chart-overlay {
+  top: -40px;
+  /* sebelumnya -30 / -32; dinaikkan agar tak menimpa garis */
   right: 10px;
 }
 
 /* (opsional) beri jarak antar label & select biar ringkas */
-.pc-body .pc-col:first-child .chart-overlay{ gap: 4px; }
+.pc-body .pc-col:first-child .chart-overlay {
+  gap: 4px;
+}
 
 /* Sembunyikan overlay filter (jika ada) di chart Penjualan Pertahun (kolom kanan) */
 .pc-body .pc-col:last-child .chart-overlay,
 .pc-body .pc-col:last-child .chart-overlay .filter-label,
-.pc-body .pc-col:last-child .chart-overlay .chart-filter{
+.pc-body .pc-col:last-child .chart-overlay .chart-filter {
   display: none !important;
 }
 
 /* Pastikan overlay tetap tampil di Penjualan Perbulan (kolom kiri) */
-.pc-body .pc-col:first-child .chart-overlay{
+.pc-body .pc-col:first-child .chart-overlay {
   display: flex !important;
 }
 
 /* === Overlay Penjualan Perbulan: label di atas, legend di kiri, select di kanan === */
-.chart-container { position: relative; }
+.chart-container {
+  position: relative;
+}
 
 /* posisi overlay (pojok kanan atas grafik bulanan) */
-.chart-overlay{
+.chart-overlay {
   position: absolute;
   right: 10px;
-  top: -40px;                /* sesuaikan kalau perlu: -38/-42 */
+  top: -40px;
+  /* sesuaikan kalau perlu: -38/-42 */
   display: flex !important;
-  flex-direction: column;    /* label di atas, baris di bawahnya */
+  flex-direction: column;
+  /* label di atas, baris di bawahnya */
   align-items: flex-end;
   gap: 6px;
   z-index: 3;
 }
 
 /* label kecil di atas select */
-.chart-overlay .filter-label{
+.chart-overlay .filter-label {
   font-size: 11px;
   font-weight: 700;
   color: #8a97a9;
@@ -623,162 +1470,190 @@ html,body{
 }
 
 /* baris legend + select: JANGAN WRAP */
-.chart-overlay .filter-row{
+.chart-overlay .filter-row {
   display: flex;
   align-items: center;
   gap: 12px;
-  flex-wrap: nowrap;         /* <— kunci agar tidak membungkus */
-  white-space: nowrap;       /* <— pastikan tetap satu baris */
+  flex-wrap: nowrap;
+  /* <— kunci agar tidak membungkus */
+  white-space: nowrap;
+  /* <— pastikan tetap satu baris */
 }
 
 /* legend di kiri select */
-.chart-overlay .overlay-legend{
+.chart-overlay .overlay-legend {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  flex: 0 0 auto;            /* ukuran sesuai konten, tidak melebar */
+  flex: 0 0 auto;
+  /* ukuran sesuai konten, tidak melebar */
   white-space: nowrap;
 }
 
 /* pastikan "pill" tidak menyebabkan wrap aneh */
-.chart-overlay .overlay-legend .pill{
+.chart-overlay .overlay-legend .pill {
   display: inline-block;
-  width: 26px; height: 12px; /* atau ukuran pill yang kamu pakai */
+  width: 26px;
+  height: 12px;
+  /* atau ukuran pill yang kamu pakai */
   border-radius: 6px;
 }
 
 /* teks legend */
-.chart-overlay .overlay-legend .legend-text{
+.chart-overlay .overlay-legend .legend-text {
   font-size: 12px;
   font-weight: 700;
   color: #4b5b71;
 }
 
 /* select jangan melar sehingga mendorong legend */
-.chart-overlay .chart-filter{
+.chart-overlay .chart-filter {
   flex: 0 0 auto;
 }
 
 /* Sembunyikan legend yang lama di header bila masih ada */
-.panel-header--chart .legend--pills{ display: none !important; }
+.panel-header--chart .legend--pills {
+  display: none !important;
+}
 
 /* Besarkan ukuran "button warna" (pill) di legend overlay grafik bulanan */
-.chart-overlay .overlay-legend{
-  gap: 10px;                      /* jarak antar item legend */
+.chart-overlay .overlay-legend {
+  gap: 10px;
+  /* jarak antar item legend */
 }
-.chart-overlay .filter-row{
-  gap: 16px;                      /* jarak legend <-> select */
+
+.chart-overlay .filter-row {
+  gap: 16px;
+  /* jarak legend <-> select */
 }
-.chart-overlay .overlay-legend .pill{
-  width: 40px;                    /* <— besar pill */
-  height: 16px;                   /* <— tinggi pill */
-  border-radius: 999px;           /* kapsul */
+
+.chart-overlay .overlay-legend .pill {
+  width: 40px;
+  /* <— besar pill */
+  height: 16px;
+  /* <— tinggi pill */
+  border-radius: 999px;
+  /* kapsul */
   display: inline-block;
-  box-shadow: inset 0 -1px 0 rgba(0,0,0,.15); /* sedikit depth */
-  transform: translateY(1px);     /* biar sejajar dengan teks */
+  box-shadow: inset 0 -1px 0 rgba(0, 0, 0, .15);
+  /* sedikit depth */
+  transform: translateY(1px);
+  /* biar sejajar dengan teks */
 }
-.chart-overlay .overlay-legend .legend-text{
-  font-size: 13px;                /* teks ikut sedikit lebih besar */
+
+.chart-overlay .overlay-legend .legend-text {
+  font-size: 13px;
+  /* teks ikut sedikit lebih besar */
   font-weight: 700;
 }
 
 /* (opsional) kalau di layar kecil terasa sempit, sedikit dikecilkan */
-@media (max-width: 1200px){
-  .chart-overlay .overlay-legend .pill{ width: 34px; height: 14px; }
+@media (max-width: 1200px) {
+  .chart-overlay .overlay-legend .pill {
+    width: 34px;
+    height: 14px;
+  }
 }
 
 /* Sembunyikan title kanan di header (kita pindah ke dalam chart kanan) */
-.panel-header--chart .ph-righttitle{
+.panel-header--chart .ph-righttitle {
   display: none !important;
 }
 
 /* Sembunyikan title kanan di header (kita pindah ke dalam chart kanan) */
-.panel-header--chart .ph-righttitle{
+.panel-header--chart .ph-righttitle {
   display: none !important;
 }
 
 /* TAMPILKAN kembali title kanan (Penjualan Pertahun) di header panel gabungan */
-.panel-header--chart .ph-righttitle{
+.panel-header--chart .ph-righttitle {
   display: block !important;
 }
 
 /* Pindahkan judul pertahun: sembunyikan title kanan di header */
-.panel-header--chart .ph-righttitle{
+.panel-header--chart .ph-righttitle {
   display: none !important;
 }
 
 /* Tampilkan judul "Penjualan Pertahun" di kiri atas area grafik pertahun */
-.panel-combo .pc-col:nth-child(2) .mini-title{
-  display: block !important;          /* override rule .mini-title {display:none} */
+.panel-combo .pc-col:nth-child(2) .mini-title {
+  display: block !important;
+  /* override rule .mini-title {display:none} */
   font-weight: 800;
   color: #2f3f59;
-  font-size: 18px;                     /* samakan ukuran dengan title */
-  margin: 0 0 8px;                     /* beri jarak ke grafik */
+  font-size: 18px;
+  /* samakan ukuran dengan title */
+  margin: 0 0 8px;
+  /* beri jarak ke grafik */
 }
 
 /* Sembunyikan judul kanan bawaan header */
-.panel-header--chart .ph-righttitle{
+.panel-header--chart .ph-righttitle {
   display: none !important;
 }
 
 /* Tampilkan & naikkan judul di kiri grafik pertahun agar sejajar header kiri */
-.panel-combo .pc-col:nth-child(2){ position: relative; }
-.panel-combo .pc-col:nth-child(2) .mini-title{
-  display: block !important;   /* override .mini-title { display:none } */
+.panel-combo .pc-col:nth-child(2) {
+  position: relative;
+}
+
+.panel-combo .pc-col:nth-child(2) .mini-title {
+  display: block !important;
+  /* override .mini-title { display:none } */
   font-weight: 800;
   color: #2f3f59;
   font-size: 18px;
   line-height: 1.2;
   margin: 0 0 8px;
-  transform: translateY(-28px); /* naikkan ~28px; sesuaikan -26/-30 jika perlu */
+  transform: translateY(-28px);
+  /* naikkan ~28px; sesuaikan -26/-30 jika perlu */
 }
 
-@media (max-width:1200px){
-  .panel-combo .pc-col:nth-child(2) .mini-title{ transform: translateY(-24px); }
+@media (max-width:1200px) {
+  .panel-combo .pc-col:nth-child(2) .mini-title {
+    transform: translateY(-24px);
+  }
 }
 
 /* Naikkan seluruh kolom kanan (title + grafik pertahun) agar sejajar header kiri */
-.panel-combo .pc-body .pc-col:nth-child(2){
-  margin-top: -18px;               /* geser ke atas; sesuaikan -16/-20 jika perlu */
+.panel-combo .pc-body .pc-col:nth-child(2) {
+  margin-top: -18px;
+  /* geser ke atas; sesuaikan -16/-20 jika perlu */
 }
 
 /* Rapatkan jarak title ke grafik & batalkan translate sebelumnya */
-.panel-combo .pc-col:nth-child(2) .mini-title{
-  transform: none !important;      /* override jika sebelumnya diangkat pakai translate */
-  margin: 0 0 6px;                  /* kecilkan jarak ke grafik */
-  display: block !important;        /* pastikan tampil */
+.panel-combo .pc-col:nth-child(2) .mini-title {
+  transform: none !important;
+  /* override jika sebelumnya diangkat pakai translate */
+  margin: 0 0 6px;
+  /* kecilkan jarak ke grafik */
+  display: block !important;
+  /* pastikan tampil */
 }
 
-@media (max-width:1200px){
-  .panel-combo .pc-body .pc-col:nth-child(2){ margin-top: -16px; }
+@media (max-width:1200px) {
+  .panel-combo .pc-body .pc-col:nth-child(2) {
+    margin-top: -16px;
+  }
 }
-/* 1) Matikan judul kanan bawaan header gabungan */
-.panel-header--chart .ph-righttitle{
-  display: none !important;
+
+/* 1) SHOW judul kanan di header untuk alignment yang sejajar */
+.panel-header--chart .ph-righttitle {
+  display: block !important;
+  font-weight: 700;
+  color: #f59e0b;
+  font-size: 16px;
 }
 
 /* 2) Pastikan kolom kanan (grafik pertahun) start di titik yang sama dgn kolom kiri */
-.panel-combo .pc-body .pc-col:nth-child(2){
+.panel-combo .pc-body .pc-col:nth-child(2) {
   margin-top: 0 !important;
-  position: relative;            /* anchor utk judul absolut */
+  position: relative;
 }
 
-/* 3) Taruh judul 'Penjualan Pertahun' di level yang sama dengan judul kiri */
-.panel-combo .pc-col:nth-child(2) .mini-title{
-  display: block !important;     /* override default .mini-title {display:none} */
-  position: absolute;
-  top: -44px;                    /* sejajarkan dengan 'Penjualan Perbulan' */
-  left: 0;
-  margin: 0;
-  line-height: 1;
-  font-weight: 800;
-  color: #2f3f59;
-  font-size: 18px;
-}
-
-/* (opsional) kalau masih beda 1–2px, geser halus: -42 / -46 */
-@media (max-width:1200px){
-  .panel-combo .pc-col:nth-child(2) .mini-title{ top: -42px; }
+/* 3) Hide mini-title di dalam body karena sudah ada di header */
+.panel-combo .pc-col:nth-child(2) .mini-title {
+  display: none !important;
 }
 
 .white-scrim {
@@ -786,48 +1661,54 @@ html,body{
   top: 0;
   left: 0;
   right: 0;
-  bottom: 0;              /* dulu bottom: var(--batik-strip); */
+  bottom: 0;
+  /* dulu bottom: var(--batik-strip); */
   background: #ffffff;
-  opacity: 0.96;          /* dari 0.9 → 0.96 */
+  opacity: 0.96;
+  /* dari 0.9 → 0.96 */
 }
 
 /* ===== Single Panel (full width) — gaya mirip panel-combo ===== */
-.panel-single{
-  background:#fff;
-  border:1px solid var(--line);
-  border-radius:10px;
-  box-shadow:0 2px 10px rgba(0,0,0,.04);
-  height:360px;                  /* samakan tinggi default */
-  display:flex;
-  flex-direction:column;
-  min-height:0;
-  margin-top:18px;               /* jarak dari panel bawah */
+.panel-single {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, .04);
+  height: 360px;
+  /* samakan tinggi default */
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  margin-top: 18px;
+  /* jarak dari panel bawah */
 }
 
 /* header sudah pakai .panel-header .panel-header--chart yang ada */
 
-.ps-body{
-  flex:1;
-  min-height:0;
-  padding:12px 16px;
-  display:grid;
-  place-items:center;            /* sementara: pusat placeholder */
+.ps-body {
+  flex: 1;
+  min-height: 0;
+  padding: 12px 16px;
+  display: grid;
+  place-items: center;
+  /* sementara: pusat placeholder */
 }
 
 /* Placeholder tampilan awal (boleh dihapus saat isi konten) */
-.ps-placeholder{
-  font-size:13px;
-  color:#7b8aa0;
-  border:1px dashed var(--line);
-  padding:18px 22px;
-  border-radius:10px;
-  background:#f9fbfe;
+.ps-placeholder {
+  font-size: 13px;
+  color: #7b8aa0;
+  border: 1px dashed var(--line);
+  padding: 18px 22px;
+  border-radius: 10px;
+  background: #f9fbfe;
 }
 
 /* Responsif: biar enak di layar kecil */
-@media (max-width:1200px){
-  .panel-single{
-    height:auto;                 /* biar fleksibel konten memanjang */
+@media (max-width:1200px) {
+  .panel-single {
+    height: auto;
+    /* biar fleksibel konten memanjang */
   }
 }
 
@@ -837,292 +1718,458 @@ html,body{
 }
 
 /* ===== Produk Terlaris (layout dua kolom: kiri tabel, kanan chart) ===== */
-.pt-grid{
-  width:100%;
-  display:grid;
+.pt-grid {
+  width: 100%;
+  display: grid;
   grid-template-columns: minmax(560px, 1.1fr) minmax(360px, 1fr);
-  gap:24px;
-  align-items:start;
+  gap: 24px;
+  align-items: start;
 }
 
-.pt-left{ min-width:0; }
-.pt-right{ min-width:0; display:flex; justify-content:center; }
+.pt-left {
+  min-width: 0;
+}
 
-.pt-chart-slot{
-  width:100%;
-  max-width:520px;
-  min-height:260px;           /* slot kosong supaya proporsional seperti gambar */
-  border-radius:12px;
-  background:transparent;     /* sengaja transparan; nanti diisi donut */
+.pt-right {
+  min-width: 0;
+  display: flex;
+  justify-content: center;
+}
+
+.pt-chart-slot {
+  width: 100%;
+  max-width: 520px;
+  min-height: 260px;
+  /* slot kosong supaya proporsional seperti gambar */
+  border-radius: 12px;
+  background: transparent;
+  /* sengaja transparan; nanti diisi donut */
 }
 
 /* Toolbar tombol di atas tabel (Copy | Excel) */
-.pt-toolbar{
-  display:flex;
-  gap:8px;
-  margin-bottom:10px;
+.pt-toolbar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
 }
-.btn{
+
+.btn {
   font: 500 12px/1 "Poppins", system-ui, Arial, sans-serif;
-  padding:8px 12px;
-  border-radius:8px;
-  border:1px solid var(--line);
-  background:#f1f5f9;
-  box-shadow:0 1px 0 rgba(0,0,0,.02);
-  cursor:pointer;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: #f1f5f9;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, .02);
+  cursor: pointer;
 }
-.btn-gray:hover{ filter:brightness(0.98); }
+
+.btn-gray:hover {
+  filter: brightness(0.98);
+}
 
 /* Bungkus tabel */
-.table-wrap{
-  border:1px solid var(--line);
-  border-radius:8px;
-  overflow:hidden;
-  background:#fff;
-  box-shadow:0 1.5px 8px rgba(0,0,0,.03);
+.table-wrap {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 1.5px 8px rgba(0, 0, 0, .03);
 }
 
 /* Tabel */
-.pt-table{
-  width:100%;
-  border-collapse:separate;
-  border-spacing:0;
-  font-size:13px;
-  color:#2b3b54;
+.pt-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 13px;
+  color: #2b3b54;
 }
-.pt-table thead th{
-  background:#f7fafc;
-  font-weight:600;
-  text-align:left;
-  padding:10px 12px;
-  border-bottom:1px solid var(--line);
+
+.pt-table thead th {
+  background: #f7fafc;
+  font-weight: 600;
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--line);
 }
-.pt-table tbody td{
-  padding:10px 12px;
-  border-bottom:1px solid #edf2f7;
+
+.pt-table tbody td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #edf2f7;
 }
-.pt-table tbody tr:last-child td{ border-bottom:none; }
+
+.pt-table tbody tr:last-child td {
+  border-bottom: none;
+}
 
 /* Kolom lebar seperti contoh */
-.pt-table .col-no{ width:44px; text-align:center; }
-.pt-table .col-img{ width:92px; }
+.pt-table .col-no {
+  width: 44px;
+  text-align: center;
+}
+
+.pt-table .col-img {
+  width: 92px;
+}
 
 /* “Gambar” placeholder bulat kapsul */
-.img-pill{
-  display:inline-flex; align-items:center; justify-content:center;
-  min-width:64px; height:28px; padding:0 10px;
-  border-radius:999px;
-  border:1px solid var(--line);
-  background:#f2f6fb;
-  font-size:12px; color:#66768f;
+.img-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 64px;
+  height: 28px;
+  padding: 0 10px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: #f2f6fb;
+  font-size: 12px;
+  color: #66768f;
 }
 
 /* Responsif: stack vertikal di layar sempit */
-@media (max-width: 1200px){
-  .pt-grid{
+@media (max-width: 1200px) {
+  .pt-grid {
     grid-template-columns: 1fr;
   }
-  .pt-chart-slot{
-    max-width:none; min-height:220px;
+
+  .pt-chart-slot {
+    max-width: none;
+    min-height: 220px;
   }
 }
 
 /* === Resize tabel Produk Terlaris agar pas di card === */
 
 /* Card boleh auto-height biar tidak “mendorong” layout */
-.panel-single{ height:auto; }
+.panel-single {
+  height: auto;
+}
 
 /* Grid: kolom kiri (tabel) dipersempit */
-.pt-grid{
+.pt-grid {
   grid-template-columns: minmax(440px, 0.9fr) minmax(420px, 1.1fr);
-  gap:20px;
+  gap: 20px;
 }
 
 /* Batasi lebar maksimal tabel */
-.pt-left{ min-width:0; justify-self:start; }
-.table-wrap{ max-width: 500px; }   /* <- sesuaikan kalau mau lebih kecil/besar */
+.pt-left {
+  min-width: 0;
+  justify-self: start;
+}
+
+.table-wrap {
+  max-width: 500px;
+}
+
+/* <- sesuaikan kalau mau lebih kecil/besar */
 
 /* Perkecil tipografi & padding tabel */
-.pt-table{ font-size:12px; }
-.pt-table thead th{ padding:8px 10px; }
-.pt-table tbody td{ padding:8px 10px; }
+.pt-table {
+  font-size: 12px;
+}
+
+.pt-table thead th {
+  padding: 8px 10px;
+}
+
+.pt-table tbody td {
+  padding: 8px 10px;
+}
 
 /* Perkecil lebar kolom */
-.pt-table .col-no{ width:38px; }
-.pt-table .col-img{ width:84px; }
+.pt-table .col-no {
+  width: 38px;
+}
+
+.pt-table .col-img {
+  width: 84px;
+}
 
 /* Perkecil “Gambar” pill */
-.img-pill{
-  min-width:56px; height:24px; padding:0 8px; font-size:11px;
+.img-pill {
+  min-width: 56px;
+  height: 24px;
+  padding: 0 8px;
+  font-size: 11px;
 }
 
 /* Sedikit rapatkan toolbar */
-.pt-toolbar{ gap:6px; margin-bottom:8px; }
-.btn{ padding:6px 10px; font-size:11.5px; }
+.pt-toolbar {
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.btn {
+  padding: 6px 10px;
+  font-size: 11.5px;
+}
 
 /* Jaga tetap rapi di layar sempit */
-@media (max-width:1200px){
-  .pt-grid{ grid-template-columns:1fr; }
-  .table-wrap{ max-width:none; }
+@media (max-width:1200px) {
+  .pt-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .table-wrap {
+    max-width: none;
+  }
 }
 
 /* 1) Kembalikan tinggi card seperti panel chart lain */
-.panel-single{ 
-  height:360px !important;   /* samakan dengan tinggi card sebelumnya */
+.panel-single {
+  height: 360px !important;
+  /* samakan dengan tinggi card sebelumnya */
 }
 
 /* 2) Pastikan isi card tidak dipusatkan */
-.panel-single .ps-body{
-  display:block;
-  padding:12px 16px;
-}
-
-/* 3) Kolom kiri (tabel) fleksibel vertikal */
-.pt-left{
-  display:flex;
-  flex-direction:column;
-  min-width:0;
-}
-
-/* 4) Tabel mengikuti tinggi card (bukan sebaliknya) */
-.table-wrap{
-  flex:1;
-  min-height:0;
-  /* 360 - header(±56) - padding(24) - toolbar(±32) = ~248px tersedia */
-  max-height:248px;
-  overflow:auto;             /* jika baris > muat, tabel yang scroll */
-}
-
-/* (opsional) rapatkan baris agar muat 10 item tanpa mengubah tinggi card */
-.pt-table{ font-size:12px; }
-.pt-table thead th{ padding:7px 10px; }
-.pt-table tbody td{ padding:7px 10px; }
-
-/* Produk Terlaris: tabel mengikuti tinggi Transaksi Terbaru */
-.panel-single{ height:360px; }               /* samakan tinggi card bawah */
-.panel-single .ps-body{ padding:12px 16px; }
-
-.pt-left .table-wrap{
-  max-height:none !important; /* jangan dibatasi oleh aturan sebelumnya */
-  height:auto;                /* akan di-set inline oleh JS */
-  overflow:auto;              /* jika baris lebih banyak, scroll di dalam */
-}
-
-/* === Produk Terlaris: tampilkan 10 baris penuh tanpa scroll === */
-.panel-single { 
-  height: auto !important;           /* card ikut tinggi konten */
-}
-
-.panel-single .ps-body{
-  display: block;                     /* pastikan bukan grid-center */
+.panel-single .ps-body {
+  display: block;
   padding: 12px 16px;
 }
 
-.pt-left .table-wrap{
-  height: auto !important;            /* lepaskan batas tinggi */
+/* 3) Kolom kiri (tabel) fleksibel vertikal */
+.pt-left {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* 4) Tabel mengikuti tinggi card (bukan sebaliknya) */
+.table-wrap {
+  flex: 1;
+  min-height: 0;
+  /* 360 - header(±56) - padding(24) - toolbar(±32) = ~248px tersedia */
+  max-height: 248px;
+  overflow: auto;
+  /* jika baris > muat, tabel yang scroll */
+}
+
+/* (opsional) rapatkan baris agar muat 10 item tanpa mengubah tinggi card */
+.pt-table {
+  font-size: 12px;
+}
+
+.pt-table thead th {
+  padding: 7px 10px;
+}
+
+.pt-table tbody td {
+  padding: 7px 10px;
+}
+
+/* Produk Terlaris: tabel mengikuti tinggi Transaksi Terbaru */
+.panel-single {
+  height: 360px;
+}
+
+/* samakan tinggi card bawah */
+.panel-single .ps-body {
+  padding: 12px 16px;
+}
+
+.pt-left .table-wrap {
   max-height: none !important;
-  overflow: visible !important;       /* hilangkan scroll */
+  /* jangan dibatasi oleh aturan sebelumnya */
+  height: auto;
+  /* akan di-set inline oleh JS */
+  overflow: auto;
+  /* jika baris lebih banyak, scroll di dalam */
+}
+
+/* === Produk Terlaris: tampilkan 10 baris penuh tanpa scroll === */
+.panel-single {
+  height: auto !important;
+  /* card ikut tinggi konten */
+}
+
+.panel-single .ps-body {
+  display: block;
+  /* pastikan bukan grid-center */
+  padding: 12px 16px;
+}
+
+.pt-left .table-wrap {
+  height: auto !important;
+  /* lepaskan batas tinggi */
+  max-height: none !important;
+  overflow: visible !important;
+  /* hilangkan scroll */
 }
 
 /* (opsional) rapatkan sedikit agar proporsional */
-.pt-table{ font-size: 12px; }
-.pt-table thead th{ padding: 8px 10px; }
-.pt-table tbody td{ padding: 8px 10px; }
-.img-pill{ height:24px; min-width:56px; padding:0 8px; font-size:11px; }
+.pt-table {
+  font-size: 12px;
+}
+
+.pt-table thead th {
+  padding: 8px 10px;
+}
+
+.pt-table tbody td {
+  padding: 8px 10px;
+}
+
+.img-pill {
+  height: 24px;
+  min-width: 56px;
+  padding: 0 8px;
+  font-size: 11px;
+}
 
 /* Hilangkan batasan lebar tabel */
-.table-wrap{
+.table-wrap {
   width: 100%;
   max-width: none !important;
 }
 
 /* Pastikan tabel mengikuti lebar kontainer */
-.pt-table{
+.pt-table {
   width: 100%;
   table-layout: auto;
 }
 
 /* === Produk Terlaris — ukuran seperti gambar contoh === */
-.pt-grid{
+.pt-grid {
   /* kiri (tabel) ~650–700px, kanan fleksibel */
   grid-template-columns: minmax(660px, 0.95fr) minmax(360px, 1.05fr) !important;
   gap: 24px;
 }
 
 /* batasi lebar tabel agar tidak melebar lagi */
-.table-wrap{
-  max-width: 680px !important;   /* boleh 660–720 sesuai selera */
+.table-wrap {
+  max-width: 680px !important;
+  /* boleh 660–720 sesuai selera */
   width: 100%;
 }
 
 /* tipografi & padding tabel sedikit lebih rapat seperti mock */
-.pt-table{ font-size: 12px; }
-.pt-table thead th{ padding: 8px 10px; }
-.pt-table tbody td{ padding: 8px 10px; }
+.pt-table {
+  font-size: 12px;
+}
+
+.pt-table thead th {
+  padding: 8px 10px;
+}
+
+.pt-table tbody td {
+  padding: 8px 10px;
+}
 
 /* lebar kolom kecil */
-.pt-table .col-no{ width: 44px; text-align: center; }
-.pt-table .col-img{ width: 92px; }
+.pt-table .col-no {
+  width: 44px;
+  text-align: center;
+}
+
+.pt-table .col-img {
+  width: 92px;
+}
 
 /* responsif: tumpuk vertikal di layar kecil */
-@media (max-width: 1200px){
-  .pt-grid{ grid-template-columns: 1fr !important; }
-  .table-wrap{ max-width: none !important; }
+@media (max-width: 1200px) {
+  .pt-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .table-wrap {
+    max-width: none !important;
+  }
 }
 
 /* === Produk Terlaris: lebih kecil + ada space bawah === */
 
 /* 1) Perkecil lebar kolom kiri (tabel) */
-.pt-grid{
+.pt-grid {
   grid-template-columns: minmax(420px, 0.85fr) minmax(420px, 1.15fr) !important;
   gap: 22px;
 }
 
 /* 2) Batasi lebar maksimum tabel agar tampak lebih ramping */
-.table-wrap{
-  max-width: 460px !important;   /* boleh turunkan ke 440px jika mau lebih kecil */
+.table-wrap {
+  max-width: 460px !important;
+  /* boleh turunkan ke 440px jika mau lebih kecil */
   width: 100%;
 }
 
 /* 3) Pad & font lebih rapat supaya tinggi total konten ikut berkurang */
-.pt-table{ font-size: 11.5px; }
+.pt-table {
+  font-size: 11.5px;
+}
+
 .pt-table thead th,
-.pt-table tbody td{ padding: 6px 8px; }
+.pt-table tbody td {
+  padding: 6px 8px;
+}
 
 /* 4) Tambah ruang kosong di bawah kartu Produk Terlaris */
-.panel-single{ margin-bottom: 22px !important; }
+.panel-single {
+  margin-bottom: 22px !important;
+}
 
 /* === Produk Terlaris — Pendekkan tinggi tabel (tanpa scroll) === */
-.panel-single .ps-body{ padding:10px 14px !important; }  /* body card lebih rapat */
-.pt-toolbar{ margin-bottom:6px !important; }              /* toolbar Copy/Excel lebih rapat */
+.panel-single .ps-body {
+  padding: 10px 14px !important;
+}
 
-.pt-table{ font-size:11px; line-height:1.25; }            /* default kamu 13px → 11px */
-.pt-table thead th{ padding:6px 10px !important; }        /* header tabel lebih pendek */
-.pt-table tbody td{ padding:5px 10px !important; }        /* baris tabel lebih pendek */
-.img-pill{ height:22px; min-width:52px; padding:0 8px; font-size:10.5px; } /* kapsul "Gambar" ikut kecil */
+/* body card lebih rapat */
+.pt-toolbar {
+  margin-bottom: 6px !important;
+}
+
+/* toolbar Copy/Excel lebih rapat */
+
+.pt-table {
+  font-size: 11px;
+  line-height: 1.25;
+}
+
+/* default kamu 13px → 11px */
+.pt-table thead th {
+  padding: 6px 10px !important;
+}
+
+/* header tabel lebih pendek */
+.pt-table tbody td {
+  padding: 5px 10px !important;
+}
+
+/* baris tabel lebih pendek */
+.img-pill {
+  height: 22px;
+  min-width: 52px;
+  padding: 0 8px;
+  font-size: 10.5px;
+}
+
+/* kapsul "Gambar" ikut kecil */
 
 /* donut kanan sedikit lebih pendek supaya proporsional */
-.pt-chart-slot{ min-height:240px !important; }
+.pt-chart-slot {
+  min-height: 240px !important;
+}
 
 /* beri space di bawah kartu */
-.panel-single{ margin-bottom:24px !important; }
+.panel-single {
+  margin-bottom: 24px !important;
+}
 
 /* === Produk Terlaris — Lebarkan tabel sampai tepi (garis kuning) === */
 
 /* Kolom kiri (tabel) ambil seluruh sisa lebar; kolom kanan fixed 420–520px */
-.pt-grid{
+.pt-grid {
   grid-template-columns: 1fr minmax(420px, 520px) !important;
   gap: 24px;
 }
 
 /* Lepaskan batas lebar tabel supaya bisa melebar penuh */
-.table-wrap{
+.table-wrap {
   max-width: none !important;
   width: 100%;
 }
 
 /* Biarkan slot donut max 520px agar proporsional */
-.pt-chart-slot{
+.pt-chart-slot {
   max-width: 520px !important;
   width: 100%;
 }
@@ -1130,190 +2177,224 @@ html,body{
 /* === Produk Terlaris — tambah jarak antara card & table === */
 
 /* Jarak horizontal antar kolom kiri–kanan */
-.pt-grid{
-  gap: 32px !important;          /* sebelumnya 24px */
+.pt-grid {
+  gap: 32px !important;
+  /* sebelumnya 24px */
 }
 
 /* (opsional) jarak kecil ekstra antara toolbar Copy/Excel dan tabel */
-.pt-toolbar{
-  margin-bottom: 12px !important; /* bikin napas di atas tabel */
+.pt-toolbar {
+  margin-bottom: 12px !important;
+  /* bikin napas di atas tabel */
 }
 
 /* (opsional) kalau masih terasa nempel, beri sedikit offset kanan area chart */
-.pt-right{
-  margin-left: 2px;               /* sangat kecil, tidak mempengaruhi lebar tabel */
+.pt-right {
+  margin-left: 2px;
+  /* sangat kecil, tidak mempengaruhi lebar tabel */
 }
 
 /* === Produk Terlaris: garis vertikal antar kolom === */
-.pt-table thead th + th,
-.pt-table tbody td + td{
+.pt-table thead th+th,
+.pt-table tbody td+td {
   border-left: 1px solid var(--line);
 }
 
 /* (opsional) bikin garis body sedikit lebih halus */
-.pt-table tbody td + td{
+.pt-table tbody td+td {
   border-left-color: #e6edf5;
 }
 
 /* === Produk Terlaris — center header + kolom tertentu === */
 
 /* 1) Judul (TH) semua kolom jadi center */
-.pt-table thead th{
+.pt-table thead th {
   text-align: center !important;
 }
 
 /* 2) Data (TD) yang dipusatkan: Gambar(2), Terjual(4), Persentase(6) */
 .pt-table tbody td:nth-child(2),
 .pt-table tbody td:nth-child(4),
-.pt-table tbody td:nth-child(6){
+.pt-table tbody td:nth-child(6) {
   text-align: center !important;
   vertical-align: middle;
 }
 
 /* (opsional) kalau pill "Gambar" mau ekstra center secara fleksibel */
-.pt-table tbody td:nth-child(2) .img-pill{
+.pt-table tbody td:nth-child(2) .img-pill {
   display: inline-flex;
   align-items: center;
   justify-content: center;
 }
+
 /* ==== Produk Terlaris: tambah jarak antara garis biru & garis kuning ==== */
-.panel-single .pt-left{
-  margin-left: 14px;         /* naik-turunkan 10–18px sesuai selera */
+.panel-single .pt-left {
+  margin-left: 14px;
+  /* naik-turunkan 10–18px sesuai selera */
 }
 
 /* (opsional) di layar sempit sedikit lebih kecil */
-@media (max-width:1200px){
-  .panel-single .pt-left{ margin-left: 10px; }
+@media (max-width:1200px) {
+  .panel-single .pt-left {
+    margin-left: 10px;
+  }
 }
 
 /* === Produk Terlaris — tambah space di bawah tabel, posisi tabel tidak berubah === */
-.panel-single .ps-body{
-  padding-bottom: 28px !important;   /* ruang ekstra di dalam card */
+.panel-single .ps-body {
+  padding-bottom: 28px !important;
+  /* ruang ekstra di dalam card */
   position: relative;
 }
-.panel-single .ps-body::after{
+
+.panel-single .ps-body::after {
   content: "";
   display: block;
-  height: 18px;                      /* spacer di paling bawah card */
+  height: 18px;
+  /* spacer di paling bawah card */
 }
 
 /* (opsional) sedikit lebih hemat ruang di layar kecil */
-@media (max-width:1200px){
-  .panel-single .ps-body{ padding-bottom: 20px !important; }
-  .panel-single .ps-body::after{ height: 12px; }
+@media (max-width:1200px) {
+  .panel-single .ps-body {
+    padding-bottom: 20px !important;
+  }
+
+  .panel-single .ps-body::after {
+    height: 12px;
+  }
 }
 
 /* === Transaksi Terbaru → samakan dengan Produk Terlaris === */
 
 /* Bungkus tabel: border, radius, shadow seperti Produk Terlaris */
-.ds-table-wrap{
-  border:1px solid var(--line);
-  border-radius:8px;
-  overflow:hidden;
-  background:#fff;
-  box-shadow:0 1.5px 8px rgba(0,0,0,.03);
+.ds-table-wrap {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 1.5px 8px rgba(0, 0, 0, .03);
 }
 
 /* Tabel + tipografi */
-.ds-table{
-  width:100%;
-  border-collapse:separate;
-  border-spacing:0;
-  font-size:12px;               /* sama dengan .pt-table */ 
-  color:#2b3b54;
+.ds-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 12px;
+  /* sama dengan .pt-table */
+  color: #2b3b54;
 }
 
 /* Header: latar abu, center */
-.ds-table thead th{
-  background:#f7fafc;
-  font-weight:600;
-  text-align:center;
-  padding:8px 10px;
-  border-bottom:1px solid var(--line);
+.ds-table thead th {
+  background: #f7fafc;
+  font-weight: 600;
+  text-align: center;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--line);
 }
 
 /* Body: padding + garis horizontal */
-.ds-table tbody td{
-  padding:8px 10px;
-  border-bottom:1px solid #edf2f7;
+.ds-table tbody td {
+  padding: 8px 10px;
+  border-bottom: 1px solid #edf2f7;
 }
-.ds-table tbody tr:last-child td{ border-bottom:none; }
+
+.ds-table tbody tr:last-child td {
+  border-bottom: none;
+}
 
 /* Garis vertikal antar kolom */
-.ds-table thead th + th,
-.ds-table tbody td + td{
-  border-left:1px solid var(--line);
+.ds-table thead th+th,
+.ds-table tbody td+td {
+  border-left: 1px solid var(--line);
 }
-.ds-table tbody td + td{ border-left-color:#e6edf5; }
+
+.ds-table tbody td+td {
+  border-left-color: #e6edf5;
+}
 
 /* Perataan data kolom tertentu */
-.ds-table tbody td:nth-child(1),   /* No */
-.ds-table tbody td:nth-child(5),   /* Total Item */
-.ds-table tbody td:nth-child(8){   /* Aksi */
-  text-align:center;
-  vertical-align:middle;
+.ds-table tbody td:nth-child(1),
+/* No */
+.ds-table tbody td:nth-child(5),
+/* Total Item */
+.ds-table tbody td:nth-child(8) {
+  /* Aksi */
+  text-align: center;
+  vertical-align: middle;
 }
 
 /* (opsional) tombol aksi agar rapi */
-.aksi-link{
-  border:1px solid var(--line);
-  background:#f1f5f9;
-  padding:6px 10px;
-  border-radius:8px;
-  font-size:11.5px;
+.aksi-link {
+  border: 1px solid var(--line);
+  background: #f1f5f9;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 11.5px;
 }
 
 /* === Transaksi Terbaru — Compact mode (lebih kecil) === */
 
 /* Ukuran font global tabel + line-height lebih rapat */
-.ds-table{
+.ds-table {
   font-size: 11px !important;
   line-height: 1.25;
 }
 
 /* Header lebih kecil & pendek */
-.ds-table thead th{
+.ds-table thead th {
   font-size: 11.5px !important;
   padding: 6px 8px !important;
 }
 
 /* Sel body lebih rapat */
-.ds-table tbody td{
+.ds-table tbody td {
   padding: 5px 8px !important;
 }
 
 /* Tombol/aksi di kolom terakhir ikut diperkecil */
-.aksi-link{
+.aksi-link {
   padding: 4px 8px !important;
   font-size: 10.5px !important;
   border-radius: 6px;
 }
 
 /* (opsional) tambah sedikit kerapihan untuk baris terakhir */
-.ds-table tbody tr:last-child td{ padding-bottom: 6px !important; }
+.ds-table tbody tr:last-child td {
+  padding-bottom: 6px !important;
+}
 
 /* === Metode Pembayaran — sejajarkan label & angka + kecilkan font === */
 
 /* 1) Top-align semua sel (dot | teks | count) */
-.donut-legend li{
-  align-items: start !important;           /* sebelumnya center */
+.donut-legend li {
+  align-items: start !important;
+  /* sebelumnya center */
 }
 
 /* 2) Angka di kanan sejajarkan ke baris label (bukan ditengah dua baris teks) */
-.dl-count{
-  align-self: start;                        /* naik ke atas, sejajar label */
-  padding-top: 1px;                         /* micro adjust; 0–2px sesuai tampilan */
-  font-size: 12.5px;                        /* sedikit lebih kecil dari default 13px */
+.dl-count {
+  align-self: start;
+  /* naik ke atas, sejajar label */
+  padding-top: 1px;
+  /* micro adjust; 0–2px sesuai tampilan */
+  font-size: 12.5px;
+  /* sedikit lebih kecil dari default 13px */
   line-height: 1.2;
 }
 
 /* 3) Kecilkan teks kiri agar muat rapi */
-.dl-label{
-  font-size: 12.5px;                        /* label “Cash/Debit/…” */
+.dl-label {
+  font-size: 12.5px;
+  /* label “Cash/Debit/…” */
   line-height: 1.15;
 }
-.dl-sub{
-  font-size: 11px !important;               /* “Jumlah Transaksi Sebanyak” */
+
+.dl-sub {
+  font-size: 11px !important;
+  /* “Jumlah Transaksi Sebanyak” */
   line-height: 1.2;
   margin-top: 2px;
 }
@@ -1321,7 +2402,7 @@ html,body{
 /* === Metode Pembayaran — label, subteks, dan angka dalam satu baris === */
 
 /* item legend: dot | (label + sub + angka) */
-.donut-legend li{
+.donut-legend li {
   display: flex !important;
   align-items: center !important;
   gap: 10px;
@@ -1329,52 +2410,56 @@ html,body{
 }
 
 /* blok teks jadi satu baris fleksibel */
-.dl-text{
+.dl-text {
   display: flex !important;
   align-items: center;
   gap: 8px;
-  flex-wrap: wrap;           /* aman jika ruang sempit */
+  flex-wrap: wrap;
+  /* aman jika ruang sempit */
   line-height: 1.2;
 }
 
 /* nama metode tebal */
-.dl-label{
+.dl-label {
   font-weight: 800;
 }
 
 /* kalimat + angka pada baris yang sama */
-.dl-sub{
+.dl-sub {
   display: inline-flex;
   align-items: center;
-  gap: 6px;                  /* jarak kecil sebelum angka */
+  gap: 6px;
+  /* jarak kecil sebelum angka */
   font-size: 12px;
   color: #7b8aa0;
 }
 
-.dl-sub .dl-count{
+.dl-sub .dl-count {
   font-weight: 800;
   color: #2f3f59;
   font-size: 12.5px;
 }
 
 /* === Legend Metode Pembayaran — sejajarkan semua dalam satu baris === */
-.donut-legend li{
+.donut-legend li {
   display: flex !important;
-  align-items: center !important;  /* dot, label, teks sejajar vertikal */
+  align-items: center !important;
+  /* dot, label, teks sejajar vertikal */
   gap: 10px;
   padding: 4px 0 !important;
 }
 
 /* blok teks kiri: label + kalimat jadi satu baris */
-.dl-text{
+.dl-text {
   display: flex !important;
   align-items: center !important;
   gap: 8px;
-  flex-wrap: nowrap;               /* jangan pindah baris */
+  flex-wrap: nowrap;
+  /* jangan pindah baris */
 }
 
 /* nama metode (Cash/Debit/...) jangan center & jangan turun baris */
-.dl-label{
+.dl-label {
   display: inline-block !important;
   margin: 0 6px 0 0 !important;
   text-align: left !important;
@@ -1382,24 +2467,29 @@ html,body{
 }
 
 /* “Jumlah Transaksi Sebanyak” + angka di baris yang sama */
-.dl-sub{
+.dl-sub {
   display: inline-flex !important;
   align-items: center !important;
   gap: 6px;
   margin: 0 !important;
-  white-space: nowrap;             /* tetap satu baris */
+  white-space: nowrap;
+  /* tetap satu baris */
 }
 
 /* angka tebal */
-.dl-count{ font-weight: 800; }
+.dl-count {
+  font-weight: 800;
+}
 
 /* pastikan dot tidak offset ke atas */
-.donut-legend .dot{ margin-top: 0 !important; }
+.donut-legend .dot {
+  margin-top: 0 !important;
+}
 
 /* === Legend Metode Pembayaran — horizontal sejajar === */
 
 /* Setiap item legend: dot | (label+sub) | angka di satu garis */
-.donut-legend li{
+.donut-legend li {
   display: flex !important;
   align-items: center !important;
   gap: 10px;
@@ -1407,20 +2497,22 @@ html,body{
 }
 
 /* Bikin .dl-label dan .dl-sub jadi satu baris */
-.dl-text{
+.dl-text {
   display: flex !important;
   flex-direction: row !important;
   align-items: center !important;
   gap: 8px;
-  white-space: nowrap !important;      /* cegah turun baris */
+  white-space: nowrap !important;
+  /* cegah turun baris */
 }
 
 /* Nama metode + kalimat tetap horizontal */
-.dl-label{
+.dl-label {
   margin: 0 6px 0 0 !important;
   font-weight: 800;
 }
-.dl-sub{
+
+.dl-sub {
   display: inline-flex !important;
   align-items: center !important;
   gap: 6px;
@@ -1429,107 +2521,149 @@ html,body{
 }
 
 /* Angka tetap di kanan; tebal */
-.dl-count{
+.dl-count {
   font-weight: 800;
   white-space: nowrap;
 }
 
 /* Pastikan dot tidak offset */
-.donut-legend .dot{ margin-top: 0 !important; }
+.donut-legend .dot {
+  margin-top: 0 !important;
+}
 
-.dl-label, .dl-sub, .dl-count { font-size: 12px !important; }
+.dl-label,
+.dl-sub,
+.dl-count {
+  font-size: 12px !important;
+}
 
 /* === Pendekin METODE PEMBAYARAN & TRANSAKSI TERBARU (tanpa ubah isi) === */
-.ds-panels--bottom .ds-panel.tall{
-  height: 420px !important;      /* ← atur sesuai selera: 360–460px */
+.ds-panels--bottom .ds-panel.tall {
+  height: 420px !important;
+  /* ← atur sesuai selera: 360–460px */
   display: flex;
   flex-direction: column;
 }
 
-.ds-panels--bottom .ds-panel.tall .panel-body{
+.ds-panels--bottom .ds-panel.tall .panel-body {
   flex: 1 1 auto;
-  overflow-y: auto;              /* konten di dalam bisa discroll jika kepanjangan */
+  overflow-y: auto;
+  /* konten di dalam bisa discroll jika kepanjangan */
   -webkit-overflow-scrolling: touch;
 }
 
 /* Scrollbar tipis agar rapi (opsional) */
-.ds-panels--bottom .ds-panel.tall .panel-body::-webkit-scrollbar{ width: 6px; }
-.ds-panels--bottom .ds-panel.tall .panel-body::-webkit-scrollbar-thumb{
-  background: #e0e6ee; border-radius: 8px;
+.ds-panels--bottom .ds-panel.tall .panel-body::-webkit-scrollbar {
+  width: 6px;
 }
-.ds-panels--bottom .ds-panel.tall .panel-body::-webkit-scrollbar-track{ background: transparent; }
+
+.ds-panels--bottom .ds-panel.tall .panel-body::-webkit-scrollbar-thumb {
+  background: #e0e6ee;
+  border-radius: 8px;
+}
+
+.ds-panels--bottom .ds-panel.tall .panel-body::-webkit-scrollbar-track {
+  background: transparent;
+}
 
 /* Firefox (opsional) */
-.ds-panels--bottom .ds-panel.tall .panel-body{
+.ds-panels--bottom .ds-panel.tall .panel-body {
   scrollbar-width: thin;
   scrollbar-color: #e0e6ee transparent;
 }
 
 /* ==== Tinggi target 2 card bawah (atur supaya pas garis ungu) ==== */
-:root{
+:root {
   /* ubah angka ini sampai pas garis ungu */
-  --bottomCardHeight: 10px;   /* coba 360–380px; naik-turun 2–4px untuk presisi */
+  --bottomCardHeight: 10px;
+  /* coba 360–380px; naik-turun 2–4px untuk presisi */
 }
 
-.ds-panels--bottom .ds-panel.tall{
+.ds-panels--bottom .ds-panel.tall {
   height: var(--bottomCardHeight) !important;
   display: flex;
   flex-direction: column;
 }
 
-.ds-panels--bottom .ds-panel.tall .panel-body{
+.ds-panels--bottom .ds-panel.tall .panel-body {
   flex: 1 1 auto;
-  overflow-y: auto;            /* isi card scroll jika lebih tinggi */
+  overflow-y: auto;
+  /* isi card scroll jika lebih tinggi */
   -webkit-overflow-scrolling: touch;
 }
 
 /* (opsional) scrollbar tipis agar rapi */
-.ds-panels--bottom .ds-panel.tall .panel-body::-webkit-scrollbar{ width: 6px; }
-.ds-panels--bottom .ds-panel.tall .panel-body::-webkit-scrollbar-thumb{
-  background:#e0e6ee; border-radius: 8px;
+.ds-panels--bottom .ds-panel.tall .panel-body::-webkit-scrollbar {
+  width: 6px;
 }
-.ds-panels--bottom .ds-panel.tall .panel-body{ scrollbar-width: thin; scrollbar-color:#e0e6ee transparent; }
+
+.ds-panels--bottom .ds-panel.tall .panel-body::-webkit-scrollbar-thumb {
+  background: #e0e6ee;
+  border-radius: 8px;
+}
+
+.ds-panels--bottom .ds-panel.tall .panel-body {
+  scrollbar-width: thin;
+  scrollbar-color: #e0e6ee transparent;
+}
 
 /* sekitar baris 247–252 di Dashboard.css */
-.ds-panels--bottom .ds-panel{ height:auto !important; }
-.ds-panels--bottom .panel-body{ flex: initial !important; }
+.ds-panels--bottom .ds-panel {
+  height: auto !important;
+}
+
+.ds-panels--bottom .panel-body {
+  flex: initial !important;
+}
 
 /* ==== Force height 2 card bawah sampai garis ungu ==== */
-:root{
+:root {
   /* atur sampai pas garis ungu (coba 340–380px) */
   --bottomCardHeight: 520px;
 }
 
-.ds-panels--bottom .ds-panel.tall{
+.ds-panels--bottom .ds-panel.tall {
   height: var(--bottomCardHeight) !important;
   min-height: 0 !important;
   display: flex !important;
   flex-direction: column !important;
 }
 
-.ds-panels--bottom .ds-panel.tall .panel-body{
+.ds-panels--bottom .ds-panel.tall .panel-body {
   flex: 1 1 auto !important;
-  overflow-y: auto !important;   /* isi scroll jika lebih tinggi */
+  overflow-y: auto !important;
+  /* isi scroll jika lebih tinggi */
   -webkit-overflow-scrolling: touch;
 }
 
 /* scrollbar tipis (opsional) */
-.ds-panels--bottom .ds-panel.tall .panel-body::-webkit-scrollbar{ width:6px; }
-.ds-panels--bottom .ds-panel.tall .panel-body::-webkit-scrollbar-thumb{ background:#e0e6ee; border-radius:8px; }
-.ds-panels--bottom .ds-panel.tall .panel-body{ scrollbar-width:thin; scrollbar-color:#e0e6ee transparent; }
+.ds-panels--bottom .ds-panel.tall .panel-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.ds-panels--bottom .ds-panel.tall .panel-body::-webkit-scrollbar-thumb {
+  background: #e0e6ee;
+  border-radius: 8px;
+}
+
+.ds-panels--bottom .ds-panel.tall .panel-body {
+  scrollbar-width: thin;
+  scrollbar-color: #e0e6ee transparent;
+}
 
 /* === Produk Terbaru & Semua Data Produk (card gabungan) === */
 
 /* Grid 2 kolom: kiri sempit, kanan lebar */
-.pj-grid{
+.pj-grid {
   display: grid;
-  grid-template-columns: minmax(420px, 480px) 1fr; /* sesuaikan 420–500px */
+  grid-template-columns: minmax(420px, 480px) 1fr;
+  /* sesuaikan 420–500px */
   gap: 24px;
   align-items: start;
 }
 
 /* Catatan kecil di atas tabel "Produk Terbaru" */
-.pj-left .note{
+.pj-left .note {
   margin: 0 0 10px 0;
   color: #6b7a90;
   font-size: 12px;
@@ -1537,13 +2671,13 @@ html,body{
 
 /* Kolom "Stok" pada tabel kiri rata tengah */
 .pj-left .pt-table th:nth-child(4),
-.pj-left .pt-table td:nth-child(4){
+.pj-left .pt-table td:nth-child(4) {
   text-align: center;
   vertical-align: middle;
 }
 
 /* Toolbar kanan: tombol Copy/Excel + Search seperti contoh */
-.pj-right .pt-toolbar{
+.pj-right .pt-toolbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1551,7 +2685,7 @@ html,body{
 }
 
 /* Kotak pencarian kecil di kanan */
-.pj-right .pt-toolbar .tc-right{
+.pj-right .pt-toolbar .tc-right {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -1561,23 +2695,28 @@ html,body{
   border-radius: 8px;
   background: #fff;
 }
-.pj-right .pt-toolbar .tc-right input{
+
+.pj-right .pt-toolbar .tc-right input {
   border: 0;
   outline: 0;
   background: transparent;
   height: 28px;
   font-size: 12px;
-  width: 180px;              /* ubah bila perlu */
+  width: 180px;
+  /* ubah bila perlu */
 }
 
 /* Judul kanan (Semua Data Produk) tetap rata kanan header */
-.panel-header.panel-header--chart .ph-righttitle{
+.panel-header.panel-header--chart .ph-righttitle {
   font-weight: 700;
 }
 
 /* Responsive: jika layar sempit, tumpuk jadi 1 kolom */
-@media (max-width: 1200px){
-  .pj-grid{ grid-template-columns: 1fr; }
+@media (max-width: 1200px) {
+  .pj-grid {
+    grid-template-columns: 1fr;
+  }
+
   /* (opsional) sembunyikan judul kanan agar tidak numpuk */
   /* .panel-header.panel-header--chart .ph-righttitle{ display:none; } */
 }
@@ -1588,107 +2727,158 @@ html,body{
 /* Matikan batas tinggi & scroll pada wrapper tabel di card ini saja */
 .panel-single .pj-grid .table-wrap,
 .pj-left .table-wrap,
-.pj-right .table-wrap{
+.pj-right .table-wrap {
   max-height: none !important;
   overflow: visible !important;
 }
 
 /* Pastikan kontainer card tidak membatasi tinggi */
-.panel-single .ps-body{
+.panel-single .ps-body {
   overflow: visible !important;
 }
-.pj-left, .pj-right{
+
+.pj-left,
+.pj-right {
   height: auto !important;
   overflow: visible !important;
 }
 
 /* (opsional) kalau ada rule global yang membatasi tinggi .table-wrap */
-.table-wrap{ scrollbar-width: auto; }  /* no-op, hanya untuk memastikan tidak ada styling scrollbar khusus */
-
-/* === Perlebar tabel "Semua Data Produk" ke kiri === */
-:root{
-  /* bebas kamu atur untuk pas-nya */
-  --pj-left-min: 360px;  /* sebelumnya 420px */
-  --pj-left-max: 420px;  /* sebelumnya 480px */
-  --pj-gap: 16px;        /* sebelumnya 24px */
+.table-wrap {
+  scrollbar-width: auto;
 }
 
-.pj-grid{
+/* no-op, hanya untuk memastikan tidak ada styling scrollbar khusus */
+
+/* === Perlebar tabel "Semua Data Produk" ke kiri === */
+:root {
+  /* bebas kamu atur untuk pas-nya */
+  --pj-left-min: 360px;
+  /* sebelumnya 420px */
+  --pj-left-max: 420px;
+  /* sebelumnya 480px */
+  --pj-gap: 16px;
+  /* sebelumnya 24px */
+}
+
+.pj-grid {
   grid-template-columns: minmax(var(--pj-left-min), var(--pj-left-max)) 1fr !important;
   gap: var(--pj-gap) !important;
   align-items: start;
 }
 
 /* pastikan tidak ada margin/padding yang menahan di sisi kiri/kanan */
-.pj-left{ margin-right: 0 !important; }
-.pj-right{ margin-left: 0 !important; }
+.pj-left {
+  margin-right: 0 !important;
+}
+
+.pj-right {
+  margin-left: 0 !important;
+}
 
 /* === Samakan lebar kolom kiri dg Produk Terlaris & lebarkan tabel kanan === */
 
 /* Satu variabel untuk “lebar kolom kiri” (tabel) — sesuaikan sampai pas garis ungu */
-:root{
-  --pt-left-width: 560px;   /* ubah 540–600px sesuai garis ungu di layar kamu */
+:root {
+  --pt-left-width: 560px;
+  /* ubah 540–600px sesuai garis ungu di layar kamu */
 }
 
 /* Pakai lebar yang sama untuk grid Produk Terlaris (pt-grid) dan card baru (pj-grid) */
-.pt-grid{
+.pt-grid {
   grid-template-columns: var(--pt-left-width) 1fr !important;
 }
-.pj-grid{
-  grid-template-columns: var(--pt-left-width) 1fr !important;  /* kiri = tabel Produk Terbaru, kanan = Semua Data Produk */
-  gap: 20px !important;                                        /* jarak antar tabel */
+
+.pj-grid {
+  grid-template-columns: var(--pt-left-width) 1fr !important;
+  /* kiri = tabel Produk Terbaru, kanan = Semua Data Produk */
+  gap: 20px !important;
+  /* jarak antar tabel */
   align-items: start;
 }
 
 /* Pastikan wrapper & tabel mengisi kolomnya penuh (tidak ada batasan internal) */
-.pt-left, .pj-left, .pj-right{ min-width: 0 !important; }
+.pt-left,
+.pj-left,
+.pj-right {
+  min-width: 0 !important;
+}
+
 .pt-left .table-wrap,
 .pj-left .table-wrap,
-.pj-right .table-wrap{ width: 100% !important; }
+.pj-right .table-wrap {
+  width: 100% !important;
+}
+
 .pt-left .pt-table,
 .pj-left .pt-table,
-.pj-right .pt-table{ width: 100% !important; }
+.pj-right .pt-table {
+  width: 100% !important;
+}
 
 /* Hilangkan padding ekstra yang bisa bikin terlihat “nggak nempel” ke garis grid */
-.pj-left, .pj-right{ margin: 0 !important; }
+.pj-left,
+.pj-right {
+  margin: 0 !important;
+}
 
 /* === Samakan garis kiri dg Produk Terlaris & lebarkan kanan sampai garis ungu === */
 
 /* Atur sekali di sini sampai pas garis ungu kiri */
-:root{
-  --left-col-width: 560px;   /* coba 540–600px sampai benar-benar sejajar */
-  --mid-gap: 18px;           /* jarak di tengah */
+:root {
+  --left-col-width: 560px;
+  /* coba 540–600px sampai benar-benar sejajar */
+  --mid-gap: 18px;
+  /* jarak di tengah */
 }
 
 /* Grid card "Produk Terlaris" & card "Produk Terbaru + Semua Data Produk" sama lebarnya */
-.panel-single .pt-grid{
+.panel-single .pt-grid {
   grid-template-columns: var(--left-col-width) 1fr !important;
 }
-.panel-single .pj-grid{
+
+.panel-single .pj-grid {
   grid-template-columns: var(--left-col-width) 1fr !important;
   gap: var(--mid-gap) !important;
   align-items: start;
 }
 
 /* Pastikan tidak ada margin/padding yang menahan lebar */
-.pj-left, .pj-right, .pt-left{ margin:0 !important; min-width:0 !important; }
+.pj-left,
+.pj-right,
+.pt-left {
+  margin: 0 !important;
+  min-width: 0 !important;
+}
+
 .pj-left .table-wrap,
 .pj-right .table-wrap,
-.pt-left .table-wrap{ width:100% !important; margin:0 !important; }
+.pt-left .table-wrap {
+  width: 100% !important;
+  margin: 0 !important;
+}
+
 .pj-left .pt-table,
 .pj-right .pt-table,
-.pt-left .pt-table{ width:100% !important; box-sizing:border-box; }
+.pt-left .pt-table {
+  width: 100% !important;
+  box-sizing: border-box;
+}
 
 /* Hilangkan batas tinggi/scroll agar tabel tampil penuh */
-.pj-grid .table-wrap{ max-height:none !important; overflow:visible !important; }
+.pj-grid .table-wrap {
+  max-height: none !important;
+  overflow: visible !important;
+}
 
-:root{
+:root {
   /* Naikkan sampai kolom kiri pas & tidak menumpahkan kolom "Stok" */
-  --left-col-width: 640px;   /* coba 630–660px sesuai garis ungu kiri */
+  --left-col-width: 640px;
+  /* coba 630–660px sesuai garis ungu kiri */
 }
 
 /* Pastikan grid card baru ikut pakai lebar ini */
-.panel-single .pj-grid{
+.panel-single .pj-grid {
   grid-template-columns: var(--left-col-width) 1fr !important;
   gap: 18px !important;
 }
@@ -1696,507 +2886,755 @@ html,body{
 /* === Card Produk Terbaru & Semua Data Produk: kiri kecil, kanan besar === */
 
 /* Lebar kolom kiri khusus card ini */
-:root{
-  --pj-left-width: 420px;   /* kecilkan/naikkan (380–460px) sesuai kebutuhan */
+:root {
+  --pj-left-width: 420px;
+  /* kecilkan/naikkan (380–460px) sesuai kebutuhan */
   --pj-gap: 18px;
 }
 
-.panel-single .pj-grid{
-  grid-template-columns: var(--pj-left-width) 1fr !important; /* kiri kecil, kanan ambil sisa */
+.panel-single .pj-grid {
+  grid-template-columns: var(--pj-left-width) 1fr !important;
+  /* kiri kecil, kanan ambil sisa */
   gap: var(--pj-gap) !important;
   align-items: start;
 }
 
 /* Pastikan tabel kiri muat di lebar kecil */
-.pj-left .pt-table{ table-layout: fixed; width: 100%; }
-.pj-left .pt-table th, 
-.pj-left .pt-table td{
+.pj-left .pt-table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.pj-left .pt-table th,
+.pj-left .pt-table td {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 /* Lebar kolom-kolom tabel kiri supaya rapih */
-.pj-left .pt-table .col-no{ width: 45px; }
-.pj-left .pt-table .col-img{ width: 95px; }
+.pj-left .pt-table .col-no {
+  width: 45px;
+}
+
+.pj-left .pt-table .col-img {
+  width: 95px;
+}
+
 .pj-left .pt-table th:nth-child(4),
-.pj-left .pt-table td:nth-child(4){ /* Stok */
-  width: 72px; 
+.pj-left .pt-table td:nth-child(4) {
+  /* Stok */
+  width: 72px;
   text-align: center;
 }
 
 /* Biarkan kolom nama ambil sisa */
 .pj-left .pt-table th:nth-child(3),
-.pj-left .pt-table td:nth-child(3){
+.pj-left .pt-table td:nth-child(3) {
   width: auto;
 }
 
 /* Pastikan wrapper tak menahan lebar/tinggi */
-.pj-left, .pj-right{ min-width:0 !important; margin:0 !important; }
-.pj-left .table-wrap, .pj-right .table-wrap{ width:100% !important; max-height:none !important; overflow:visible !important; }
-
-/* === Tambah gap antar tabel kiri & kanan pada card produk === */
-:root{
-  --pj-gap: 150px;            /* ubah 24–40px sesuai selera */
+.pj-left,
+.pj-right {
+  min-width: 0 !important;
+  margin: 0 !important;
 }
 
-.panel-single .pj-grid{
-  column-gap: var(--pj-gap) !important;  /* jarak horizontal */
-  row-gap: 12px !important;              /* (opsional) jarak vertikal dalam grid */
+.pj-left .table-wrap,
+.pj-right .table-wrap {
+  width: 100% !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+/* === Tambah gap antar tabel kiri & kanan pada card produk === */
+:root {
+  --pj-gap: 150px;
+  /* ubah 24–40px sesuai selera */
+}
+
+.panel-single .pj-grid {
+  column-gap: var(--pj-gap) !important;
+  /* jarak horizontal */
+  row-gap: 12px !important;
+  /* (opsional) jarak vertikal dalam grid */
 }
 
 /* === Lebarkan tabel kanan (Semua Data Produk) === */
-:root{
+:root {
   /* kecilkan kiri -> kanan bertambah lebar */
-  --pj-left-width: 380px;   /* sebelumnya 420px; coba 360–420px sesuai selera */
-  --pj-gap: 24px;           /* jarak tengah (boleh ubah) */
+  --pj-left-width: 380px;
+  /* sebelumnya 420px; coba 360–420px sesuai selera */
+  --pj-gap: 24px;
+  /* jarak tengah (boleh ubah) */
 }
 
-.panel-single .pj-grid{
-  grid-template-columns: var(--pj-left-width) 1fr !important;  /* kanan ambil sisa */
+.panel-single .pj-grid {
+  grid-template-columns: var(--pj-left-width) 1fr !important;
+  /* kanan ambil sisa */
   column-gap: var(--pj-gap) !important;
   align-items: start;
 }
 
 /* pastikan tabel kanan mengisi penuh kolomnya */
 .pj-right .table-wrap,
-.pj-right .pt-table{ width:700px !important; }
+.pj-right .pt-table {
+  width: 700px !important;
+}
 
-.pj-right .pt-table{ table-layout:auto !important; } /* biar kolomnya bebas melebar */
+.pj-right .pt-table {
+  table-layout: auto !important;
+}
+
+/* biar kolomnya bebas melebar */
 
 /* === 1) Kolom kiri & kanan harus sama-tinggi === */
-.panel-single .pj-grid{ align-items: stretch !important; }
-.pj-left, .pj-right{
+.panel-single .pj-grid {
+  align-items: stretch !important;
+}
+
+.pj-left,
+.pj-right {
   display: flex !important;
   flex-direction: column !important;
   min-height: 0;
 }
+
 .pj-left .table-wrap,
-.pj-right .table-wrap{
-  flex: 1 1 auto !important;   /* area tabel mengisi tinggi kolom */
+.pj-right .table-wrap {
+  flex: 1 1 auto !important;
+  /* area tabel mengisi tinggi kolom */
   width: 100%;
 }
 
 /* === 2) Tinggikan baris tabel kanan agar garis bawahnya sejajar === */
 /* (atur angka padding jika masih kurang/lebih) */
-.pj-right .pt-table thead th{ padding-top: 10px; padding-bottom: 10px; }
-.pj-right .pt-table tbody td{ padding-top: 12px; padding-bottom: 12px; }
+.pj-right .pt-table thead th {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.pj-right .pt-table tbody td {
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
 
 /* ==== Full-height untuk Tabel Kanan (Semua Data Produk) ==== */
 .panel-single .ps-body,
-.panel-single .pt-grid { min-height: 0; }
+.panel-single .pt-grid {
+  min-height: 0;
+}
 
 /* kolom kanan jadi flex supaya table-wrap bisa flex:1 */
-.panel-single .pj-grid .pj-right{ display:flex; flex-direction:column; min-height:0; }
-.panel-single .pj-grid .pj-right .table-wrap{
-  flex:1; min-height:0; height:auto;           /* ambil tinggi sisa card */
-  display:block;                                /* tetap table normal di dalam */
+.panel-single .pj-grid .pj-right {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.panel-single .pj-grid .pj-right .table-wrap {
+  flex: 1;
+  min-height: 0;
+  height: auto;
+  /* ambil tinggi sisa card */
+  display: block;
+  /* tetap table normal di dalam */
 }
 
 /* tabel isi mengikuti tinggi wrapper */
-.panel-single .pj-grid .pj-right .pt-table{ height:100%; }
-.panel-single .pj-grid .pj-right .pt-table tbody tr{
-  height: var(--rowH, 48px);                    /* akan diisi dari JSX, default 48px */
+.panel-single .pj-grid .pj-right .pt-table {
+  height: 100%;
+}
+
+.panel-single .pj-grid .pj-right .pt-table tbody tr {
+  height: var(--rowH, 48px);
+  /* akan diisi dari JSX, default 48px */
 }
 
 /* supaya tak ada area kosong aneh di bawah header sticky */
-.panel-single .pj-grid .pj-right .pt-table thead th{ position:sticky; top:0; z-index:2; }
+.panel-single .pj-grid .pj-right .pt-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
 
 /* ===== Wheel Chart (Top 5 Skills) ===== */
-.wheel-wrap{
-  display:flex;align-items:center;gap:28px;flex-wrap:wrap;
-}
-.wheel-box{
-  position:relative;width:420px;max-width:100%;
-}
-.wheel-center{
-  position:absolute;display:grid;place-items:center;border-radius:12px;
-}
-.wheel-center .wc-outer{
-  width:140px;height:140px;border-radius:999px;
-  background:#ffffff;box-shadow:inset 0 0 0 10px rgba(45,55,72,.16);
-  display:grid;place-items:center;
-}
-.wheel-center .wc-inner{
-  width:110px;height:110px;border-radius:999px;background:#fff;
-  box-shadow:0 6px 14px rgba(0,0,0,.06);
-  display:grid;place-items:center;border:1px solid rgba(0,0,0,.06);
-}
-.wheel-center .wc-top{
-  font-weight:800;font-size:22px;line-height:1;color:#2b3a57;letter-spacing:.3px;
-}
-.wheel-center .wc-sub{
-  font-weight:600;font-size:11px;color:#6b7a90;letter-spacing:.8px;margin-top:2px;
-  text-align:center;
+.wheel-wrap {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  flex-wrap: wrap;
 }
 
-.wheel-pct{
-  font-size:13px;font-weight:800;fill:#2b3a57;
-  paint-order:stroke; stroke:#fff; stroke-width:3px;
+.wheel-box {
+  position: relative;
+  width: 420px;
+  max-width: 100%;
 }
 
-.wheel-legend{list-style:none;margin:0;padding:0;min-width:260px}
-.wheel-legend li{
-  display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px dashed #e3e9f2;
+.wheel-center {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
 }
-.wheel-legend li:last-child{border-bottom:none}
-.wheel-legend .dot{
-  width:14px;height:14px;border-radius:999px;display:inline-block;flex:0 0 auto;
-  box-shadow:0 0 0 3px #fff, 0 0 0 4px rgba(0,0,0,.04);
+
+.wheel-center .wc-outer {
+  width: 140px;
+  height: 140px;
+  border-radius: 999px;
+  background: #ffffff;
+  box-shadow: inset 0 0 0 10px rgba(45, 55, 72, .16);
+  display: grid;
+  place-items: center;
 }
-.wheel-legend .wl-text{flex:1 1 auto}
-.wheel-legend .wl-label{font-weight:700;color:#2b3a57;font-size:13px}
-.wheel-legend .wl-count{font-weight:800;color:#2b3a57;font-size:13px}
 
-.pie-wrap{display:flex;flex-direction:column;align-items:center;gap:14px;min-width:320px}
-.pie-box{position:relative}
-.pie-center{position:absolute;display:grid;place-items:center;pointer-events:none}
-.pie-center .pc-top{font-weight:800;font-size:18px;line-height:1;color:#2b3a57;text-align:center}
-.pie-center .pc-sub{font-weight:700;font-size:11px;color:#6b7a90;letter-spacing:.3px;text-align:center;margin-top:2px}
+.wheel-center .wc-inner {
+  width: 110px;
+  height: 110px;
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, .06);
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(0, 0, 0, .06);
+}
 
-.pie-pct{font-size:12px;font-weight:800;fill:#2b3a57;paint-order:stroke;stroke:#fff;stroke-width:3px}
+.wheel-center .wc-top {
+  font-weight: 800;
+  font-size: 22px;
+  line-height: 1;
+  color: #2b3a57;
+  letter-spacing: .3px;
+}
 
-.pie-legend2c{display:grid;grid-template-columns:1fr 1fr;gap:8px 28px}
-.pie-legend2c ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
-.pie-legend2c li{display:flex;align-items:center;gap:10px;font-size:12.5px;color:#2b3a57}
-.pie-legend2c .dot{width:12px;height:12px;border-radius:999px;box-shadow:0 0 0 2px #fff,0 0 0 3px rgba(0,0,0,.04);flex:0 0 auto}
-.pie-legend2c .name{font-weight:600}
+.wheel-center .wc-sub {
+  font-weight: 600;
+  font-size: 11px;
+  color: #6b7a90;
+  letter-spacing: .8px;
+  margin-top: 2px;
+  text-align: center;
+}
+
+.wheel-pct {
+  font-size: 13px;
+  font-weight: 800;
+  fill: #2b3a57;
+  paint-order: stroke;
+  stroke: #fff;
+  stroke-width: 3px;
+}
+
+.wheel-legend {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  min-width: 260px
+}
+
+.wheel-legend li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px dashed #e3e9f2;
+}
+
+.wheel-legend li:last-child {
+  border-bottom: none
+}
+
+.wheel-legend .dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  display: inline-block;
+  flex: 0 0 auto;
+  box-shadow: 0 0 0 3px #fff, 0 0 0 4px rgba(0, 0, 0, .04);
+}
+
+.wheel-legend .wl-text {
+  flex: 1 1 auto
+}
+
+.wheel-legend .wl-label {
+  font-weight: 700;
+  color: #2b3a57;
+  font-size: 13px
+}
+
+.wheel-legend .wl-count {
+  font-weight: 800;
+  color: #2b3a57;
+  font-size: 13px
+}
+
+.pie-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  min-width: 320px
+}
+
+.pie-box {
+  position: relative
+}
+
+.pie-center {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  pointer-events: none
+}
+
+.pie-center .pc-top {
+  font-weight: 800;
+  font-size: 18px;
+  line-height: 1;
+  color: #2b3a57;
+  text-align: center
+}
+
+.pie-center .pc-sub {
+  font-weight: 700;
+  font-size: 11px;
+  color: #6b7a90;
+  letter-spacing: .3px;
+  text-align: center;
+  margin-top: 2px
+}
+
+.pie-pct {
+  font-size: 12px;
+  font-weight: 800;
+  fill: #2b3a57;
+  paint-order: stroke;
+  stroke: #fff;
+  stroke-width: 3px
+}
+
+.pie-legend2c {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 28px
+}
+
+.pie-legend2c ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px
+}
+
+.pie-legend2c li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12.5px;
+  color: #2b3a57
+}
+
+.pie-legend2c .dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  box-shadow: 0 0 0 2px #fff, 0 0 0 3px rgba(0, 0, 0, .04);
+  flex: 0 0 auto
+}
+
+.pie-legend2c .name {
+  font-weight: 600
+}
 
 /* --- FORCE tampilkan pie di sisi kanan tabel Produk Terlaris --- */
-.pt-right{display:flex !important; align-items:center; justify-content:center; padding:8px}
+.pt-right {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  padding: 8px
+}
 
 /* --- Legend pie 2 kolom (5 + 5) --- */
-.pie-legend2c{
-  display:grid; grid-template-columns:1fr 1fr; gap:8px 28px;
+.pie-legend2c {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 28px;
 }
-.pie-legend2c ul{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px}
-.pie-legend2c li{display:flex; align-items:center; gap:10px; font-size:12.5px; color:#2b3a57}
-.pie-legend2c .dot{width:12px; height:12px; border-radius:999px; box-shadow:0 0 0 2px #fff,0 0 0 3px rgba(0,0,0,.04); flex:0 0 auto}
-.pie-pct{font-size:12px; font-weight:800; fill:#2b3a57; paint-order:stroke; stroke:#fff; stroke-width:3px}
+
+.pie-legend2c ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px
+}
+
+.pie-legend2c li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12.5px;
+  color: #2b3a57
+}
+
+.pie-legend2c .dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  box-shadow: 0 0 0 2px #fff, 0 0 0 3px rgba(0, 0, 0, .04);
+  flex: 0 0 auto
+}
+
+.pie-pct {
+  font-size: 12px;
+  font-weight: 800;
+  fill: #2b3a57;
+  paint-order: stroke;
+  stroke: #fff;
+  stroke-width: 3px
+}
 
 /* ==== Produk Terlaris: paksa layout dua kolom & pie di kanan ==== */
-.pt-grid{ display:grid !important; grid-template-columns:minmax(620px,1fr) 420px !important; gap:24px !important; align-items:start !important; }
+.pt-grid {
+  display: grid !important;
+  grid-template-columns: minmax(620px, 1fr) 420px !important;
+  gap: 24px !important;
+  align-items: start !important;
+}
 
-.pie-wrap{ max-width:420px; width:100%; }
+.pie-wrap {
+  max-width: 420px;
+  width: 100%;
+}
 
 /* === OVERRIDE FINAL: Produk Terlaris (tabel kiri, pie kanan) === */
 
 /* Card Produk Terlaris */
-.panel-single{
-  background:#fff;
-  border:1px solid var(--line);
-  border-radius:10px;
-  box-shadow:0 2px 10px rgba(0,0,0,.04);
-  margin-top:18px;
+.panel-single {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, .04);
+  margin-top: 18px;
 }
 
 /* Hilangkan garis abu-abu di header card ini */
-.panel-single .panel-header--chart{
-  border-bottom:none !important;
+.panel-single .panel-header--chart {
+  border-bottom: none !important;
 }
 
 /* Isi card: agak lega */
-.panel-single .ps-body{
-  padding:12px 16px 20px;
+.panel-single .ps-body {
+  padding: 12px 16px 20px;
 }
 
 /* GRID: kiri = tabel, kanan = pie */
-.pt-grid{
-  display:grid !important;
-  grid-template-columns:minmax(620px,1fr) 420px !important;
-  gap:24px !important;
-  align-items:flex-start !important;
+.pt-grid {
+  display: grid !important;
+  grid-template-columns: minmax(620px, 1fr) 420px !important;
+  gap: 24px !important;
+  align-items: flex-start !important;
 }
 
 /* Kiri: tabel */
-.pt-left{
-  min-width:0;
+.pt-left {
+  min-width: 0;
 }
 
 /* Kanan: pie chart – PAKSA tampil di samping kanan */
-.pt-right{
-  min-width:0;
-  display:flex !important;
-  align-items:center;
-  justify-content:center;
-  padding:8px 0;
+.pt-right {
+  min-width: 0;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 0;
 }
 
 /* Ukuran slot pie */
-.pie-wrap{
-  width:100%;
-  max-width:420px;
+.pie-wrap {
+  width: 100%;
+  max-width: 420px;
 }
 
 /* Pastikan tabel Produk Terlaris tetap full lebar kolom kirinya */
-.pt-left .table-wrap{
-  width:100%;
-  max-width:none;
+.pt-left .table-wrap {
+  width: 100%;
+  max-width: none;
 }
 
 /* Responsif: layar sempit → pie turun ke bawah tabel (1 kolom) */
-@media (max-width:1200px){
-  .pt-grid{
-    grid-template-columns:1fr !important;
+@media (max-width:1200px) {
+  .pt-grid {
+    grid-template-columns: 1fr !important;
   }
-  .pt-right{
-    justify-content:center;
-    margin-top:12px;
+
+  .pt-right {
+    justify-content: center;
+    margin-top: 12px;
   }
 }
 
 /* ===== Single Panel (full width) — gaya mirip panel-combo ===== */
-.panel-single{
-  background:#fff;
-  border:1px solid var(--line);
-  border-radius:10px;
-  box-shadow:0 2px 10px rgba(0,0,0,.04);
-  height:auto;                /* tinggi ikut isi */
-  display:flex;
-  flex-direction:column;
-  min-height:0;
-  margin-top:18px;
+.panel-single {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, .04);
+  height: auto;
+  /* tinggi ikut isi */
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  margin-top: 18px;
 }
 
 /* header pakai .panel-header / .panel-header--chart yang sudah ada */
 
 /* body umum card single */
-.panel-single .ps-body{
-  flex:1;
-  min-height:0;
-  padding:12px 16px;
+.panel-single .ps-body {
+  flex: 1;
+  min-height: 0;
+  padding: 12px 16px;
 }
 
 /* Placeholder (kalau dibutuhkan di card lain) */
-.ps-placeholder{
-  font-size:13px;
-  color:#7b8aa0;
-  border:1px dashed var(--line);
-  padding:18px 22px;
-  border-radius:10px;
-  background:#f9fbfe;
+.ps-placeholder {
+  font-size: 13px;
+  color: #7b8aa0;
+  border: 1px dashed var(--line);
+  padding: 18px 22px;
+  border-radius: 10px;
+  background: #f9fbfe;
 }
 
 /* Responsif: biar fleksibel di layar kecil */
-@media (max-width:1200px){
-  .panel-single{
-    height:auto;
+@media (max-width:1200px) {
+  .panel-single {
+    height: auto;
   }
 }
 
 /* Hilangkan garis abu-abu di header card Produk Terlaris */
-.panel-single .panel-header--chart{
-  border-bottom:none !important;
+.panel-single .panel-header--chart {
+  border-bottom: none !important;
 }
 
 /* ===== Produk Terlaris (layout 2 kolom: kiri tabel, kanan pie) ===== */
 
-.pt-grid{
-  width:100%;
-  display:grid;
-  grid-template-columns:minmax(620px,1fr) 420px; /* kiri tabel, kanan pie */
-  column-gap:24px;
-  align-items:flex-start;
+.pt-grid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(620px, 1fr) 420px;
+  /* kiri tabel, kanan pie */
+  column-gap: 24px;
+  align-items: flex-start;
 }
 
-.pt-left{
-  min-width:0;
+.pt-left {
+  min-width: 0;
 }
 
-.pt-right{
-  min-width:0;
-  display:flex;
-  justify-content:center;
-  align-items:center;
+.pt-right {
+  min-width: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 /* Slot pie (dibungkus TopProductsPie) */
-.pt-chart-slot{
-  width:100%;
-  max-width:420px;
-  min-height:260px;
-  border-radius:12px;
-  background:transparent;
+.pt-chart-slot {
+  width: 100%;
+  max-width: 420px;
+  min-height: 260px;
+  border-radius: 12px;
+  background: transparent;
 }
 
 /* Toolbar tombol di atas tabel (Copy | Excel) */
-.pt-toolbar{
-  display:flex;
-  gap:8px;
-  margin-bottom:10px;
+.pt-toolbar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
 }
 
 /* Bungkus tabel Produk Terlaris */
-.table-wrap{
-  border:1px solid var(--line);
-  border-radius:8px;
-  overflow:hidden;
-  background:#fff;
-  box-shadow:0 1.5px 8px rgba(0,0,0,.03);
+.table-wrap {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 1.5px 8px rgba(0, 0, 0, .03);
 }
 
 /* Tabel Produk Terlaris */
-.pt-table{
-  width:100%;
-  border-collapse:separate;
-  border-spacing:0;
-  font-size:12px;
-  color:#2b3b54;
+.pt-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 12px;
+  color: #2b3b54;
 }
 
-.pt-table thead th{
-  background:#f7fafc;
-  font-weight:600;
-  text-align:center;
-  padding:8px 10px;
-  border-bottom:1px solid var(--line);
+.pt-table thead th {
+  background: #f7fafc;
+  font-weight: 600;
+  text-align: center;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--line);
 }
 
-.pt-table tbody td{
-  padding:8px 10px;
-  border-bottom:1px solid #edf2f7;
+.pt-table tbody td {
+  padding: 8px 10px;
+  border-bottom: 1px solid #edf2f7;
 }
 
-.pt-table tbody tr:last-child td{
-  border-bottom:none;
+.pt-table tbody tr:last-child td {
+  border-bottom: none;
 }
 
 /* garis vertikal antar kolom */
-.pt-table thead th + th,
-.pt-table tbody td + td{
-  border-left:1px solid var(--line);
+.pt-table thead th+th,
+.pt-table tbody td+td {
+  border-left: 1px solid var(--line);
 }
 
-.pt-table tbody td + td{
-  border-left-color:#e6edf5;
+.pt-table tbody td+td {
+  border-left-color: #e6edf5;
 }
 
 /* Lebar beberapa kolom */
-.pt-table .col-no{
-  width:44px;
-  text-align:center;
+.pt-table .col-no {
+  width: 44px;
+  text-align: center;
 }
 
-.pt-table .col-img{
-  width:92px;
+.pt-table .col-img {
+  width: 92px;
 }
 
 /* Kolom tertentu rata tengah (gambar, terjual, persen) */
 .pt-table tbody td:nth-child(2),
 .pt-table tbody td:nth-child(4),
-.pt-table tbody td:nth-child(6){
-  text-align:center;
-  vertical-align:middle;
+.pt-table tbody td:nth-child(6) {
+  text-align: center;
+  vertical-align: middle;
 }
 
 /* pill "Gambar" */
-.img-pill{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  min-width:64px;
-  height:24px;
-  padding:0 8px;
-  border-radius:999px;
-  border:1px solid var(--line);
-  background:#f2f6fb;
-  font-size:11px;
-  color:#66768f;
+.img-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 64px;
+  height: 24px;
+  padding: 0 8px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: #f2f6fb;
+  font-size: 11px;
+  color: #66768f;
 }
 
 /* Pie di kanan tabel */
-.pie-wrap{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:14px;
-  max-width:420px;
-  width:100%;
-  min-width:320px;
+.pie-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  max-width: 420px;
+  width: 100%;
+  min-width: 320px;
 }
 
-.pie-box{
-  position:relative;
+.pie-box {
+  position: relative;
 }
 
-.pie-center{
-  position:absolute;
-  inset:0;
-  display:grid;
-  place-items:center;
-  pointer-events:none;
+.pie-center {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
 }
 
-.pie-center .pc-top{
-  font-weight:800;
-  font-size:18px;
-  line-height:1;
-  color:#2b3a57;
-  text-align:center;
+.pie-center .pc-top {
+  font-weight: 800;
+  font-size: 18px;
+  line-height: 1;
+  color: #2b3a57;
+  text-align: center;
 }
 
-.pie-center .pc-sub{
-  font-weight:700;
-  font-size:11px;
-  color:#6b7a90;
-  letter-spacing:.3px;
-  text-align:center;
-  margin-top:2px;
+.pie-center .pc-sub {
+  font-weight: 700;
+  font-size: 11px;
+  color: #6b7a90;
+  letter-spacing: .3px;
+  text-align: center;
+  margin-top: 2px;
 }
 
-.pie-pct{
-  font-size:12px;
-  font-weight:800;
-  fill:#2b3a57;
-  paint-order:stroke;
-  stroke:#fff;
-  stroke-width:3px;
+.pie-pct {
+  font-size: 12px;
+  font-weight: 800;
+  fill: #2b3a57;
+  paint-order: stroke;
+  stroke: #fff;
+  stroke-width: 3px;
 }
 
 /* legend dua kolom (5 + 5) */
-.pie-legend2c{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:8px 28px;
+.pie-legend2c {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 28px;
 }
 
-.pie-legend2c ul{
-  list-style:none;
-  margin:0;
-  padding:0;
-  display:flex;
-  flex-direction:column;
-  gap:8px;
+.pie-legend2c ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
-.pie-legend2c li{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  font-size:12.5px;
-  color:#2b3a57;
+.pie-legend2c li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12.5px;
+  color: #2b3a57;
 }
 
-.pie-legend2c .dot{
-  width:12px;
-  height:12px;
-  border-radius:999px;
-  box-shadow:0 0 0 2px #fff,0 0 0 3px rgba(0,0,0,.04);
-  flex:0 0 auto;
+.pie-legend2c .dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  box-shadow: 0 0 0 2px #fff, 0 0 0 3px rgba(0, 0, 0, .04);
+  flex: 0 0 auto;
 }
 
-.pie-legend2c .name{
-  font-weight:600;
+.pie-legend2c .name {
+  font-weight: 600;
 }
 
 /* Responsif Produk Terlaris */
-@media (max-width:1200px){
-  .pt-grid{
-    grid-template-columns:1fr;
-    row-gap:16px;
+@media (max-width:1200px) {
+  .pt-grid {
+    grid-template-columns: 1fr;
+    row-gap: 16px;
   }
-  .pt-right{
-    justify-content:flex-start;
+
+  .pt-right {
+    justify-content: flex-start;
   }
 }
 
@@ -2204,7 +3642,7 @@ html,body{
 
 /* Grid dua kolom: kiri tabel, kanan pie.
    Lebar kiri kita buat agak lebih kecil supaya muat di layar sempit. */
-.pt-grid{
+.pt-grid {
   display: grid !important;
   grid-template-columns: minmax(320px, 1.1fr) minmax(260px, 0.9fr) !important;
   gap: 20px !important;
@@ -2212,19 +3650,20 @@ html,body{
 }
 
 /* Tabel jangan maksa lebar, biar fleksibel */
-.pt-left{
+.pt-left {
   min-width: 0 !important;
 }
 
-.pt-right{
+.pt-right {
   min-width: 0 !important;
   display: flex !important;
   align-items: center;
-  justify-content: center;   /* sekarang di tengah */
+  justify-content: center;
+  /* sekarang di tengah */
   padding: 8px 0;
 }
 
-.pie-wrap{
+.pie-wrap {
   width: 100%;
   max-width: 320px;
   margin-left: 0;
@@ -2233,12 +3672,14 @@ html,body{
 
 /* === KECILKAN SEDIKIT TABEL PRODUK TERLARIS SAJA === */
 .pt-table--top {
-  font-size: 11px;          /* font sedikit lebih kecil */
+  font-size: 11px;
+  /* font sedikit lebih kecil */
 }
 
 .pt-table--top th,
 .pt-table--top td {
-  padding: 6px 8px;         /* padding lebih rapat */
+  padding: 6px 8px;
+  /* padding lebih rapat */
 }
 
 /* Kolom nomor & gambar lebih sempit */
@@ -2275,7 +3716,8 @@ html,body{
 
 /* Gambar TIDAK diperkecil */
 .pt-table--top .col-img {
-  width: 90px;   /* atau boleh dihapus aturan width ini kalau mau auto */
+  width: 90px;
+  /* atau boleh dihapus aturan width ini kalau mau auto */
 }
 
 /* kolom angka kita kecilkan */
@@ -2293,40 +3735,49 @@ html,body{
   width: 90px;
   text-align: right;
 }
+
 /* === OVERRIDE LEGEND METODE PEMBAYARAN: RAPAT SEPERTI DESAIN === */
-.ds-panels--bottom .ds-panel:first-child .donut-legend{
+.ds-panels--bottom .ds-panel:first-child .donut-legend {
   display: flex;
   flex-direction: column;
-  gap: 3px;         /* jarak antar baris kecil, hampir bedempet */
-  padding: 0;       /* hilangkan padding ekstra */
-  margin-top: 4px;  /* legend naik sedikit mendekati donut */
+  gap: 3px;
+  /* jarak antar baris kecil, hampir bedempet */
+  padding: 0;
+  /* hilangkan padding ekstra */
+  margin-top: 4px;
+  /* legend naik sedikit mendekati donut */
 }
 
-.ds-panels--bottom .ds-panel:first-child .donut-legend li{
-  padding: 0;       /* hilangkan padding atas/bawah di tiap item */
+.ds-panels--bottom .ds-panel:first-child .donut-legend li {
+  padding: 0;
+  /* hilangkan padding atas/bawah di tiap item */
   min-height: 0;
-  line-height: 1.2; /* baris teks lebih rapat */
+  line-height: 1.2;
+  /* baris teks lebih rapat */
 }
 
 /* pastikan teksnya nggak nambah jarak */
 .ds-panels--bottom .ds-panel:first-child .dl-label,
 .ds-panels--bottom .ds-panel:first-child .dl-sub,
-.ds-panels--bottom .ds-panel:first-child .dl-count{
+.ds-panels--bottom .ds-panel:first-child .dl-count {
   margin: 0;
-}       
+}
 
 /* === OVERRIDE: Pusatkan pie Top 10 di kolom kanan === */
-.pt-right{
+.pt-right {
   min-width: 0 !important;
-  display: block !important;   /* tidak pakai flex lagi */
+  display: block !important;
+  /* tidak pakai flex lagi */
   padding: 8px 0;
 }
 
 /* blok pie + legend ditaruh tepat di tengah kolom */
-.pie-wrap{
+.pie-wrap {
   width: 100%;
-  max-width: 420px;            /* atau 320px kalau mau lebih kecil */
-  margin: 0 auto;              /* INI yang bikin benar-benar di tengah */
+  max-width: 420px;
+  /* atau 320px kalau mau lebih kecil */
+  margin: 0 auto;
+  /* INI yang bikin benar-benar di tengah */
 }
 
 /* MODE BESAR (default) */
@@ -2334,109 +3785,116 @@ html,body{
   display: grid;
   grid-template-columns: 60px 1fr;
   transition: grid-template-columns .25s ease;
-  background: var(--bg);          /* abu-abu */
+  background: var(--bg);
+  /* abu-abu */
 
   /* font global untuk seluruh dashboard */
   font-family: "Poppins", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  font-weight: 600;               /* versi bold */
+  font-weight: 600;
+  /* versi bold */
 
   /* ✅ penting supaya area konten punya tinggi tetap */
   height: 100vh;
   min-height: 0;
+  overflow: hidden;
 }
 
 /* === Sidebar collapse: hanya icon saat diperkecil === */
-.dashboard.collapsed .ds-nav-item{
+.dashboard.collapsed .ds-nav-item {
   grid-template-columns: 1fr;
   justify-content: center;
   padding-left: 0;
   padding-right: 0;
 }
 
-.dashboard.collapsed .ds-nav-item span:nth-child(2){
-  display: none; /* sembunyikan teks menu: Dashboard, Transaksi, dll */
+.dashboard.collapsed .ds-nav-item span:nth-child(2) {
+  display: none;
+  /* sembunyikan teks menu: Dashboard, Transaksi, dll */
 }
 
-.dashboard.collapsed .ds-nav-item .ico{
-  justify-self: center; /* icon di tengah */
+.dashboard.collapsed .ds-nav-item .ico {
+  justify-self: center;
+  /* icon di tengah */
 }
 
-.ds-topbar{
+.ds-topbar {
   position: relative;
-  z-index: 20;   /* lebih tinggi dari sidebar (5), jadi bar putih gradasi selalu di atas */
+  z-index: 20;
+  /* lebih tinggi dari sidebar (5), jadi bar putih gradasi selalu di atas */
 }
 
-.ds-topbar::before{
+.ds-topbar::before {
   content: "";
   position: absolute;
   top: 0;
   left: -210px;
   height: 100%;
 
-    right: auto;
-    width: 630px !important;
+  right: auto;
+  width: 630px !important;
 
-  background: linear-gradient(
-    to right,
-    rgba(255,255,255,1) 0%,
-    rgba(255,255,255,1) 85%,
-    rgba(255,255,255,0) 100%
-  );
+  background: linear-gradient(to right,
+      rgba(255, 255, 255, 1) 0%,
+      rgba(255, 255, 255, 1) 85%,
+      rgba(255, 255, 255, 0) 100%);
 
   pointer-events: none;
   z-index: -1;
 }
 
-.ds-topbar::after{
+.ds-topbar::after {
   content: "";
   position: absolute;
   bottom: 0;
   left: -210px;
 
   /* ❗ Panjang shadow hanya sampai produk kiri */
-  width: 420px;  /* nanti akan aku hitungkan akurat setelah lihat crop dekat */
+  width: 420px;
+  /* nanti akan aku hitungkan akurat setelah lihat crop dekat */
 
   height: 1px;
-  background: linear-gradient(
-    to right,
-    rgba(0,0,0,0.12),
-    rgba(0,0,0,0.05),
-    rgba(0,0,0,0)
-  );
+  background: linear-gradient(to right,
+      rgba(0, 0, 0, 0.12),
+      rgba(0, 0, 0, 0.05),
+      rgba(0, 0, 0, 0));
   pointer-events: none;
 }
 
 /* ===== OVERRIDE: hilangkan garis abu-abu di bawah bar putih & kanan bar orange ===== */
 
 /* Hilangkan border bawah topbar (garis di bawah bar putih) */
-.ds-topbar{
+.ds-topbar {
   border-bottom: none !important;
 }
 
 /* ===== OVERRIDE: turunkan navigasi di sidebar agar tidak menimpa title POS Kasir ===== */
-.ds-nav{
-  margin-top: 16px !important;   /* coba 32–48px sampai pas di layar kamu */
+.ds-nav {
+  margin-top: 16px !important;
+  /* coba 32–48px sampai pas di layar kamu */
 }
 
 /* ===== OVERRIDE: perbesar icon di sidebar ===== */
-.ds-nav-item .ico{
-  font-size: 18px !important;  /* tadinya 14px, sekarang sedikit lebih besar */
+.ds-nav-item .ico {
+  font-size: 18px !important;
+  /* tadinya 14px, sekarang sedikit lebih besar */
 }
 
 /* ===== OVERRIDE: perbesar icon sidebar ===== */
-.ds-nav-item .ico{
-  font-size: 20px !important;   /* kalau mau lebih besar: 22px */
+.ds-nav-item .ico {
+  font-size: 20px !important;
+  /* kalau mau lebih besar: 22px */
 }
 
 /* ===== OVERRIDE: saat sidebar diperkecil, jarak icon ditambah ===== */
 
 /* tambah gap antar item menu */
-.dashboard.collapsed .ds-nav{
-  gap: 10px !important;         /* default-nya 6px, sekarang lebih renggang */
+.dashboard.collapsed .ds-nav {
+  gap: 10px !important;
+  /* default-nya 6px, sekarang lebih renggang */
 }
 
 /* tambah padding vertikal tiap icon */
-.dashboard.collapsed .ds-nav-item{
+.dashboard.collapsed .ds-nav-item {
   padding-top: 10px !important;
   padding-bottom: 10px !important;
 }
@@ -2453,18 +3911,22 @@ html,body{
 }
 
 
-.ds-side-bottom{
-  margin-top: auto;        /* tetap dorong ke bawah */
-  display: flex;           /* biar sama seperti .ds-nav */
+.ds-side-bottom {
+  margin-top: auto;
+  /* tetap dorong ke bawah */
+  display: flex;
+  /* biar sama seperti .ds-nav */
   flex-direction: column;
-  align-items: center;     /* ⬅️ ini yang bikin icon sejajar dengan yang atas */
-  padding-bottom: 22px;    /* sedikit jarak dari bawah (boleh kamu kecil/besarkan) */
+  align-items: center;
+  /* ⬅️ ini yang bikin icon sejajar dengan yang atas */
+  padding-bottom: 22px;
+  /* sedikit jarak dari bawah (boleh kamu kecil/besarkan) */
   position: relative;
 }
 
 
 /* ✅ garis abu-abu pemisah, mirip line di header profil */
-.ds-side-bottom::before{
+.ds-side-bottom::before {
   content: "";
   position: absolute;
   top: 0;
@@ -2474,8 +3936,2228 @@ html,body{
   background: #e2e6ee;
 }
 
-.ds-inner, 
+.ds-inner,
 .transaksi-wrapper,
 .trx-container {
   overflow: visible !important;
+}
+
+/* Wrapper utama dashboard: background gelap + card besar konten */
+.dashboard {
+  /* layout: sidebar lebar 280px + konten */
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  height: 100vh;
+  min-height: 0;
+
+  padding: 24px;
+  box-sizing: border-box;
+
+  background: radial-gradient(circle at top left, #2f326b 0%, #050816 55%, #020010 100%);
+}
+
+/* Card konten utama */
+.ds-main {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
+
+  background: rgba(15, 23, 42, 0.96);
+  border-radius: 32px;
+  padding: 24px 28px;
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(22px);
+}
+
+/* Isi di dalam main scrollable */
+.ds-inner {
+  flex: 1;
+  padding-top: 16px;
+  padding-bottom: 10px;
+  overflow-y: scroll !important;
+  overflow-x: hidden !important;
+  min-height: 0;
+  max-height: calc(100vh - 100px);
+}
+
+/* ======================== TOPBAR DARK ======================== */
+
+.ds-topbar {
+  position: relative;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 4px 0;
+  background: transparent;
+  border-bottom: none;
+  color: #e5e7eb;
+}
+
+/* Matikan gradasi putih lama di topbar */
+.ds-topbar::before,
+.ds-topbar::after {
+  content: none !important;
+}
+
+/* Semua teks di topbar jadi terang */
+.ds-topbar,
+.ds-topbar * {
+  color: #e5e7eb;
+}
+
+/* ======================== SIDEBAR DARK ======================== */
+
+.ds-sidebar.ds-sidebar-dark {
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  overflow: hidden;
+
+  border-radius: 32px;
+  padding: 22px 18px 18px;
+  min-width: 0;
+
+  background: radial-gradient(circle at top left, #32346f 0%, #1b1f3d 45%, #0b0f23 100%);
+  box-shadow: 0 26px 70px rgba(0, 0, 0, 0.85);
+
+  color: #e5e7eb;
+
+  /* hilangkan margin-top & height lama */
+  margin-top: 0;
+  height: 100%;
+  border-right: none;
+}
+
+/* Brand kecil di atas */
+.ds-side-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.ds-brand-logo {
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 18px;
+
+  background: linear-gradient(135deg, #fb923c, #f97316, #facc15);
+  color: #fff;
+  box-shadow: 0 12px 30px rgba(248, 181, 82, 0.55);
+}
+
+.ds-brand-text .brand-name {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.ds-brand-text .brand-sub {
+  font-size: 11px;
+  font-weight: 500;
+  color: rgba(209, 213, 219, 0.8);
+}
+
+/* Kartu profil user */
+.ds-side-user-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  box-sizing: border-box;
+
+  padding: 10px 14px;
+  border-radius: 16px;
+
+  background: linear-gradient(135deg,
+      rgba(30, 41, 59, 0.9),
+      rgba(15, 23, 42, 0.95));
+  border: 2px solid #f59e0b;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.ds-user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: linear-gradient(135deg, #f97316, #fb7185);
+  color: #fff;
+  font-weight: 700;
+}
+
+.ds-user-meta .user-name {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.ds-user-meta .user-role {
+  font-size: 11px;
+  color: rgba(209, 213, 219, 0.8);
+}
+
+/* ======================== NAV UTAMA ======================== */
+
+.ds-nav-dark {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ds-nav-caption {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(148, 163, 184, 0.9);
+  margin-bottom: 4px;
+}
+
+/* item menu */
+.ds-nav-item-dark {
+  border: none;
+  outline: none;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  padding: 10px 12px;
+  border-radius: 18px;
+
+  font-size: 13px;
+  color: #9ca3af;
+
+  cursor: pointer;
+  transition:
+    background 0.18s ease,
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    color 0.18s ease;
+}
+
+.ds-nav-item-dark .nav-ico {
+  width: 32px;
+  height: 32px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: rgba(15, 23, 42, 0.85);
+  color: #e5e7eb;
+  font-size: 16px;
+}
+
+.ds-nav-item-dark .nav-label {
+  white-space: nowrap;
+}
+
+/* hover */
+.ds-nav-item-dark:hover {
+  background: rgba(148, 163, 184, 0.16);
+  transform: translateX(3px);
+}
+
+/* active */
+.ds-nav-item-dark.active {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: #ffffff;
+  box-shadow: 0 16px 40px rgba(79, 70, 229, 0.85);
+}
+
+.ds-nav-item-dark.active .nav-ico {
+  background: rgba(15, 23, 42, 0.5);
+}
+
+/* ======================== BAGIAN BAWAH SIDEBAR ======================== */
+
+.ds-side-bottom-dark {
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid rgba(148, 163, 184, 0.4);
+
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* item "ghost" (contoh Pengguna) */
+.ds-nav-item-dark.ghost {
+  background: transparent;
+  color: #9ca3af;
+}
+
+.ds-nav-item-dark.ghost .nav-ico {
+  background: rgba(15, 23, 42, 0.7);
+}
+
+/* tombol logout */
+.ds-logout-btn {
+  border: none;
+  outline: none;
+
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  padding: 10px 12px;
+  border-radius: 18px;
+
+  background: rgba(248, 113, 113, 0.12);
+  color: #fca5a5;
+
+  cursor: pointer;
+  font-size: 13px;
+
+  transition:
+    background 0.18s ease,
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    color 0.18s ease;
+}
+
+.ds-logout-btn .nav-ico {
+  width: 32px;
+  height: 32px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: rgba(127, 29, 29, 0.75);
+  color: #fecaca;
+}
+
+.ds-logout-btn:hover {
+  background: rgba(248, 113, 113, 0.2);
+  transform: translateX(3px);
+  box-shadow: 0 14px 32px rgba(248, 113, 113, 0.5);
+}
+
+/* ============================================================
+   DARK MODE OVERRIDE – SIDEBAR & LAYOUT DASHBOARD
+   (ditempel di PALING BAWAH Dashboard.css)
+   ============================================================ */
+
+/* Layout utama: sidebar + konten */
+.dashboard {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  gap: 24px;
+  padding: 24px;
+  box-sizing: border-box;
+  height: 100vh;
+  min-height: 0;
+
+  background: radial-gradient(circle at top left, #312e81 0%, #020617 55%, #020012 100%);
+}
+
+/* Card konten utama */
+.ds-main {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+
+  background: rgba(15, 23, 42, 0.97);
+  border-radius: 32px;
+  padding: 24px 28px;
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.7);
+}
+
+/* Isi di dalam main bisa scroll */
+.ds-inner {
+  flex: 1;
+  padding-top: 12px;
+  padding-bottom: 18px;
+  overflow-y: scroll !important;
+  overflow-x: hidden !important;
+  min-height: 0;
+  max-height: calc(100vh - 100px);
+}
+
+/* TOPBAR: matikan white-bar lama */
+.ds-topbar {
+  background: transparent !important;
+  border-bottom: none !important;
+  color: #e5e7eb;
+}
+
+/* buang bar gradasi putih & oranye lama */
+.ds-topbar::before,
+.ds-topbar::after {
+  content: none !important;
+}
+
+/* ======================= SIDEBAR DARK ======================= */
+
+.ds-sidebar.ds-sidebar-dark {
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  overflow: hidden;
+
+  margin-top: 0;
+  /* override margin-top:80px lama */
+  height: 100%;
+  /* bukan calc(100vh - 80px) lagi */
+
+  border-right: none;
+  border-radius: 32px;
+  padding: 22px 18px 18px;
+  min-width: 0;
+
+  background: radial-gradient(circle at top left, #32346f 0%, #1b1f3d 45%, #0b0f23 100%);
+  box-shadow: 0 26px 70px rgba(0, 0, 0, 0.85);
+  color: #e5e7eb;
+}
+
+/* Brand */
+.ds-side-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.ds-brand-logo {
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 18px;
+
+  background: linear-gradient(135deg, #fb923c, #f97316, #facc15);
+  color: #fff;
+  box-shadow: 0 12px 30px rgba(248, 181, 82, 0.55);
+}
+
+.ds-brand-text .brand-name {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.ds-brand-text .brand-sub {
+  font-size: 11px;
+  font-weight: 500;
+  color: rgba(209, 213, 219, 0.8);
+}
+
+/* User card */
+.ds-side-user-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  box-sizing: border-box;
+
+  padding: 10px 14px;
+  border-radius: 16px;
+
+  background: linear-gradient(135deg,
+      rgba(30, 41, 59, 0.9),
+      rgba(15, 23, 42, 0.95));
+  border: 2px solid #f59e0b;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.ds-user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: linear-gradient(135deg, #f97316, #fb7185);
+  color: #fff;
+  font-weight: 700;
+}
+
+.ds-user-meta .user-name {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.ds-user-meta .user-role {
+  font-size: 11px;
+  color: rgba(209, 213, 219, 0.8);
+}
+
+/* NAV UTAMA */
+.ds-nav-dark {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ds-nav-caption {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(148, 163, 184, 0.9);
+  margin-bottom: 4px;
+}
+
+/* item menu */
+.ds-nav-item-dark {
+  border: none;
+  outline: none;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  padding: 10px 12px;
+  border-radius: 18px;
+
+  font-size: 13px;
+  color: #9ca3af;
+
+  cursor: pointer;
+  transition:
+    background 0.18s ease,
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    color 0.18s ease;
+}
+
+.ds-nav-item-dark .nav-ico {
+  width: 32px;
+  height: 32px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: rgba(15, 23, 42, 0.85);
+  color: #e5e7eb;
+  font-size: 16px;
+}
+
+.ds-nav-item-dark .nav-label {
+  white-space: nowrap;
+}
+
+/* hover */
+.ds-nav-item-dark:hover {
+  background: rgba(148, 163, 184, 0.16);
+  transform: translateX(3px);
+}
+
+/* active */
+.ds-nav-item-dark.active {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: #ffffff;
+  box-shadow: 0 16px 40px rgba(79, 70, 229, 0.85);
+}
+
+.ds-nav-item-dark.active .nav-ico {
+  background: rgba(15, 23, 42, 0.5);
+}
+
+/* BAGIAN BAWAH SIDEBAR */
+.ds-side-bottom-dark {
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid rgba(148, 163, 184, 0.4);
+
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* item “ghost” (Pengguna) */
+.ds-nav-item-dark.ghost {
+  background: transparent;
+  color: #9ca3af;
+}
+
+.ds-nav-item-dark.ghost .nav-ico {
+  background: rgba(15, 23, 42, 0.7);
+}
+
+/* tombol logout */
+.ds-logout-btn {
+  border: none;
+  outline: none;
+
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  padding: 10px 12px;
+  border-radius: 18px;
+
+  background: rgba(248, 113, 113, 0.12);
+  color: #fca5a5;
+
+  cursor: pointer;
+  font-size: 13px;
+
+  transition:
+    background 0.18s ease,
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    color 0.18s ease;
+}
+
+.ds-logout-btn .nav-ico {
+  width: 32px;
+  height: 32px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: rgba(127, 29, 29, 0.75);
+  color: #fecaca;
+}
+
+.ds-logout-btn:hover {
+  background: rgba(248, 113, 113, 0.2);
+  transform: translateX(3px);
+  box-shadow: 0 14px 32px rgba(248, 113, 113, 0.5);
+}
+
+/* ======================= TOPBAR DARK MODE BARU ======================= */
+
+.ds-topbar {
+  position: relative;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 6px 0;
+  background: transparent;
+  border-bottom: none;
+  color: #e5e7eb;
+}
+
+/* matikan dekorasi lama kalau ada */
+.ds-topbar::before,
+.ds-topbar::after {
+  content: none !important;
+}
+
+.ds-topbar-left {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ds-topbar-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ds-topbar-title {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.ds-topbar-sub {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+.ds-topbar-sub svg {
+  font-size: 13px;
+}
+
+.ds-topbar-sub .dot-sep {
+  width: 4px;
+  height: 4px;
+  border-radius: 999px;
+  background: #6b7280;
+}
+
+.ds-topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.ds-topbar-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(148, 163, 184, 0.5);
+}
+
+.ds-topbar-pill svg {
+  font-size: 13px;
+  color: #9ca3af;
+}
+
+.ds-topbar-pill input {
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #e5e7eb;
+  font-size: 12px;
+  width: 220px;
+}
+
+.ds-topbar-pill input::placeholder {
+  color: #6b7280;
+}
+
+/* ================================================
+   DARK MODE STYLES
+   ================================================ */
+
+/* Main background */
+.dashboard.dark {
+  background: var(--bg);
+}
+
+/* Sidebar Dark */
+.dashboard.dark .ds-sidebar {
+  background: #1e293b;
+  border-color: var(--line);
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.3);
+}
+
+.dashboard.dark .ds-side-header::after {
+  background: var(--line);
+}
+
+.dashboard.dark .side-user {
+  background: #334155;
+  color: #f59e0b;
+}
+
+.dashboard.dark .side-user::after {
+  background: #334155;
+  color: #e2e8f0;
+}
+
+.dashboard.dark .ds-nav-item .ico {
+  background: #334155;
+  color: #f59e0b;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, .2);
+}
+
+.dashboard.dark .ds-nav-item:hover .ico {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, .3);
+}
+
+.dashboard.dark .ds-nav-item.active .ico {
+  background: #f59e0b;
+  color: #1e293b;
+}
+
+.dashboard.dark .ds-nav-item.active::before {
+  background: #f59e0b;
+}
+
+.dashboard.dark .ds-nav-item::after {
+  background: #334155;
+  color: #e2e8f0;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, .4);
+}
+
+/* Topbar Dark */
+.dashboard.dark .ds-topbar {
+  background: #0f172a;
+  border-color: var(--line);
+}
+
+.dashboard.dark .ds-topbar-title {
+  color: #f1f5f9;
+}
+
+.dashboard.dark .ds-topbar-sub {
+  color: #94a3b8;
+}
+
+.dashboard.dark .ds-topbar-pill {
+  background: #334155;
+  border-color: #475569;
+}
+
+.dashboard.dark .ds-topbar-pill input {
+  color: #e2e8f0;
+}
+
+.dashboard.dark .ds-topbar-pill input::placeholder {
+  color: #64748b;
+}
+
+.dashboard.dark .ds-topbar-pill svg {
+  color: #94a3b8;
+}
+
+/* Main content area */
+.dashboard.dark .ds-main {
+  background: var(--bg);
+}
+
+.dashboard.dark .ds-inner {
+  background: var(--bg);
+}
+
+/* Section titles */
+.dashboard.dark .ds-section-title {
+  color: #94a3b8;
+}
+
+/* Cards (keep original colors but adjust text) */
+.dashboard.dark .ds-card {
+  box-shadow: 0 4px 14px rgba(0, 0, 0, .3);
+}
+
+/* Panels */
+.dashboard.dark .panel-combo,
+.dashboard.dark .ds-panel,
+.dashboard.dark .panel-single {
+  background: var(--bg-panel);
+  border-color: var(--line);
+  box-shadow: var(--shadow-sm);
+}
+
+.dashboard.dark .panel-header {
+  border-color: var(--line);
+  color: var(--text-secondary);
+}
+
+.dashboard.dark .ph-title,
+.dashboard.dark .ph-righttitle {
+  color: var(--text-primary);
+}
+
+.dashboard.dark .mini-title {
+  color: var(--text-primary);
+}
+
+/* Tables */
+.dashboard.dark .ds-table-wrap,
+.dashboard.dark .table-wrap {
+  background: var(--bg-panel);
+  border-color: var(--line);
+}
+
+.dashboard.dark .ds-table thead th,
+.dashboard.dark .pt-table thead th {
+  background: #1e293b;
+  color: #94a3b8;
+  border-color: var(--line);
+}
+
+.dashboard.dark .ds-table tbody td,
+.dashboard.dark .pt-table tbody td {
+  color: #e2e8f0;
+  border-color: var(--line);
+}
+
+.dashboard.dark .ds-table tbody tr:hover,
+.dashboard.dark .pt-table tbody tr:hover {
+  background: #334155;
+}
+
+/* Buttons */
+.dashboard.dark .btn {
+  background: #334155;
+  border-color: #475569;
+  color: #e2e8f0;
+}
+
+.dashboard.dark .btn:hover {
+  background: #475569;
+}
+
+.dashboard.dark .btn-green {
+  background: #166534;
+  border-color: #22c55e;
+  color: #bbf7d0;
+}
+
+.dashboard.dark .btn-gray {
+  background: #334155;
+  border-color: #475569;
+  color: #e2e8f0;
+}
+
+.dashboard.dark .aksi-link {
+  background: #334155;
+  border-color: #475569;
+  color: #e2e8f0;
+}
+
+/* Search inputs */
+.dashboard.dark .tc-right {
+  background: #334155;
+  border-color: #475569;
+}
+
+.dashboard.dark .tc-right input {
+  color: #e2e8f0;
+  background: transparent;
+}
+
+.dashboard.dark .tc-right input::placeholder {
+  color: #64748b;
+}
+
+.dashboard.dark .tc-right svg {
+  color: #94a3b8;
+}
+
+/* Pagination */
+.dashboard.dark .pager button {
+  background: #334155;
+  border-color: #475569;
+  color: #e2e8f0;
+}
+
+.dashboard.dark .pager button:hover {
+  background: #475569;
+}
+
+.dashboard.dark .pager button.active {
+  background: #3b82f6;
+  border-color: #3b82f6;
+  color: #fff;
+}
+
+.dashboard.dark .pager .ellipsis {
+  color: #64748b;
+}
+
+.dashboard.dark .table-footer .tf-left {
+  color: #94a3b8;
+}
+
+/* Charts */
+.dashboard.dark .chart-container {
+  background: transparent;
+}
+
+.dashboard.dark .chart-svg text {
+  fill: #94a3b8;
+}
+
+.dashboard.dark .chart-overlay .filter-label {
+  color: #64748b;
+}
+
+.dashboard.dark .chart-overlay .legend-text {
+  color: #e2e8f0;
+}
+
+/* Donut chart */
+.dashboard.dark .dc-top,
+.dashboard.dark .dc-sub {
+  color: #94a3b8;
+}
+
+.dashboard.dark .dc-big {
+  color: var(--text-primary);
+}
+
+.dashboard.dark .donut-legend li {
+  color: #e2e8f0;
+}
+
+.dashboard.dark .dl-label {
+  color: var(--text-primary);
+}
+
+.dashboard.dark .dl-sub {
+  color: #64748b;
+}
+
+.dashboard.dark .dl-count {
+  color: var(--text-primary);
+}
+
+/* Pie chart */
+.dashboard.dark .pie-legend2c li,
+.dashboard.dark .pie-legend2c .name {
+  color: #e2e8f0;
+}
+
+.dashboard.dark .pc-top,
+.dashboard.dark .pc-sub {
+  color: #94a3b8;
+}
+
+/* Profile Pill */
+.dashboard.dark .profile-pill {
+  background: #334155;
+  color: #f59e0b;
+}
+
+.dashboard.dark .profile-menu {
+  background: #1e293b;
+  border-color: var(--line);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, .4);
+}
+
+.dashboard.dark .profile-menu .menu-item {
+  color: #e2e8f0;
+}
+
+.dashboard.dark .profile-menu .menu-item:hover {
+  background: #334155;
+}
+
+.dashboard.dark .profile-menu .menu-sep {
+  background: var(--line);
+}
+
+/* Image pills */
+.dashboard.dark .img-pill {
+  background: #334155;
+  color: #94a3b8;
+}
+
+/* Placeholder */
+.dashboard.dark .ps-placeholder {
+  color: #64748b;
+}
+
+/* Filter select */
+.dashboard.dark .chart-filter {
+  background: #334155;
+  border-color: #475569;
+  color: #e2e8f0;
+}
+
+/* Smooth transition for theme change */
+.dashboard,
+.dashboard * {
+  transition: background-color 0.3s ease,
+    border-color 0.3s ease,
+    color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+/* ================================================
+   LIGHT MODE STYLES - SIDEBAR & LAYOUT
+   ================================================ */
+
+/* Main dashboard layout - Light Mode */
+.dashboard.light {
+  background: linear-gradient(135deg, #e0e7ff 0%, #f0f4f8 50%, #e9f1f6 100%);
+}
+
+/* Main content area - Light Mode */
+.dashboard.light .ds-main {
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+}
+
+/* Sidebar - Light Mode */
+.dashboard.light .ds-sidebar-dark {
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.06);
+  color: #334155;
+}
+
+/* Sidebar Brand - Light Mode */
+.dashboard.light .ds-brand-logo {
+  background: linear-gradient(135deg, #f59e0b, #f97316);
+  box-shadow: 0 8px 20px rgba(245, 158, 11, 0.35);
+}
+
+.dashboard.light .ds-brand-text .brand-name {
+  color: #1e293b;
+}
+
+.dashboard.light .ds-brand-text .brand-sub {
+  color: #64748b;
+}
+
+/* User Card - Light Mode */
+.dashboard.light .ds-side-user-card {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(249, 115, 22, 0.05));
+  border-color: #e2e8f0;
+}
+
+.dashboard.light .ds-user-meta .user-name {
+  color: #1e293b;
+}
+
+.dashboard.light .ds-user-meta .user-role {
+  color: #64748b;
+}
+
+/* Nav Caption - Light Mode */
+.dashboard.light .ds-nav-caption {
+  color: #94a3b8;
+}
+
+/* Nav Items - Light Mode */
+.dashboard.light .ds-nav-item-dark {
+  color: #64748b;
+}
+
+.dashboard.light .ds-nav-item-dark .nav-ico {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.dashboard.light .ds-nav-item-dark:hover {
+  background: rgba(245, 158, 11, 0.1);
+  color: #1e293b;
+}
+
+.dashboard.light .ds-nav-item-dark:hover .nav-ico {
+  background: #fef3c7;
+  color: #f59e0b;
+}
+
+/* Nav Item Active - Light Mode */
+.dashboard.light .ds-nav-item-dark.active {
+  background: linear-gradient(135deg, #f59e0b, #f97316);
+  color: #ffffff;
+  box-shadow: 0 8px 24px rgba(245, 158, 11, 0.4);
+}
+
+.dashboard.light .ds-nav-item-dark.active .nav-ico {
+  background: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+}
+
+/* Ghost Item - Light Mode */
+.dashboard.light .ds-nav-item-dark.ghost {
+  color: #94a3b8;
+}
+
+.dashboard.light .ds-nav-item-dark.ghost .nav-ico {
+  background: #f1f5f9;
+  color: #94a3b8;
+}
+
+/* Sidebar Bottom - Light Mode */
+.dashboard.light .ds-side-bottom-dark {
+  border-color: #e2e8f0;
+}
+
+/* Logout Button - Light Mode */
+.dashboard.light .ds-logout-btn {
+  background: rgba(239, 68, 68, 0.08);
+  color: #dc2626;
+}
+
+.dashboard.light .ds-logout-btn .nav-ico {
+  background: #fecaca;
+  color: #dc2626;
+}
+
+.dashboard.light .ds-logout-btn:hover {
+  background: rgba(239, 68, 68, 0.15);
+  box-shadow: 0 8px 20px rgba(239, 68, 68, 0.2);
+}
+
+/* Topbar - Light Mode */
+.dashboard.light .ds-topbar {
+  background: transparent;
+  border-color: #e2e8f0;
+}
+
+.dashboard.light .ds-topbar-title {
+  color: #0f172a;
+}
+
+.dashboard.light .ds-topbar-sub {
+  color: #334155;
+}
+
+.dashboard.light .ds-topbar-sub svg {
+  color: #f59e0b;
+}
+
+.dashboard.light .ds-topbar-pill {
+  background: #f1f5f9;
+  border-color: #e2e8f0;
+}
+
+.dashboard.light .ds-topbar-pill svg {
+  color: #94a3b8;
+}
+
+.dashboard.light .ds-topbar-pill input {
+  color: #334155;
+}
+
+.dashboard.light .ds-topbar-pill input::placeholder {
+  color: #94a3b8;
+}
+
+/* Profile Pill - Light Mode */
+.dashboard.light .profile-pill {
+  background: #f1f5f9;
+  color: #f59e0b;
+  border: 1px solid #e2e8f0;
+}
+
+.dashboard.light .profile-menu {
+  background: #ffffff;
+  border-color: #e2e8f0;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard.light .profile-menu .menu-item {
+  color: #334155;
+}
+
+.dashboard.light .profile-menu .menu-item:hover {
+  background: #f1f5f9;
+}
+
+.dashboard.light .profile-menu .menu-sep {
+  background: #e2e8f0;
+}
+
+/* Inner content area - Light Mode */
+.dashboard.light .ds-inner {
+  background: transparent;
+}
+
+/* Section Title - Light Mode */
+.dashboard.light .ds-section-title {
+  color: #64748b;
+}
+
+.dashboard.light .ds-section-title svg {
+  color: #f59e0b;
+}
+
+/* ======================= RESPONSIVE LAYOUT ======================= */
+/* Viewport medium - sidebar lebih kecil */
+@media (max-width: 1200px) {
+  .dashboard {
+    grid-template-columns: 220px minmax(0, 1fr);
+    gap: 16px;
+    padding: 16px;
+  }
+
+  .ds-sidebar.ds-sidebar-dark {
+    padding: 16px 12px;
+  }
+}
+
+/* Viewport kecil - sidebar collapse atau hidden */
+@media (max-width: 900px) {
+  .dashboard {
+    grid-template-columns: 180px minmax(0, 1fr);
+    gap: 12px;
+    padding: 12px;
+  }
+
+  .ds-sidebar.ds-sidebar-dark {
+    padding: 14px 10px;
+  }
+
+  .ds-brand-text .brand-name {
+    font-size: 14px;
+  }
+
+  .ds-brand-text .brand-sub {
+    font-size: 10px;
+  }
+
+  .ds-nav-item-dark .nav-label {
+    font-size: 12px;
+  }
+
+  .ds-side-user-card {
+    padding: 8px 10px;
+  }
+
+  .ds-user-meta .user-name {
+    font-size: 12px;
+  }
+}
+
+/* Viewport sangat kecil - sidebar sangat compact */
+@media (max-width: 768px) {
+  .dashboard {
+    grid-template-columns: 70px minmax(0, 1fr);
+    gap: 8px;
+    padding: 8px;
+  }
+
+  .ds-sidebar.ds-sidebar-dark {
+    padding: 12px 8px;
+    align-items: center;
+  }
+
+  .ds-side-brand {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .ds-brand-text {
+    display: none;
+  }
+
+  .ds-side-user-card {
+    padding: 8px;
+    justify-content: center;
+  }
+
+  .ds-user-meta {
+    display: none;
+  }
+
+  .ds-nav-item-dark .nav-label,
+  .ds-logout-btn .nav-label {
+    display: none;
+  }
+
+  .ds-nav-item-dark,
+  .ds-logout-btn {
+    justify-content: center;
+    padding: 10px;
+  }
+
+  .ds-nav-caption {
+    display: none;
+  }
+
+  /* Topbar adjustments */
+  .ds-topbar {
+    padding: 4px 8px 0;
+  }
+
+  .ds-topbar-title {
+    font-size: 16px;
+  }
+
+  .ds-main {
+    padding: 16px;
+    border-radius: 20px;
+  }
+}
+
+/* ============================================
+   USER DROPDOWN MENU
+   ============================================ */
+
+.ds-side-user-wrapper {
+  position: relative;
+  width: 100%;
+  padding: 0 16px;
+}
+
+.ds-side-user-card.clickable {
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.ds-side-user-card.clickable:hover,
+.ds-side-user-card.clickable.open {
+  border-color: #f59e0b;
+  background: rgba(245, 158, 11, 0.05);
+}
+
+.ds-user-chevron {
+  margin-left: auto;
+  color: #94a3b8;
+  font-size: 12px;
+  transition: transform 0.2s ease;
+}
+
+.ds-side-user-card.open .ds-user-chevron {
+  transform: rotate(180deg);
+}
+
+.ds-user-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 16px;
+  right: 16px;
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 12px;
+  padding: 8px 0;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  z-index: 100;
+  animation: dropdownSlideIn 0.2s ease-out;
+}
+
+@keyframes dropdownSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 16px;
+  background: none;
+  border: none;
+  color: #e2e8f0;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: left;
+}
+
+.dropdown-item:hover {
+  background: rgba(245, 158, 11, 0.1);
+  color: #f59e0b;
+}
+
+.dropdown-item svg {
+  font-size: 16px;
+  color: #94a3b8;
+  transition: color 0.15s ease;
+}
+
+.dropdown-item:hover svg {
+  color: #f59e0b;
+}
+
+.dropdown-divider {
+  height: 1px;
+  background: #334155;
+  margin: 8px 0;
+}
+
+.dropdown-item.logout {
+  color: #f87171;
+}
+
+.dropdown-item.logout:hover {
+  background: rgba(248, 113, 113, 0.1);
+  color: #ef4444;
+}
+
+.dropdown-item.logout svg {
+  color: #f87171;
+}
+
+.dropdown-item.logout:hover svg {
+  color: #ef4444;
+}
+
+/* Light mode dropdown */
+.dashboard.light .ds-user-dropdown {
+  background: #ffffff;
+  border-color: #e2e8f0;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard.light .dropdown-item {
+  color: #334155;
+}
+
+.dashboard.light .dropdown-item:hover {
+  background: rgba(245, 158, 11, 0.1);
+  color: #d97706;
+}
+
+.dashboard.light .dropdown-item svg {
+  color: #64748b;
+}
+
+.dashboard.light .dropdown-item:hover svg {
+  color: #d97706;
+}
+
+.dashboard.light .dropdown-divider {
+  background: #e2e8f0;
+}
+
+.dashboard.light .dropdown-item.logout {
+  color: #dc2626;
+}
+
+.dashboard.light .dropdown-item.logout:hover {
+  background: rgba(220, 38, 38, 0.1);
+}
+
+.dashboard.light .dropdown-item.logout svg {
+  color: #dc2626;
+}
+
+/* ===== Modern Chart & Panel Styling ===== */
+.panel-combo {
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.panel-combo .panel-header {
+  background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  padding: 16px 20px;
+}
+
+.panel-combo .ph-title {
+  font-weight: 800;
+  color: #1e293b;
+  font-size: 16px;
+  letter-spacing: -0.3px;
+}
+
+/* Chart Container Modern */
+.chart-container {
+  position: relative;
+  padding: 12px;
+  background: linear-gradient(180deg, #ffffff 0%, #f9fafb 100%);
+  border-radius: 12px;
+}
+
+.chart-svg {
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.05));
+}
+
+.chart-overlay {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  z-index: 10;
+}
+
+.overlay-legend {
+  display: flex;
+  gap: 16px;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(8px);
+  padding: 8px 14px;
+  border-radius: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #475569;
+}
+
+.legend-item .pill {
+  width: 24px;
+  height: 8px;
+  border-radius: 4px;
+}
+
+/* Modern Donut Chart */
+.donut-wrap {
+  position: relative;
+  padding: 16px;
+}
+
+.donut-box {
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.1));
+}
+
+.donut-legend li {
+  padding: 6px 10px;
+  border-radius: 8px;
+  transition: background 0.2s ease;
+}
+
+.donut-legend li:hover {
+  background: rgba(59, 130, 246, 0.05);
+}
+
+/* Panel Body Modern */
+.panel-body {
+  padding: 20px;
+  background: transparent;
+}
+
+.mini-title {
+  font-weight: 700;
+  font-size: 14px;
+  color: #475569;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mini-title::before {
+  content: "";
+  width: 4px;
+  height: 16px;
+  background: linear-gradient(180deg, #f59e0b 0%, #f97316 100%);
+  border-radius: 2px;
+}
+
+/* Panel Single Modern */
+.panel-single {
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 20px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+}
+
+/* Action Button Modern - Orange Theme */
+.aksi-link {
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+}
+
+.aksi-link:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(245, 158, 11, 0.4);
+}
+
+/* ===== MODERN TABLE STYLING - ORANGE THEME ===== */
+.table-shell {
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.table-controls {
+  padding: 8px 0 16px;
+}
+
+.btn {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border-color: #f59e0b;
+}
+
+.btn-green {
+  background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+  border-color: #86efac;
+  color: #166534;
+}
+
+.btn-green:hover {
+  background: linear-gradient(135deg, #bbf7d0 0%, #86efac 100%);
+}
+
+.tc-right {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 8px 12px;
+  transition: all 0.2s ease;
+}
+
+.tc-right:focus-within {
+  border-color: #f59e0b;
+  box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.1);
+}
+
+.table-footer {
+  padding-top: 16px;
+  border-top: 1px solid #e2e8f0;
+  margin-top: 16px;
+}
+
+.pager button {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.pager button:hover:not(:disabled) {
+  border-color: #f59e0b;
+  color: #f59e0b;
+  transform: translateY(-1px);
+}
+
+.pager button.active {
+  background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
+  border-color: transparent;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+}
+
+/* ===== MODERN CHART STYLING - ORANGE THEME ===== */
+.chart-container {
+  background: linear-gradient(180deg, #ffffff 0%, #fefce8 50%, #fef3c7 100%);
+  border-radius: 16px;
+  padding: 16px;
+  position: relative;
+}
+
+.chart-svg {
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.08));
+}
+
+.overlay-legend {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(254, 252, 232, 0.95) 100%);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  border-radius: 24px;
+  padding: 10px 18px;
+  box-shadow: 0 4px 16px rgba(245, 158, 11, 0.15);
+}
+
+.legend-item .pill {
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Panel Combo - Chart Card */
+.panel-combo {
+  background: linear-gradient(180deg, #ffffff 0%, #fffbeb 100%);
+  border: 1px solid rgba(245, 158, 11, 0.15);
+  border-radius: 20px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+.panel-combo .panel-header {
+  background: linear-gradient(180deg, #fffbeb 0%, #fef3c7 100%);
+  border-bottom: 1px solid rgba(245, 158, 11, 0.15);
+  padding: 18px 24px;
+}
+
+.panel-combo .ph-title,
+.ph-righttitle {
+  font-weight: 700;
+  color: #92400e;
+  font-size: 15px;
+  letter-spacing: -0.3px;
+}
+
+/* Modern Donut */
+.donut-wrap {
+  padding: 20px;
+}
+
+.donut-box {
+  filter: drop-shadow(0 8px 24px rgba(245, 158, 11, 0.15));
+}
+
+.dc-top,
+.dc-sub {
+  color: #92400e;
+}
+
+.dc-big {
+  color: #78350f;
+  font-weight: 800;
+  font-size: 24px;
+}
+
+.donut-legend {
+  background: linear-gradient(180deg, #fffbeb 0%, #fef3c7 100%);
+  border-radius: 16px;
+  padding: 12px;
+}
+
+.donut-legend li {
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.8);
+  margin-bottom: 8px;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.donut-legend li:hover {
+  background: #fff;
+  border-color: #f59e0b;
+  transform: translateX(4px);
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.15);
+}
+
+.dl-label {
+  color: #92400e;
+  font-weight: 700;
+}
+
+.dl-count {
+  color: #f59e0b;
+  font-weight: 800;
+}
+
+/* Dark Mode - Charts & Panels */
+.dashboard.dark .panel-combo,
+.dashboard.dark .panel-single,
+.dashboard.dark .ds-panel {
+  background: var(--bg-card);
+  border-color: var(--line);
+}
+
+.dashboard.dark .panel-header {
+  background: var(--bg-card);
+  border-bottom-color: var(--line);
+}
+
+.dashboard.dark .ph-title,
+.dashboard.dark .ph-righttitle,
+.dashboard.dark .mini-title {
+  color: var(--text-primary);
+}
+
+.dashboard.dark .donut-legend li {
+  background: var(--bg);
+}
+
+.dashboard.dark .donut-legend li:hover {
+  background: var(--bg-card);
+}
+
+.dashboard.dark .dl-label,
+.dashboard.dark .dl-count {
+  color: var(--text-primary);
+}
+
+.dashboard.dark .dl-sub,
+.dashboard.dark .dc-top,
+.dashboard.dark .dc-sub {
+  color: var(--text-muted);
+}
+
+.dashboard.dark .dc-big {
+  color: var(--text-primary);
+}
+
+.dashboard.dark .table-shell {
+  background: var(--bg-card);
+  border-color: var(--line);
+}
+
+.dashboard.dark .btn {
+  background: var(--bg);
+  border-color: var(--line);
+  color: var(--text-primary);
+}
+
+.dashboard.dark .btn:hover {
+  border-color: #f59e0b;
+  color: #f59e0b;
+}
+
+.dashboard.dark .tc-right {
+  background: var(--bg-card);
+  border-color: var(--line);
+}
+
+.dashboard.dark .tc-right:focus-within {
+  border-color: #f59e0b;
+}
+
+.dashboard.dark .pager button {
+  background: var(--bg);
+  border-color: var(--line);
+  color: var(--text-primary);
+}
+
+.dashboard.dark .pager button:hover:not(:disabled) {
+  border-color: #f59e0b;
+  color: #f59e0b;
+}
+
+.dashboard.dark .table-footer {
+  border-top-color: var(--line);
+}
+
+/* ========================================
+   LOGOUT CONFIRMATION MODAL
+   ======================================== */
+
+.logout-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.logout-modal-content {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 32px;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.logout-modal-icon {
+  width: 70px;
+  height: 70px;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(234, 88, 12, 0.2) 100%);
+  border: 2px solid #f59e0b;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+}
+
+.logout-modal-icon svg {
+  font-size: 32px;
+  color: #f59e0b;
+}
+
+.logout-modal-title {
+  color: #f1f5f9;
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 12px;
+}
+
+.logout-modal-message {
+  color: #94a3b8;
+  font-size: 14px;
+  margin: 0 0 28px;
+  line-height: 1.6;
+}
+
+.logout-modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.logout-btn-cancel,
+.logout-btn-confirm {
+  padding: 12px 28px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.logout-btn-cancel {
+  background: rgba(100, 116, 139, 0.2);
+  border: 1px solid #64748b;
+  color: #94a3b8;
+}
+
+.logout-btn-cancel:hover {
+  background: rgba(100, 116, 139, 0.3);
+  color: #f1f5f9;
+}
+
+.logout-btn-confirm {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: #fff;
+  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+}
+
+.logout-btn-confirm:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+}
+
+/* ========================================
+   TODAY OVERVIEW SECTION
+   ======================================== */
+
+.ds-today-section {
+  margin-bottom: 24px;
+}
+
+.ds-section-header {
+  margin-bottom: 16px;
+}
+
+.ds-section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.ds-section-title svg {
+  font-size: 18px;
+}
+
+/* Today Stats Cards */
+.ds-today-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.ds-today-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 20px;
+  border-radius: 16px;
+  background: var(--bg-card);
+  box-shadow: var(--shadow-sm);
+  transition: all 0.3s ease;
+}
+
+.ds-today-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.ds-today-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: #fff;
+}
+
+.ds-today-card.green .ds-today-icon {
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+}
+
+.ds-today-card.blue .ds-today-icon {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+}
+
+.ds-today-card.orange .ds-today-icon {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+}
+
+.ds-today-card.purple .ds-today-icon {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+}
+
+.ds-today-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ds-today-value {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.ds-today-label {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* Today Grid (Chart + Low Stock) */
+.ds-today-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 20px;
+}
+
+/* Hourly Chart */
+.ds-hourly-chart {
+  background: var(--bg-card);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+}
+
+.ds-chart-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+}
+
+.ds-hourly-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  height: 160px;
+  padding-top: 10px;
+}
+
+.ds-hour-bar {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  height: 100%;
+}
+
+.ds-bar-fill {
+  width: 100%;
+  max-width: 40px;
+  background: linear-gradient(180deg, #f59e0b 0%, #fbbf24 100%);
+  border-radius: 6px 6px 0 0;
+  transition: height 0.5s ease;
+  cursor: pointer;
+  min-height: 4px;
+}
+
+.ds-bar-fill:hover {
+  background: linear-gradient(180deg, #ea580c 0%, #f59e0b 100%);
+}
+
+.ds-hour-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* Low Stock Widget */
+.ds-low-stock {
+  background: var(--bg-card);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+}
+
+.ds-low-stock-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ds-low-stock-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  background: var(--bg);
+  border-radius: 10px;
+}
+
+.ds-product-name {
+  font-size: 13px;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.ds-stock-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+.ds-stock-badge.warning {
+  background: rgba(245, 158, 11, 0.15);
+  color: #d97706;
+}
+
+.ds-stock-badge.critical {
+  background: rgba(239, 68, 68, 0.15);
+  color: #dc2626;
+}
+
+.ds-low-stock-empty {
+  text-align: center;
+  padding: 30px;
+  color: #22c55e;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .ds-today-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .ds-today-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .ds-today-cards {
+    grid-template-columns: 1fr;
+  }
 }

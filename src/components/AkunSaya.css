@@ -1,0 +1,662 @@
+/* ============================================
+   AKUN SAYA - PREMIUM MODERN DESIGN
+   ============================================ */
+
+.akun-page {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    animation: pageSlideIn 0.4s ease-out;
+    height: 100%;
+    overflow-y: auto;
+
+    /* Jangan di-hidden, karena akan meng-clip shadow */
+    overflow-x: visible;
+
+    /* Kasih ruang untuk shadow (shadow blur 24px + scrollbar) */
+    padding: 16px 44px 24px 16px;
+
+    /* Reservasi ruang scrollbar (browser modern) */
+    scrollbar-gutter: stable;
+}
+
+/* Custom scrollbar styling - Orange theme */
+.akun-page::-webkit-scrollbar {
+    width: 10px;
+}
+
+.akun-page::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 4px;
+}
+
+.akun-page::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #f59e0b 0%, #ea580c 100%);
+    border-radius: 4px;
+}
+
+.akun-page::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #fbbf24 0%, #f97316 100%);
+}
+
+@keyframes pageSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ============================================
+   HEADER
+   ============================================ */
+
+.akun-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 0 20px 0;
+    border-bottom: 1px solid rgba(59, 130, 246, 0.1);
+    overflow: visible;
+}
+
+.akun-header-content {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.akun-header-icon {
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    border-radius: 16px;
+    color: #fff;
+    font-size: 1.5rem;
+    box-shadow: 0 8px 24px rgba(245, 158, 11, 0.3);
+    animation: iconPulse 2s ease-in-out infinite;
+}
+
+@keyframes iconPulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+.akun-header-text {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.akun-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0;
+    background: linear-gradient(135deg, #1e293b 0%, #475569 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.akun-subtitle {
+    font-size: 0.9rem;
+    color: #64748b;
+    margin: 0;
+}
+
+/* ============================================
+   LOADING
+   ============================================ */
+
+.akun-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    min-height: 400px;
+    color: #64748b;
+}
+
+.akun-loading .spinner {
+    font-size: 2rem;
+    color: #f59e0b;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ============================================
+   ALERTS
+   ============================================ */
+
+.akun-alert {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 20px;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.akun-alert.error {
+    background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+    border: 1px solid #fecaca;
+    color: #dc2626;
+}
+
+.akun-alert.success {
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+    border: 1px solid #bbf7d0;
+    color: #16a34a;
+}
+
+.akun-alert .alert-icon {
+    font-size: 1.1rem;
+}
+
+.akun-alert button {
+    margin-left: auto;
+    background: none;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.akun-alert button:hover {
+    opacity: 1;
+}
+
+/* ============================================
+   PROFILE CARD
+   ============================================ */
+
+.akun-content {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.akun-profile-card {
+    background: #fff;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.profile-cover {
+    height: 120px;
+    background: linear-gradient(135deg, #f59e0b 0%, #ea580c 50%, #dc2626 100%);
+    position: relative;
+}
+
+.profile-cover::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+.profile-avatar-section {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding: 0 32px 24px;
+    margin-top: -40px;
+    position: relative;
+}
+
+.profile-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 24px;
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    font-weight: 700;
+    color: #fff;
+    border: 4px solid #fff;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    position: relative;
+    overflow: hidden;
+}
+
+.profile-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.avatar-upload-btn {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    width: 36px;
+    height: 36px;
+    background: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: all 0.2s ease;
+}
+
+.avatar-upload-btn:hover {
+    background: #f59e0b;
+    color: #fff;
+    transform: scale(1.1);
+}
+
+.avatar-delete-btn {
+    position: absolute;
+    bottom: 8px;
+    left: 8px;
+    width: 36px;
+    height: 36px;
+    background: #fff;
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: all 0.2s ease;
+}
+
+.avatar-delete-btn:hover {
+    background: #dc2626;
+    color: #fff;
+    transform: scale(1.1);
+}
+
+.avatar-delete-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.profile-info {
+    flex: 1;
+    padding-top: 48px;
+}
+
+.profile-name {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0 0 4px;
+}
+
+.profile-email {
+    font-size: 0.9rem;
+    color: #64748b;
+    margin: 0 0 12px;
+}
+
+.profile-badges {
+    display: flex;
+    gap: 10px;
+}
+
+.role-badge,
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.role-badge.role-superadmin {
+    background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+    color: #fff;
+}
+
+.role-badge.role-admin {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    color: #fff;
+}
+
+.role-badge.role-kasir {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: #fff;
+}
+
+.role-badge.small {
+    padding: 4px 10px;
+    font-size: 0.7rem;
+}
+
+.status-badge.status-active {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+.status-badge.status-inactive {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+/* ============================================
+   DETAILS GRID
+   ============================================ */
+
+.akun-details-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+}
+
+@media (max-width: 900px) {
+    .akun-details-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.akun-card {
+    background: #fff;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.akun-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.akun-card-header h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin: 0;
+}
+
+.edit-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: #f1f5f9;
+    border: none;
+    border-radius: 10px;
+    color: #64748b;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.edit-btn:hover {
+    background: #e2e8f0;
+    color: #475569;
+}
+
+.edit-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.cancel-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    color: #64748b;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.cancel-btn:hover {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+}
+
+.save-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    border: none;
+    border-radius: 10px;
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.save-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+}
+
+.save-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.save-btn .spinner {
+    animation: spin 1s linear infinite;
+}
+
+.akun-card-body {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.info-row {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.info-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.info-label svg {
+    font-size: 0.9rem;
+    color: #f59e0b;
+}
+
+.info-value {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #1e293b;
+    padding-left: 26px;
+}
+
+.info-input {
+    padding: 12px 16px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 1rem;
+    color: #334155;
+    background: #f8fafc;
+    transition: all 0.2s ease;
+    margin-left: 26px;
+}
+
+.info-input:focus {
+    outline: none;
+    border-color: #f59e0b;
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.1);
+}
+
+/* ============================================
+   DARK MODE
+   ============================================ */
+
+.dashboard.dark .akun-title {
+    background: linear-gradient(135deg, #f1f5f9 0%, #cbd5e1 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.dashboard.dark .akun-subtitle {
+    color: #94a3b8;
+}
+
+.dashboard.dark .akun-profile-card,
+.dashboard.dark .akun-card {
+    background: #1e293b;
+    border-color: #334155;
+}
+
+.dashboard.dark .profile-avatar {
+    border-color: #1e293b;
+}
+
+.dashboard.dark .profile-name,
+.dashboard.dark .akun-card-header h3,
+.dashboard.dark .info-value {
+    color: #f1f5f9;
+}
+
+.dashboard.dark .profile-email,
+.dashboard.dark .info-label {
+    color: #94a3b8;
+}
+
+.dashboard.dark .akun-card-header {
+    border-bottom-color: #334155;
+}
+
+.dashboard.dark .edit-btn {
+    background: #334155;
+    color: #cbd5e1;
+}
+
+.dashboard.dark .edit-btn:hover {
+    background: #475569;
+    color: #f1f5f9;
+}
+
+.dashboard.dark .cancel-btn {
+    background: transparent;
+    border-color: #475569;
+    color: #cbd5e1;
+}
+
+.dashboard.dark .cancel-btn:hover {
+    background: #334155;
+    color: #f1f5f9;
+}
+
+.dashboard.dark .info-input {
+    background: #0f172a;
+    border-color: #334155;
+    color: #f1f5f9;
+}
+
+.dashboard.dark .info-input:focus {
+    border-color: #f59e0b;
+    background: #1e293b;
+}
+
+.dashboard.dark .avatar-upload-btn {
+    background: #334155;
+    color: #cbd5e1;
+}
+
+.dashboard.dark .avatar-upload-btn:hover {
+    background: #f59e0b;
+    color: #fff;
+}
+
+.dashboard.dark .avatar-delete-btn {
+    background: #334155;
+    color: #cbd5e1;
+}
+
+.dashboard.dark .avatar-delete-btn:hover {
+    background: #dc2626;
+    color: #fff;
+}
+
+/* Dark mode scrollbar - Orange theme */
+.dashboard.dark .akun-page::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.dashboard.dark .akun-page::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #f59e0b 0%, #ea580c 100%);
+}
+
+.dashboard.dark .akun-page::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #fbbf24 0%, #f97316 100%);
+}

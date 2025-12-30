@@ -1,0 +1,680 @@
+/* ============================================
+   PENGATURAN - PREMIUM MODERN DESIGN
+   ============================================ */
+
+.pengaturan-page {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    animation: pageSlideIn 0.4s ease-out;
+    height: 100%;
+    overflow-y: auto;
+
+    /* INI KUNCI: jangan di-hidden, karena nge-clip shadow */
+    overflow-x: visible;
+
+    /* kasih ruang kanan lebih lega (shadow blur 24px + scrollbar) */
+    padding: 16px 44px 24px 16px;
+
+    /* reservasi ruang scrollbar (browser modern) */
+    scrollbar-gutter: stable;
+}
+
+/* scrollbar boleh tetap */
+.pengaturan-page::-webkit-scrollbar {
+    width: 10px;
+}
+
+
+.pengaturan-page::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 4px;
+}
+
+.pengaturan-page::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #6366f1 0%, #8b5cf6 100%);
+    border-radius: 4px;
+}
+
+.pengaturan-page::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #4f46e5 0%, #7c3aed 100%);
+}
+
+@keyframes pageSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ============================================
+   HEADER
+   ============================================ */
+
+.pengaturan-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 0 20px 0;
+    border-bottom: 1px solid rgba(59, 130, 246, 0.1);
+    overflow: visible;
+}
+
+.pengaturan-header-content {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.pengaturan-header-icon {
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    border-radius: 16px;
+    color: #fff;
+    font-size: 1.5rem;
+    box-shadow: 0 8px 24px rgba(99, 102, 241, 0.3);
+    animation: iconPulse 2s ease-in-out infinite;
+}
+
+@keyframes iconPulse {
+
+    0%,
+    100% {
+        transform: rotate(0deg);
+    }
+
+    25% {
+        transform: rotate(15deg);
+    }
+
+    75% {
+        transform: rotate(-15deg);
+    }
+}
+
+.pengaturan-header-text {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.pengaturan-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0;
+    background: linear-gradient(135deg, #1e293b 0%, #475569 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.pengaturan-subtitle {
+    font-size: 0.9rem;
+    color: #64748b;
+    margin: 0;
+}
+
+/* ============================================
+   ALERTS
+   ============================================ */
+
+.pengaturan-alert {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 20px;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.pengaturan-alert.error {
+    background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+    border: 1px solid #fecaca;
+    color: #dc2626;
+}
+
+.pengaturan-alert.success {
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+    border: 1px solid #bbf7d0;
+    color: #16a34a;
+}
+
+.pengaturan-alert .alert-icon {
+    font-size: 1.1rem;
+}
+
+.pengaturan-alert button {
+    margin-left: auto;
+    background: none;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.pengaturan-alert button:hover {
+    opacity: 1;
+}
+
+/* ============================================
+   CONTENT
+   ============================================ */
+
+.pengaturan-content {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.pengaturan-card {
+    background: #fff;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.pengaturan-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.card-header-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.card-header-title h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin: 0;
+}
+
+.header-icon {
+    font-size: 1.2rem;
+}
+
+.header-icon.purple {
+    color: #8b5cf6;
+}
+
+.header-icon.yellow {
+    color: #f59e0b;
+}
+
+.header-icon.green {
+    color: #10b981;
+}
+
+.header-icon.blue {
+    color: #3b82f6;
+}
+
+.pengaturan-card-body {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* ============================================
+   THEME TOGGLE
+   ============================================ */
+
+.theme-toggle-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border-radius: 16px;
+}
+
+.theme-info {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.theme-icon-wrap {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.theme-icon {
+    font-size: 1.5rem;
+}
+
+.theme-icon.sun {
+    color: #f59e0b;
+}
+
+.theme-icon.moon {
+    color: #6366f1;
+}
+
+.theme-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.theme-label {
+    font-size: 0.8rem;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.theme-value {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.theme-toggle-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    border: none;
+    border-radius: 12px;
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 16px rgba(99, 102, 241, 0.3);
+}
+
+.theme-toggle-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+}
+
+/* ============================================
+   TOGGLE SWITCHES
+   ============================================ */
+
+.toggle-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px solid #f1f5f9;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.toggle-row:last-child {
+    border-bottom: none;
+}
+
+.toggle-row:hover {
+    background: #f8fafc;
+    margin: 0 -24px;
+    padding: 14px 24px;
+}
+
+.toggle-label {
+    font-size: 0.95rem;
+    color: #334155;
+    font-weight: 500;
+}
+
+.toggle-switch {
+    width: 52px;
+    height: 28px;
+    background: #e2e8f0;
+    border-radius: 14px;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.toggle-switch.active {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+.toggle-thumb {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 22px;
+    height: 22px;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+}
+
+.toggle-switch.active .toggle-thumb {
+    left: 27px;
+}
+
+/* ============================================
+   PASSWORD SECTION
+   ============================================ */
+
+.password-section h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin: 0 0 8px;
+}
+
+.password-desc {
+    font-size: 0.85rem;
+    color: #64748b;
+    margin: 0 0 20px;
+}
+
+.password-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.password-form .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.password-form label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.password-input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password-input-wrap input {
+    flex: 1;
+    padding: 12px 48px 12px 16px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    color: #334155;
+    background: #f8fafc;
+    transition: all 0.2s ease;
+}
+
+.password-input-wrap input:focus {
+    outline: none;
+    border-color: #10b981;
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+}
+
+.toggle-password {
+    position: absolute;
+    right: 12px;
+    background: none;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    padding: 8px;
+    transition: color 0.2s;
+}
+
+.toggle-password:hover {
+    color: #64748b;
+}
+
+.change-password-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 24px;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    border: none;
+    border-radius: 12px;
+    color: #fff;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+    margin-top: 8px;
+}
+
+.change-password-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+}
+
+.change-password-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.change-password-btn .spinner {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ============================================
+   ABOUT SECTION
+   ============================================ */
+
+.about-section {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border-radius: 16px;
+    margin-bottom: 16px;
+}
+
+.app-logo {
+    width: 64px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%);
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(245, 158, 11, 0.3);
+}
+
+.logo-text {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #fff;
+}
+
+.app-info h4 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0 0 4px;
+}
+
+.app-version {
+    font-size: 0.85rem;
+    color: #10b981;
+    font-weight: 600;
+    margin: 0 0 8px;
+}
+
+.app-desc {
+    font-size: 0.9rem;
+    color: #64748b;
+    margin: 0;
+}
+
+.about-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.meta-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.9rem;
+    color: #64748b;
+}
+
+.meta-row svg {
+    color: #94a3b8;
+}
+
+.meta-row .heart {
+    color: #ef4444;
+    animation: heartbeat 1.5s ease infinite;
+}
+
+@keyframes heartbeat {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.2);
+    }
+}
+
+/* ============================================
+   DARK MODE
+   ============================================ */
+
+.dashboard.dark .pengaturan-title {
+    background: linear-gradient(135deg, #f1f5f9 0%, #cbd5e1 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.dashboard.dark .pengaturan-subtitle {
+    color: #94a3b8;
+}
+
+.dashboard.dark .pengaturan-card {
+    background: #1e293b;
+    border-color: #334155;
+}
+
+.dashboard.dark .pengaturan-card-header {
+    border-bottom-color: #334155;
+}
+
+.dashboard.dark .card-header-title h3,
+.dashboard.dark .theme-value,
+.dashboard.dark .toggle-label,
+.dashboard.dark .password-section h4,
+.dashboard.dark .app-info h4 {
+    color: #f1f5f9;
+}
+
+.dashboard.dark .theme-label,
+.dashboard.dark .password-desc,
+.dashboard.dark .app-desc,
+.dashboard.dark .meta-row {
+    color: #94a3b8;
+}
+
+.dashboard.dark .theme-toggle-section,
+.dashboard.dark .about-section {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+}
+
+.dashboard.dark .theme-icon-wrap {
+    background: #334155;
+}
+
+.dashboard.dark .toggle-row:hover {
+    background: #334155;
+}
+
+.dashboard.dark .toggle-row {
+    border-bottom-color: #334155;
+}
+
+.dashboard.dark .toggle-switch {
+    background: #475569;
+}
+
+.dashboard.dark .password-input-wrap input {
+    background: #0f172a;
+    border-color: #334155;
+    color: #f1f5f9;
+}
+
+.dashboard.dark .password-input-wrap input:focus {
+    border-color: #10b981;
+    background: #1e293b;
+}
+
+.dashboard.dark .password-form label {
+    color: #94a3b8;
+}
+
+.dashboard.dark .pengaturan-page::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.dashboard.dark .pengaturan-page::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #6366f1 0%, #8b5cf6 100%);
+}
+
+.dashboard.dark .pengaturan-page::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #818cf8 0%, #a78bfa 100%);
+}

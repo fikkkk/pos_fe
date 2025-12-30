@@ -1,11 +1,12 @@
 import React from "react";
-import LoginPage from "./components/LoginPage";
+import LoginModern from "./components/LoginModern";
+
 import "./App.css";
 
 export default function App() {
   return (
     <div className="app-container">
-      <LoginPage />
+      <LoginModern />
     </div>
   );
 }

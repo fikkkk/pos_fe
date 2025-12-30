@@ -1,0 +1,844 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
+
+:root {
+  /* 🎨 Tema terang POS NUKA */
+  --lp-bg: #ffffff;
+  --lp-card-bg: #ffffff;
+  /* ⬅ card agak peach/oranye lembut */
+  --lp-left-bg: #fff9f2;
+  --lp-text-main: #1f2233;
+  --lp-text-muted: #8f96b2;
+  --lp-primary: #ff983d;
+  --lp-primary-dark: #e57920;
+}
+
+
+
+/* PAGE WRAPPER */
+.lp-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--lp-bg);
+  font-family: "Poppins", system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
+}
+
+
+
+
+/* LEFT SIDE */
+.lp-left {
+  flex: 1;
+  background: var(--lp-left-bg);
+  padding: 40px 40px 32px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  border-right: 1px solid rgba(255, 199, 143, 0.7);
+}
+
+.lp-illustration img {
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+  display: block;
+}
+
+.lp-left-text {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.lp-left-text h3 {
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--lp-text-main);
+  margin: 0;
+}
+
+.lp-left-text h2 {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--lp-text-main);
+  margin: 2px 0 10px;
+}
+
+.lp-left-text p {
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--lp-text-muted);
+  max-width: 320px;
+  margin: 0 auto;
+}
+
+/* little dots under text */
+.lp-dots {
+  margin-top: 18px;
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+}
+
+.lp-dots .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 99px;
+  background: #ffd7b6;
+  /* oranye muda */
+}
+
+.lp-dots .dot.active {
+  width: 18px;
+  background: var(--lp-primary);
+}
+
+
+.lp-title {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--lp-text-main);
+  margin: 0 0 6px;
+}
+
+.lp-subtitle {
+  font-size: 12px;
+  color: var(--lp-text-muted);
+  margin: 0 0 28px;
+}
+
+/* FORM */
+.lp-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.lp-field label {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  color: #5a5f73;
+  margin-bottom: 6px;
+}
+
+.lp-field-input {
+  display: flex;
+  align-items: center;
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #ffe1c7;
+  padding: 0 14px;
+  height: 50px;
+}
+
+.lp-field-input input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 13px;
+  color: #3a3f57;
+}
+
+.lp-field-input input::placeholder {
+  color: #d9bda4;
+}
+
+.lp-icon {
+  font-size: 14px;
+  margin-right: 8px;
+  color: #f1a968;
+}
+
+.lp-eye-btn {
+  border: none;
+  outline: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 14px;
+  color: #f1a968;
+}
+
+/* REMEMBER + FORGOT */
+.lp-remember-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: -6px;
+  margin-bottom: 4px;
+  font-size: 11px;
+}
+
+.lp-remember {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #7a809b;
+}
+
+.lp-remember input {
+  width: 14px;
+  height: 14px;
+}
+
+.lp-forgot {
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  font-size: 11px;
+  color: var(--lp-primary);
+}
+
+/* BUTTONS */
+.lp-btn-primary {
+  margin-top: 6px;
+  width: 100%;
+  height: 48px;
+  border-radius: 14px;
+  border: none;
+  outline: none;
+  background: var(--lp-primary);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease,
+    background 0.15s ease;
+}
+
+.lp-btn-primary:hover {
+  background: var(--lp-primary-dark);
+  transform: translateY(-1px);
+}
+
+/* GOOGLE BUTTON */
+.lp-btn-google {
+  margin-top: 12px;
+  width: 100%;
+  height: 48px;
+  border-radius: 14px;
+  border: 1px solid #ffe1c7;
+  background: #ffffff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #5c617c;
+  transition: background 0.15s ease, box-shadow 0.15s ease;
+}
+
+.lp-btn-google:hover {
+  background: #fff7ef;
+
+}
+
+.lp-google-circle {
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  border: 1px solid #ffd0aa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+/* BOTTOM TEXT */
+.lp-bottom-text {
+  margin-top: auto;
+  text-align: center;
+  font-size: 11px;
+  color: #b29c8c;
+  padding-top: 22px;
+}
+
+.lp-signup-link {
+  border: none;
+  background: none;
+  padding: 0;
+  margin-left: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--lp-primary);
+  cursor: pointer;
+}
+
+/* RESPONSIVE SEDERHANA */
+@media (max-width: 900px) {
+  .lp-card {
+    flex-direction: column;
+    border-radius: 24px;
+    margin: auto;
+  }
+
+  .lp-left {
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 199, 143, 0.7);
+  }
+
+  .lp-right {
+    padding: 32px 28px 24px;
+  }
+}
+
+
+
+/* ========= MODE GELAP: override variable ========= */
+.lp-page.lp-dark {
+  --lp-bg: #111827;
+  --lp-card-bg: #111827;
+  --lp-left-bg: #1f2937;
+  --lp-text-main: #f9fafb;
+  --lp-text-muted: #9ca3c7;
+}
+
+/* PAGE WRAPPER */
+.lp-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--lp-bg);
+  font-family: "Poppins", system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
+}
+
+/* MAIN CARD – dipakai Login & Register */
+.lp-card {
+  width: 980px;
+  max-width: 100%;
+  background: var(--lp-card-bg);
+  border-radius: 32px;
+  display: flex;
+  overflow: hidden;
+
+  /* 🔒 tinggi fix supaya login & register sama */
+  height: 560px;
+
+  box-shadow: 0 24px 60px 20px rgba(97, 125, 192, 0.12);
+}
+
+/* PANEL KANAN – layout kolom, isi bisa scroll */
+.lp-right {
+  flex: 1;
+  padding: 40px 72px 32px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-width: 0;
+  /* biar gak melebar aneh */
+}
+
+/* ISI UTAMA (judul + subtitle + error + form) */
+.lp-right-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  /* 🔽 di sini yang scroll */
+  padding-right: 10px;
+  /* sedikit space biar scrollbar nggak nempel */
+
+}
+
+/* Scrollbar tipis biar rapi (opsional) */
+.lp-right-main::-webkit-scrollbar {
+  width: 4px;
+}
+
+.lp-right-main::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.6);
+}
+
+.lp-right-main::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+
+
+
+
+
+/* LEFT SIDE */
+.lp-left {
+  flex: 1;
+  background: var(--lp-left-bg);
+  padding: 40px 40px 32px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  border-right: 1px solid rgba(255, 199, 143, 0.7);
+}
+
+/* ... (bagian lain BIARKAN seperti versi oranye tadi) ... */
+
+/* ===== TOP BAR & DARK TOGGLE ===== */
+.lp-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.lp-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(255, 152, 61, 0.1);
+  color: var(--lp-primary-dark);
+}
+
+.lp-dark-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.5);
+  padding: 4px 10px;
+  background: transparent;
+  font-size: 11px;
+  color: #6b7280;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.lp-dark-toggle svg {
+  font-size: 12px;
+}
+
+.lp-dark-toggle:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+/* versi dark-nya */
+.lp-page.lp-dark .lp-card {
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+}
+
+.lp-page.lp-dark .lp-left {
+  border-right-color: rgba(55, 65, 81, 0.9);
+}
+
+.lp-page.lp-dark .lp-field-input {
+  background: #111827;
+  border-color: #374151;
+}
+
+.lp-page.lp-dark .lp-field-input input {
+  color: #f9fafb;
+}
+
+.lp-page.lp-dark .lp-field-input input::placeholder {
+  color: #6b7280;
+}
+
+.lp-page.lp-dark .lp-field label {
+  color: #e5e7f5;
+}
+
+.lp-page.lp-dark .lp-icon,
+.lp-page.lp-dark .lp-eye-btn {
+  color: #f6b47c;
+}
+
+.lp-page.lp-dark .lp-btn-google {
+  border-color: #374151;
+  background: #111827;
+  color: #e5e7eb;
+}
+
+.lp-page.lp-dark .lp-btn-google:hover {
+  background: #020617;
+}
+
+.lp-page.lp-dark .lp-google-circle {
+  border-color: #4b5563;
+}
+
+.lp-page.lp-dark .lp-bottom-text {
+  color: #9ca3c7;
+}
+
+.lp-page.lp-dark .lp-dark-toggle {
+  border-color: #4b5563;
+  color: #e5e7eb;
+  background: #111827;
+}
+
+.lp-page.lp-dark .lp-dark-toggle:hover {
+  background: #020617;
+}
+
+
+
+
+
+
+
+
+/* =========================
+   LEFT FULL IMAGE + DARK OVERLAY
+   ========================== */
+
+/* Panel kiri: full image, teks di bawah */
+.lp-left {
+  position: relative;
+  flex: 1;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  /* teks nempel di bawah */
+  align-items: stretch;
+  background: #020617;
+  /* fallback kalau gambar belum kebaca */
+  border-right: 1px solid rgba(255, 199, 143, 0.7);
+  overflow: hidden;
+}
+
+/* Gambar jadi background full */
+.lp-illustration {
+  position: absolute;
+  inset: 0;
+  /* top:0; right:0; bottom:0; left:0 */
+}
+
+.lp-illustration img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* full, rapi walau agak ke-crop */
+  display: block;
+}
+
+/* Overlay gelap di atas gambar (gradient opacity kuat) */
+.lp-left::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+
+  /* 🔽 bawah sangat gelap, ke atas makin transparan */
+  background: linear-gradient(to top,
+      rgba(3, 7, 18, 0.98) 0%,
+      /* tepat di bawah teks: hampir hitam */
+      rgba(3, 7, 18, 0.96) 25%,
+      /* area teks masih gelap */
+      rgba(3, 7, 18, 0.80) 45%,
+      rgba(3, 7, 18, 0.50) 70%,
+      rgba(3, 7, 18, 0.20) 90%,
+      rgba(3, 7, 18, 0.00) 100%
+      /* atas full transparan */
+    );
+}
+
+
+
+/* Area teks di bawah */
+.lp-left-text {
+  position: relative;
+  z-index: 1;
+  margin-top: 0;
+  text-align: left;
+  background: transparent;
+  padding: 28px 32px 24px;
+}
+
+/* Badge kecil (h3) */
+.lp-left-text h3 {
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 14px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.7);
+  background: rgba(15, 23, 42, 0.9);
+  color: #e5e7f5;
+}
+
+/* Judul utama */
+.lp-left-text h2 {
+  margin: 14px 0 6px;
+  font-size: 24px;
+  font-weight: 700;
+  color: #f9fafb;
+}
+
+/* Deskripsi */
+.lp-left-text p {
+  font-size: 13px;
+  line-height: 1.7;
+  color: #cbd5f5;
+  max-width: 340px;
+}
+
+/* Dots di bawah */
+.lp-dots {
+  margin-top: 18px;
+  display: flex;
+  gap: 6px;
+}
+
+.lp-dots .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.6);
+}
+
+.lp-dots .dot.active {
+  width: 18px;
+  background: var(--lp-primary);
+}
+
+.lp-error {
+  margin-bottom: 10px;
+  font-size: 11px;
+  font-weight: 500;
+  color: #e11d48;
+  /* merah */
+}
+
+
+/* ===== OTP BOX ===== */
+.lp-otp-box {
+  width: 48px;
+  height: 56px;
+  border-radius: 14px;
+  font-size: 20px;
+  text-align: center;
+  border: 1px solid #ffe1c7;
+  background: white;
+  outline: none;
+  color: #1f2233;
+  font-weight: 600;
+  transition: all 0.15s ease;
+}
+
+.lp-otp-box:focus {
+  border-color: var(--lp-primary);
+  box-shadow: 0 0 0 2px rgba(255, 152, 61, 0.25);
+}
+
+.lp-dark .lp-otp-box {
+  background: #111827;
+  border-color: #374151;
+  color: #f9fafb;
+}
+
+.lp-dark .lp-otp-box:focus {
+  border-color: #f6b47c;
+  box-shadow: 0 0 0 2px rgba(246, 180, 124, 0.35);
+}
+
+
+/* ================================
+   🔥 LOADING OVERLAY LOGIN MODERN
+   ================================ */
+
+.lp-loading-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.35);
+  /* sedikit gelap */
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  /* di atas card */
+}
+
+.lp-loading-box {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 18px 24px 20px;
+  box-shadow: 0 18px 55px rgba(15, 23, 42, 0.25);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 240px;
+}
+
+.lp-loader {
+  display: flex;
+  gap: 8px;
+}
+
+.lp-loader span {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--lp-primary);
+  animation: lp-bounce 0.6s infinite alternate;
+}
+
+.lp-loader span:nth-child(2) {
+  animation-delay: 0.12s;
+}
+
+.lp-loader span:nth-child(3) {
+  animation-delay: 0.24s;
+}
+
+@keyframes lp-bounce {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 0.6;
+  }
+
+  100% {
+    transform: translateY(-6px) scale(1.1);
+    opacity: 1;
+  }
+}
+
+.lp-loading-text {
+  margin-top: 10px;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+/* versi dark */
+.lp-dark .lp-loading-box {
+  background: #020617;
+  box-shadow: 0 18px 55px rgba(15, 23, 42, 0.8);
+}
+
+.lp-dark .lp-loading-text {
+  color: #e5e7eb;
+}
+
+
+/* Pos Alert */
+.lp-alert-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1001;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(4px);
+}
+
+.lp-alert-card {
+  background: #ffffff;
+  border-radius: 22px;
+  padding: 20px 22px 18px;
+  width: 320px;
+  max-width: 90%;
+  box-shadow: 0 18px 55px rgba(15, 23, 42, 0.25);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: lp-pop-in 0.22s ease-out;
+}
+
+@keyframes lp-pop-in {
+  0% {
+    transform: scale(0.85) translateY(6px);
+    opacity: 0;
+  }
+
+  100% {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+.lp-alert-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+  font-size: 22px;
+}
+
+.lp-alert-success {
+  background: rgba(34, 197, 94, 0.12);
+  color: #16a34a;
+}
+
+.lp-alert-error {
+  background: rgba(248, 113, 113, 0.12);
+  color: #ef4444;
+}
+
+.lp-alert-info {
+  background: rgba(59, 130, 246, 0.12);
+  color: #2563eb;
+}
+
+.lp-alert-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+  text-align: center;
+  margin-bottom: 6px;
+}
+
+.lp-alert-message {
+  font-size: 13px;
+  color: #6b7280;
+  text-align: center;
+  margin-bottom: 14px;
+  line-height: 1.5;
+}
+
+.lp-alert-btn {
+  border: none;
+  outline: none;
+  cursor: pointer;
+  border-radius: 999px;
+  padding: 8px 18px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #111827;
+  background: linear-gradient(135deg, #ff983d, #ffd29b);
+  box-shadow: 0 10px 25px rgba(248, 163, 94, 0.35);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.lp-alert-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 30px rgba(248, 163, 94, 0.4);
+}
+
+.lp-alert-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 8px 18px rgba(248, 163, 94, 0.28);
+}
+
+.lp-dark .lp-alert-card {
+  background: #020617;
+  box-shadow: 0 18px 55px rgba(0, 0, 0, 0.9);
+}
+
+.lp-dark .lp-alert-title {
+  color: #e5e7eb;
+}
+
+.lp-dark .lp-alert-message {
+  color: #9ca3af;
+}
