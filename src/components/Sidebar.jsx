@@ -81,16 +81,11 @@ export default function Sidebar({ activeMenu, setActiveMenu, isDarkMode, toggleT
     { id: "member", label: "Member", icon: <FaUsers /> },
   ];
 
-<<<<<<< HEAD
   const handleLogoutClick = () => {
     setShowLogoutModal(true);
   };
 
   const confirmLogout = () => {
-    localStorage.removeItem("token");
-    setShowLogoutModal(false);
-=======
-  const handleLogout = () => {
     // Clear token and all profile cache data
     localStorage.removeItem("token");
     localStorage.removeItem("profile_name");
@@ -100,7 +95,8 @@ export default function Sidebar({ activeMenu, setActiveMenu, isDarkMode, toggleT
     localStorage.removeItem("last_login");
     localStorage.removeItem("member_since");
 
->>>>>>> origin/hasil2
+    setShowLogoutModal(false);
+
     if (onLogout) {
       onLogout();
     } else {
@@ -153,9 +149,9 @@ export default function Sidebar({ activeMenu, setActiveMenu, isDarkMode, toggleT
         {/* USER CARD - Dynamic user display */}
         <div className="ds-side-user-card">
           <div className="ds-user-avatar">
-            {profile?.picture ? (
+            {profilePicSrc ? (
               <img
-                src={`http://localhost:3000${profile.picture}`}
+                src={profilePicSrc}
                 alt="Profile"
                 style={{
                   width: "100%",
@@ -174,7 +170,6 @@ export default function Sidebar({ activeMenu, setActiveMenu, isDarkMode, toggleT
           </div>
         </div>
 
-<<<<<<< HEAD
         {/* MENU UTAMA */}
         <nav className="ds-nav-dark">
           <div className="ds-sidebar-date">
@@ -201,31 +196,6 @@ export default function Sidebar({ activeMenu, setActiveMenu, isDarkMode, toggleT
             </button>
           ))}
         </nav>
-=======
-      {/* USER CARD - Dynamic user display */}
-      <div className="ds-side-user-card">
-        <div className="ds-user-avatar">
-          {profilePicSrc ? (
-            <img
-              src={profilePicSrc}
-              alt="Profile"
-              style={{
-                width: "100%",
-                height: "100%",
-                objectFit: "cover",
-                borderRadius: "50%"
-              }}
-            />
-          ) : (
-            <span>{avatarInitial}</span>
-          )}
-        </div>
-        <div className="ds-user-meta">
-          <div className="user-name">{displayName}</div>
-          <div className="user-role">{roleLabel}</div>
-        </div>
-      </div>
->>>>>>> origin/hasil2
 
         {/* BAGIAN BAWAH */}
         <div className="ds-side-bottom-dark">
