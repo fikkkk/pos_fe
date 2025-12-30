@@ -28,6 +28,7 @@ import Sidebar from "./Sidebar";
 import Transaksi from "./Transaksi";
 import Datamaster from "./Datamaster";
 import LaporanManajemen from "./LaporanManajemen";
+import Member from "./Member";
 import AkunSaya from "./AkunSaya";
 import Pengaturan from "./Pengaturan";
 
@@ -755,6 +756,9 @@ export default function Dashboard() {
 
           {/* ================= HALAMAN LAPORAN ================= */}
           {activeMenu === "laporan" && <LaporanManajemen />}
+
+          {/* ================= HALAMAN MEMBER ================= */}
+          {activeMenu === "member" && <Member />}
 
           {/* ================= HALAMAN AKUN SAYA ================= */}
           {activeMenu === "akun" && <AkunSaya onProfileUpdate={handleProfileUpdate} />}

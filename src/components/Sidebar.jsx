@@ -9,6 +9,10 @@ import {
   FaCog,
   FaSignOutAlt,
   FaExclamationTriangle,
+<<<<<<< Updated upstream
+=======
+  FaTimes,
+>>>>>>> Stashed changes
 } from "react-icons/fa";
 import "./Dashboard.css";
 import ThemeToggle from "./dashboard/ThemeToggle";
@@ -94,6 +98,7 @@ export default function Sidebar({ activeMenu, setActiveMenu, isDarkMode, toggleT
     localStorage.removeItem("profile_picture_local");
     localStorage.removeItem("last_login");
     localStorage.removeItem("member_since");
+    setShowLogoutModal(false);
 
     setShowLogoutModal(false);
 
@@ -102,6 +107,10 @@ export default function Sidebar({ activeMenu, setActiveMenu, isDarkMode, toggleT
     } else {
       window.location.reload();
     }
+  };
+
+  const cancelLogout = () => {
+    setShowLogoutModal(false);
   };
 
   // Get display name (username first, then name as fallback)
@@ -232,6 +241,7 @@ export default function Sidebar({ activeMenu, setActiveMenu, isDarkMode, toggleT
 
       {/* LOGOUT CONFIRMATION MODAL */}
       {showLogoutModal && (
+<<<<<<< Updated upstream
         <div className="logout-modal-overlay" onClick={() => setShowLogoutModal(false)}>
           <div className="logout-modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="logout-modal-icon">
@@ -247,6 +257,55 @@ export default function Sidebar({ activeMenu, setActiveMenu, isDarkMode, toggleT
               </button>
               <button className="logout-btn-confirm" onClick={confirmLogout}>
                 Ya, Logout
+=======
+        <div className="logout-overlay" onClick={cancelLogout}>
+          <div className="logout-modal" onClick={(e) => e.stopPropagation()}>
+            {/* Close Button */}
+            <button className="logout-close-btn" onClick={cancelLogout}>
+              <FaTimes />
+            </button>
+
+            {/* Icon with Animation */}
+            <div className="logout-icon-wrapper">
+              <div className="logout-icon-bg"></div>
+              <div className="logout-icon">
+                <FaExclamationTriangle />
+              </div>
+            </div>
+
+            {/* Title */}
+            <h2 className="logout-title">Konfirmasi Logout</h2>
+
+            {/* Message */}
+            <p className="logout-message">
+              Apakah Anda yakin ingin keluar dari aplikasi?<br />
+              <span className="logout-warning">Sesi Anda akan berakhir dan data yang belum disimpan akan hilang.</span>
+            </p>
+
+            {/* User Info */}
+            <div className="logout-user-info">
+              <div className="logout-user-avatar">
+                {profilePicSrc ? (
+                  <img src={profilePicSrc} alt="Profile" />
+                ) : (
+                  <span>{avatarInitial}</span>
+                )}
+              </div>
+              <div className="logout-user-details">
+                <span className="logout-user-name">{displayName}</span>
+                <span className="logout-user-role">{roleLabel}</span>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="logout-actions">
+              <button className="logout-btn-cancel" onClick={cancelLogout}>
+                <span>Batal</span>
+              </button>
+              <button className="logout-btn-confirm" onClick={confirmLogout}>
+                <FaSignOutAlt />
+                <span>Ya, Logout</span>
+>>>>>>> Stashed changes
               </button>
             </div>
           </div>

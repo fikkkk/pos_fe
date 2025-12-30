@@ -1196,108 +1196,134 @@ const Transaksi = () => {
               </div>
             ) : (
               <>
-                {/* KHUSUS ITEM DENGAN PROMO */}
-                {cartWithPromo.filter(item => item.promo && item.discount > 0).length > 0 && (
-                  <div className="trx-popup-section" style={{ maxHeight: "180px", overflowY: "auto" }}>
-                    <h4 style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "8px",
-                      color: "#10b981",
-                    }}>
-                      🎉 Item dengan Promo
-                    </h4>
-                    <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                      {cartWithPromo
-                        .filter(item => item.promo && item.discount > 0)
-                        .map((item) => (
-                          <div
-                            key={item.id}
-                            style={{
-                              display: "flex",
-                              justifyContent: "space-between",
-                              alignItems: "center",
-                              padding: "12px 14px",
-                              background: "linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(5, 150, 105, 0.06) 100%)",
-                              borderRadius: "12px",
-                              border: "1px solid rgba(16, 185, 129, 0.4)",
-                              boxShadow: "0 2px 8px rgba(16, 185, 129, 0.1)",
-                            }}
-                          >
-                            <div style={{ flex: 1 }}>
-                              <div style={{ fontWeight: "700", fontSize: "0.95rem", color: "#1e293b" }}>
-                                {item.name}
+                {/* DAFTAR ITEM - PROMO & REGULER DALAM 1 SCROLL */}
+                <div className="trx-popup-section trx-popup-items-scroll">
+                  <h4 style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
+                    marginBottom: "16px",
+                  }}>
+                    🛒 Daftar Item ({cartWithPromo.length} item)
+                  </h4>
+
+                  {/* ITEMS DENGAN PROMO */}
+                  {cartWithPromo.filter(item => item.promo && item.discount > 0).length > 0 && (
+                    <div style={{ marginBottom: "16px" }}>
+                      <div style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "6px",
+                        marginBottom: "10px",
+                        fontSize: "0.85rem",
+                        fontWeight: "700",
+                        color: "#10b981",
+                      }}>
+                        <FaStar style={{ fontSize: "12px" }} />
+                        <span>Dapat Promo ({cartWithPromo.filter(item => item.promo && item.discount > 0).length})</span>
+                      </div>
+                      <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                        {cartWithPromo
+                          .filter(item => item.promo && item.discount > 0)
+                          .map((item) => (
+                            <div
+                              key={item.id}
+                              className="trx-popup-item-card trx-popup-item-promo"
+                            >
+                              <div style={{ flex: 1 }}>
+                                <div style={{ fontWeight: "700", fontSize: "0.92rem", color: "#1e293b" }}>
+                                  {item.name}
+                                </div>
+                                <div style={{ fontSize: "0.75rem", color: "#64748b", marginTop: "3px" }}>
+                                  {formatRp(item.price)} x {item.qty} pcs
+                                </div>
+                                <div className="trx-popup-promo-badge">
+                                  <FaStar style={{ fontSize: "9px" }} />
+                                  {item.promo.discountPercent ? `Diskon ${item.promo.discountPercent}%` :
+                                    item.promo.discountValue ? `Hemat ${formatRp(item.promo.discountValue)}` :
+                                      item.promo.bonusQty ? `Bonus ${item.promo.bonusQty} pcs` : "Promo"}
+                                </div>
                               </div>
-                              <div style={{ fontSize: "0.75rem", color: "#64748b", marginTop: "4px" }}>
-                                {formatRp(item.price)} x {item.qty} pcs
-                              </div>
-                              <div style={{
-                                marginTop: "6px",
-                                background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
-                                color: "#fff",
-                                padding: "3px 8px",
-                                borderRadius: "6px",
-                                fontSize: "0.7rem",
-                                fontWeight: "700",
-                                display: "inline-block",
-                              }}>
-                                🎉 {item.promo.discountPercent ? `Diskon ${item.promo.discountPercent}%` :
-                                  item.promo.discountValue ? `Hemat ${formatRp(item.promo.discountValue)}` :
-                                    item.promo.bonusQty ? `Bonus ${item.promo.bonusQty} pcs` : "Promo Aktif"}
+                              <div style={{ textAlign: "right", marginLeft: "12px" }}>
+                                <div style={{ textDecoration: "line-through", fontSize: "0.72rem", color: "#94a3b8" }}>
+                                  {formatRp(item.itemSubtotal)}
+                                </div>
+                                <div style={{ fontWeight: "800", color: "#10b981", fontSize: "1rem" }}>
+                                  {formatRp(item.itemTotal)}
+                                </div>
+                                <div style={{ fontSize: "0.65rem", color: "#10b981", fontWeight: "600" }}>
+                                  Hemat {formatRp(item.discount)}
+                                </div>
                               </div>
                             </div>
-                            <div style={{ textAlign: "right", marginLeft: "12px" }}>
-                              <div style={{ textDecoration: "line-through", fontSize: "0.75rem", color: "#94a3b8" }}>
-                                {formatRp(item.itemSubtotal)}
-                              </div>
-                              <div style={{ fontWeight: "800", color: "#10b981", fontSize: "1.1rem" }}>
-                                {formatRp(item.itemTotal)}
-                              </div>
-                              <div style={{ fontSize: "0.65rem", color: "#10b981", fontWeight: "600" }}>
-                                Hemat {formatRp(item.discount)}
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                    </div>
-
-                    {/* Total Hemat dari Promo */}
-                    <div style={{
-                      marginTop: "12px",
-                      padding: "10px 14px",
-                      background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
-                      borderRadius: "10px",
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      color: "#fff",
-                    }}>
-                      <span style={{ fontWeight: "600", fontSize: "0.9rem" }}>💰 Total Hemat dari Promo</span>
-                      <span style={{ fontWeight: "800", fontSize: "1.1rem" }}>{formatRp(totalDiskon)}</span>
-                    </div>
-                  </div>
-                )}
-
-                {/* SUMMARY PEMBAYARAN */}
-                <div className="trx-popup-section" style={{
-                  background: "linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%)",
-                  borderRadius: "12px",
-                  padding: "16px",
-                  margin: "0 20px",
-                }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px", fontSize: "0.9rem" }}>
-                    <span>SubTotal</span>
-                    <span style={{ fontWeight: "600" }}>{formatRp(subtotal)}</span>
-                  </div>
-                  {totalDiskon > 0 && (
-                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px", color: "#10b981", fontSize: "0.9rem" }}>
-                      <span>🎉 Diskon Promo</span>
-                      <span style={{ fontWeight: "600" }}>-{formatRp(totalDiskon)}</span>
+                          ))}
+                      </div>
                     </div>
                   )}
-                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px", fontSize: "0.9rem" }}>
+
+                  {/* ITEMS REGULER (TANPA PROMO) */}
+                  {cartWithPromo.filter(item => !item.promo || item.discount === 0).length > 0 && (
+                    <div>
+                      <div style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "6px",
+                        marginBottom: "10px",
+                        fontSize: "0.85rem",
+                        fontWeight: "700",
+                        color: "#64748b",
+                      }}>
+                        📦 <span>Harga Reguler ({cartWithPromo.filter(item => !item.promo || item.discount === 0).length})</span>
+                      </div>
+                      <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                        {cartWithPromo
+                          .filter(item => !item.promo || item.discount === 0)
+                          .map((item) => (
+                            <div
+                              key={item.id}
+                              className="trx-popup-item-card trx-popup-item-regular"
+                            >
+                              <div style={{ flex: 1 }}>
+                                <div style={{ fontWeight: "600", fontSize: "0.88rem", color: "#334155" }}>
+                                  {item.name}
+                                </div>
+                                <div style={{ fontSize: "0.72rem", color: "#64748b", marginTop: "2px" }}>
+                                  {formatRp(item.price)} x {item.qty} pcs
+                                </div>
+                              </div>
+                              <div className="trx-popup-item-price">
+                                {formatRp(item.itemTotal)}
+                              </div>
+                            </div>
+                          ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Total Hemat dari Promo */}
+                  {totalDiskon > 0 && (
+                    <div className="trx-popup-savings-bar">
+                      <span>💰 Total Hemat</span>
+                      <span>{formatRp(totalDiskon)}</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* SUMMARY PEMBAYARAN */}
+                <div className="trx-popup-section trx-popup-summary">
+                  <div className="trx-popup-summary-row">
+                    <span>SubTotal</span>
+                    <span>{formatRp(subtotal)}</span>
+                  </div>
+                  {totalDiskon > 0 && (
+                    <div className="trx-popup-summary-row trx-popup-summary-discount">
+                      <span>🎉 Diskon Promo</span>
+                      <span>-{formatRp(totalDiskon)}</span>
+                    </div>
+                  )}
+                  <div className="trx-popup-summary-row">
                     <span>Pajak (11%)</span>
-                    <span style={{ fontWeight: "600" }}>{formatRp(pajak)}</span>
+                    <span>{formatRp(pajak)}</span>
                   </div>
                 </div>
 
