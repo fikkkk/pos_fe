@@ -4,6 +4,7 @@ import {
   FaShoppingCart,
   FaFileAlt,
   FaChartPie,
+  FaUsers,
   FaUser,
   FaCog,
   FaSignOutAlt,
@@ -17,26 +18,70 @@ export default function Sidebar({ activeMenu, setActiveMenu, isDarkMode, toggleT
   const [profile, setProfile] = useState(null);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
+  // Decode JWT Token
+  const decodeJWT = (token) => {
+    try {
+      const base64Url = token.split(".")[1];
+      const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+      const jsonPayload = decodeURIComponent(
+        atob(base64)
+          .split("")
+          .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+          .join("")
+      );
+      return JSON.parse(jsonPayload);
+    } catch (e) {
+      return null;
+    }
+  };
+
+  // Get user info from token
+  const token = localStorage.getItem("token");
+  const userInfo = token ? decodeJWT(token) : null;
+
   // Fetch user profile - refetch when profileUpdateKey changes
   useEffect(() => {
-    const fetchProfile = async () => {
+    const loadProfile = async () => {
+      // Pertama coba ambil dari API
       try {
         const res = await api.get("/profile/me");
         setProfile(res.data);
+        return; // Berhasil, keluar
       } catch (err) {
         console.error("Error fetching profile for sidebar:", err);
       }
+
+      // Fallback: gunakan data dari localStorage
+      const savedName = localStorage.getItem("profile_name");
+      const savedUsername = localStorage.getItem("profile_username");
+      const savedPicture = localStorage.getItem("profile_picture");
+      const localPicture = localStorage.getItem("profile_picture_local");
+
+      // Decode token untuk fallback
+      const tkn = localStorage.getItem("token");
+      const info = tkn ? decodeJWT(tkn) : null;
+
+      const fallbackProfile = {
+        name: savedName || info?.name || info?.username || "User",
+        username: savedUsername || info?.username || info?.email?.split("@")[0] || "user",
+        role: info?.role || "KASIR",
+        picture: savedPicture || (localPicture ? "LOCAL" : null),
+      };
+      setProfile(fallbackProfile);
     };
-    fetchProfile();
-  }, [profileUpdateKey]);
+    loadProfile();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profileUpdateKey]); // Hanya bergantung pada profileUpdateKey
 
   const mainMenus = [
     { id: "dashboard", label: "Dashboard", icon: <FaThLarge /> },
     { id: "transaksi", label: "Transaksi", icon: <FaShoppingCart /> },
     { id: "datamaster", label: "Data Master", icon: <FaFileAlt /> },
     { id: "laporan", label: "Laporan Manajemen", icon: <FaChartPie /> },
+    { id: "member", label: "Member", icon: <FaUsers /> },
   ];
 
+<<<<<<< HEAD
   const handleLogoutClick = () => {
     setShowLogoutModal(true);
   };
@@ -44,6 +89,18 @@ export default function Sidebar({ activeMenu, setActiveMenu, isDarkMode, toggleT
   const confirmLogout = () => {
     localStorage.removeItem("token");
     setShowLogoutModal(false);
+=======
+  const handleLogout = () => {
+    // Clear token and all profile cache data
+    localStorage.removeItem("token");
+    localStorage.removeItem("profile_name");
+    localStorage.removeItem("profile_username");
+    localStorage.removeItem("profile_picture");
+    localStorage.removeItem("profile_picture_local");
+    localStorage.removeItem("last_login");
+    localStorage.removeItem("member_since");
+
+>>>>>>> origin/hasil2
     if (onLogout) {
       onLogout();
     } else {
@@ -51,12 +108,26 @@ export default function Sidebar({ activeMenu, setActiveMenu, isDarkMode, toggleT
     }
   };
 
-  // Get display name (username or name)
+  // Get display name (username first, then name as fallback)
   const displayName = profile?.username || profile?.name || "User";
   // Get role label
   const roleLabel = profile?.role || "User";
   // Get avatar initial
   const avatarInitial = displayName[0]?.toUpperCase() || "U";
+
+  // Get profile picture source
+  const getProfilePicSrc = () => {
+    if (!profile?.picture) return null;
+    if (profile.picture === "LOCAL") {
+      return localStorage.getItem("profile_picture_local");
+    }
+    if (profile.picture.startsWith("data:")) {
+      return profile.picture;
+    }
+    return `http://localhost:3000${profile.picture}`;
+  };
+
+  const profilePicSrc = getProfilePicSrc();
 
   return (
     <>
@@ -103,6 +174,7 @@ export default function Sidebar({ activeMenu, setActiveMenu, isDarkMode, toggleT
           </div>
         </div>
 
+<<<<<<< HEAD
         {/* MENU UTAMA */}
         <nav className="ds-nav-dark">
           <div className="ds-sidebar-date">
@@ -129,6 +201,31 @@ export default function Sidebar({ activeMenu, setActiveMenu, isDarkMode, toggleT
             </button>
           ))}
         </nav>
+=======
+      {/* USER CARD - Dynamic user display */}
+      <div className="ds-side-user-card">
+        <div className="ds-user-avatar">
+          {profilePicSrc ? (
+            <img
+              src={profilePicSrc}
+              alt="Profile"
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                borderRadius: "50%"
+              }}
+            />
+          ) : (
+            <span>{avatarInitial}</span>
+          )}
+        </div>
+        <div className="ds-user-meta">
+          <div className="user-name">{displayName}</div>
+          <div className="user-role">{roleLabel}</div>
+        </div>
+      </div>
+>>>>>>> origin/hasil2
 
         {/* BAGIAN BAWAH */}
         <div className="ds-side-bottom-dark">

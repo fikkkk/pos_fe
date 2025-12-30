@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import "./DataMaster.css";
-import { FaSearch, FaPlus, FaTrash, FaCheckCircle, FaTimes, FaBox, FaHistory, FaTruck } from "react-icons/fa";
+import { FaSearch, FaPlus, FaTrash, FaCheckCircle, FaTimes, FaBox, FaHistory, FaTruck, FaDatabase } from "react-icons/fa";
 import { api } from "../api";
 import AddProductModal from "./AddProductModal";
 import EditProductModal from "./EditProductModal";
@@ -135,8 +135,19 @@ export default function DataMaster() {
         setSuppliers(res.data);
       }
     } catch (err) {
-      console.error("Error fetching data:", err);
-      setError("Gagal memuat data. Silakan coba lagi.");
+      console.error("[DataMaster] Error fetching data:", {
+        tab: activeTab,
+        status: err?.response?.status,
+        message: err?.response?.data?.message || err.message,
+      });
+      const statusCode = err?.response?.status;
+      if (statusCode === 401) {
+        setError("Sesi telah berakhir. Silakan login ulang.");
+      } else if (statusCode === 403) {
+        setError("Anda tidak memiliki akses. Halaman ini khusus untuk Admin.");
+      } else {
+        setError("Gagal memuat data. Silakan coba lagi.");
+      }
     } finally {
       setLoading(false);
     }
@@ -959,6 +970,19 @@ export default function DataMaster() {
           </button>
         </div>
       )}
+
+      {/* PAGE HEADER - Modern Style with Animated Icon */}
+      <div className="dm-page-header">
+        <div className="dm-header-content">
+          <div className="dm-header-icon">
+            <FaDatabase />
+          </div>
+          <div className="dm-header-text">
+            <h1 className="dm-page-title">Data Master</h1>
+            <p className="dm-page-subtitle">Kelola data produk, user, kategori, satuan, dan promo</p>
+          </div>
+        </div>
+      </div>
 
       {/* MAIN BOX */}
       <div className="dm-main-box">

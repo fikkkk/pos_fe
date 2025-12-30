@@ -9,9 +9,34 @@
     animation: pageSlideIn 0.4s ease-out;
     height: 100%;
     overflow-y: auto;
-    overflow-x: hidden;
-    padding: 8px;
-    padding-bottom: 24px;
+
+    /* Jangan di-hidden, karena akan meng-clip shadow */
+    overflow-x: visible;
+
+    /* Kasih ruang untuk shadow (shadow blur 24px + scrollbar) */
+    padding: 16px 44px 24px 16px;
+
+    /* Reservasi ruang scrollbar (browser modern) */
+    scrollbar-gutter: stable;
+}
+
+/* Custom scrollbar styling - Orange theme */
+.akun-page::-webkit-scrollbar {
+    width: 10px;
+}
+
+.akun-page::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 4px;
+}
+
+.akun-page::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #f59e0b 0%, #ea580c 100%);
+    border-radius: 4px;
+}
+
+.akun-page::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #fbbf24 0%, #f97316 100%);
 }
 
 @keyframes pageSlideIn {
@@ -34,8 +59,9 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-bottom: 20px;
+    padding: 4px 0 20px 0;
     border-bottom: 1px solid rgba(59, 130, 246, 0.1);
+    overflow: visible;
 }
 
 .akun-header-content {
@@ -620,4 +646,17 @@
 .dashboard.dark .avatar-delete-btn:hover {
     background: #dc2626;
     color: #fff;
+}
+
+/* Dark mode scrollbar - Orange theme */
+.dashboard.dark .akun-page::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.dashboard.dark .akun-page::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #f59e0b 0%, #ea580c 100%);
+}
+
+.dashboard.dark .akun-page::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #fbbf24 0%, #f97316 100%);
 }

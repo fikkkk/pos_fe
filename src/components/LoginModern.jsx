@@ -18,7 +18,11 @@ import PosAlert from "./PosAlert";
 export default function LoginModern() {
   const [showPassword, setShowPassword] = useState(false);
   const [isAuthed, setIsAuthed] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
+  // Sinkronisasi mode tema dengan Dashboard via localStorage
+  const [darkMode, setDarkMode] = useState(() => {
+    const saved = localStorage.getItem("theme");
+    return saved ? saved === "dark" : false;
+  });
   const [screen, setScreen] = useState("login"); // "login" | "register" | "forgot"
   const [loading, setLoading] = useState(false); // loading overlay
   const [alertConfig, setAlertConfig] = useState(null); // modern alert
@@ -108,7 +112,13 @@ export default function LoginModern() {
             <button
               type="button"
               className="lp-dark-toggle"
-              onClick={() => setDarkMode((v) => !v)}
+              onClick={() => {
+                setDarkMode((v) => {
+                  const newValue = !v;
+                  localStorage.setItem("theme", newValue ? "dark" : "light");
+                  return newValue;
+                });
+              }}
             >
               {darkMode ? (
                 <>
@@ -146,6 +156,17 @@ export default function LoginModern() {
                   });
 
                   localStorage.setItem("token", res.data.access_token);
+                  // Simpan data user termasuk role
+                  localStorage.setItem("user", JSON.stringify(res.data.user));
+
+                  // Simpan waktu login terakhir
+                  localStorage.setItem("last_login", new Date().toISOString());
+
+                  // Simpan waktu pertama kali login (member sejak) jika belum ada
+                  if (!localStorage.getItem("member_since")) {
+                    localStorage.setItem("member_since", new Date().toISOString());
+                  }
+
                   setIsAuthed(true);
                 } catch (err) {
                   console.error(err);
