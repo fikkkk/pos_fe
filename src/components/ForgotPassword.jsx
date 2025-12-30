@@ -8,73 +8,54 @@ import {
   FaMoon,
   FaSun,
   FaArrowLeft,
+  FaCheckCircle,
 } from "react-icons/fa";
 import "./LoginModern.css";
 import { api } from "../api";
 
 export default function ForgotPassword({ darkMode, setDarkMode, goBackToLogin }) {
-  const [step, setStep] = useState("email"); // "email" | "reset"
+  // Step: 1 = Email, 2 = OTP, 3 = Password
+  const [step, setStep] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+
+  // Form data
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [newPassword, setNewPassword] = useState("");
-  const [confirmNew, setConfirmNew] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
 
-  const inputs = useRef([]);
+  const otpRefs = useRef([]);
 
-  /* =========================
-     STEP 1: KIRIM OTP KE EMAIL
-     ========================= */
+  // ========== STEP 1: Kirim OTP ==========
   const handleEmailSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
-    const value = email.trim();
-    if (!value) {
+    if (!email.trim()) {
       setError("Masukkan email terlebih dahulu.");
       return;
     }
 
     try {
       setLoading(true);
-
-      // BE: @Post('forgot-password') -> requestPasswordReset(email)
-      const res = await api.post("/auth/forgot-password", { email: value });
-
-      console.log(res.data);
-      // kalau sukses -> lanjut ke step reset
-      setStep("reset");
+      await api.post("/auth/forgot-password", { email: email.trim() });
+      setStep(2);
     } catch (err) {
       console.error(err);
       const raw = err?.response?.data?.message;
-      let msg = "";
+      let msg = Array.isArray(raw) ? raw.join(" ") : raw || "Gagal mengirim OTP.";
 
-      if (Array.isArray(raw)) msg = raw.join(" ");
-      else msg = raw || "Gagal mengirim OTP, coba lagi.";
-
-      const lower = msg.toLowerCase();
-
-      // kalau BE bilang OTP sudah dikirim, tetap lanjut ke step reset
-      if (
-        lower.includes("otp") &&
-        lower.includes("sudah") &&
-        (lower.includes("dikirim") || lower.includes("dikirm"))
-      ) {
-        setError("");
-        setStep("reset");
+      if (msg.toLowerCase().includes("otp") && msg.toLowerCase().includes("sudah")) {
+        setStep(2);
         return;
       }
 
-      // jika email tidak ditemukan
-      if (
-        lower.includes("email") &&
-        (lower.includes("tidak ditemukan") ||
-          lower.includes("not found") ||
-          lower.includes("belum terdaftar"))
-      ) {
+      if (msg.toLowerCase().includes("email") &&
+        (msg.toLowerCase().includes("tidak ditemukan") || msg.toLowerCase().includes("not found"))) {
         setError("Email tidak ditemukan. Pastikan email sudah terdaftar.");
         return;
       }
@@ -85,119 +66,224 @@ export default function ForgotPassword({ darkMode, setDarkMode, goBackToLogin })
     }
   };
 
-  /* =========================
-     STEP 2: RESET PASSWORD PAKAI OTP
-     ========================= */
-  const handleResetSubmit = async (e) => {
+  // ========== STEP 2: Verifikasi OTP (hanya validasi lokal) ==========
+  const handleOtpSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
-    const code = otp.join("");
-
-    if (code.length !== 6) {
-      setError("Kode OTP harus 6 digit.");
+    const otpCode = otp.join("");
+    if (otpCode.length !== 6) {
+      setError("Masukkan kode OTP 6 digit.");
       return;
     }
 
-    if (!newPassword || !confirmNew) {
-      setError("Isi kata sandi baru dan konfirmasi.");
-      return;
-    }
+    // Langsung lanjut ke Step 3 tanpa verifikasi API
+    // OTP akan diverifikasi saat reset-password
+    setStep(3);
+  };
+
+  // ========== STEP 3: Buat Password Baru ==========
+  const handlePasswordSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
 
     if (newPassword.length < 8) {
-      setError("Kata sandi baru minimal 8 karakter.");
+      setError("Kata sandi minimal 8 karakter.");
       return;
     }
 
-    if (newPassword !== confirmNew) {
-      setError("Kata sandi baru dan konfirmasi tidak sama.");
+    if (newPassword !== confirmPassword) {
+      setError("Kata sandi dan konfirmasi tidak sama.");
       return;
     }
 
     try {
       setLoading(true);
-
-      // BE: @Post('reset-password') -> resetPassword(email, newPassword, otp)
       await api.post("/auth/reset-password", {
-        email,
-        newPassword,
-        otp: code,
+        email: email.trim(),
+        otp: otp.join(""),
+        newPassword: newPassword,
       });
 
-      alert("Kata sandi berhasil direset. Silakan login dengan password baru.");
-      goBackToLogin();
+      setSuccess("Kata sandi berhasil direset!");
+      setTimeout(() => goBackToLogin(), 2000);
     } catch (err) {
       console.error(err);
       const raw = err?.response?.data?.message;
-      let msg = "";
-
-      if (Array.isArray(raw)) msg = raw.join(" ");
-      else msg = raw || "Gagal reset password, cek OTP atau coba lagi.";
-
-      const lower = msg.toLowerCase();
-
-      if (
-        lower.includes("otp") &&
-        (lower.includes("salah") ||
-          lower.includes("invalid") ||
-          lower.includes("kadaluarsa") ||
-          lower.includes("expired"))
-      ) {
-        setError("Kode OTP salah atau sudah kadaluarsa.");
-        return;
-      }
-
+      let msg = Array.isArray(raw) ? raw.join(" ") : raw || "Gagal reset password.";
       setError(msg);
     } finally {
       setLoading(false);
     }
   };
 
-  /* =========================
-     OTP INPUT HANDLER
-     ========================= */
+  // Password Strength Indicator Component
+  const PasswordStrengthIndicator = ({ password }) => {
+    const checks = [
+      { label: "Minimal 8 karakter", valid: password.length >= 8 },
+      { label: "Huruf besar (A-Z)", valid: /[A-Z]/.test(password) },
+      { label: "Huruf kecil (a-z)", valid: /[a-z]/.test(password) },
+      { label: "Angka (0-9)", valid: /[0-9]/.test(password) },
+    ];
+
+    return (
+      <div style={{
+        marginTop: "8px",
+        marginBottom: "12px",
+        padding: "12px",
+        borderRadius: "8px",
+        background: darkMode ? "rgba(55, 65, 81, 0.5)" : "rgba(243, 244, 246, 0.8)",
+      }}>
+        <p style={{
+          fontSize: "12px",
+          fontWeight: "600",
+          color: darkMode ? "#d1d5db" : "#374151",
+          marginBottom: "8px",
+        }}>
+          Kekuatan Password:
+        </p>
+        {checks.map((check, index) => (
+          <div key={index} style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+            fontSize: "12px",
+            color: check.valid
+              ? "#22c55e"
+              : darkMode ? "#9ca3af" : "#6b7280",
+            marginBottom: "4px",
+          }}>
+            <span style={{
+              width: "16px",
+              height: "16px",
+              borderRadius: "50%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              background: check.valid
+                ? "rgba(34, 197, 94, 0.2)"
+                : darkMode ? "rgba(107, 114, 128, 0.2)" : "rgba(156, 163, 175, 0.2)",
+              border: `1.5px solid ${check.valid ? "#22c55e" : darkMode ? "#6b7280" : "#9ca3af"}`,
+              fontSize: "10px",
+            }}>
+              {check.valid ? "✓" : ""}
+            </span>
+            {check.label}
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  // OTP Input Handlers
   const handleOtpChange = (value, index) => {
     if (!/^[0-9]?$/.test(value)) return;
-
     const newOtp = [...otp];
     newOtp[index] = value;
     setOtp(newOtp);
-
     if (value && index < 5) {
-      inputs.current[index + 1]?.focus();
+      otpRefs.current[index + 1]?.focus();
     }
   };
 
   const handleOtpKeyDown = (e, index) => {
     if (e.key === "Backspace" && !otp[index] && index > 0) {
-      inputs.current[index - 1]?.focus();
+      otpRefs.current[index - 1]?.focus();
     }
   };
 
-  /* =========================
-     RENDER
-     ========================= */
+  // Step Indicator Component
+  const StepIndicator = () => (
+    <div style={{
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: "8px",
+      marginBottom: "24px",
+    }}>
+      {[1, 2, 3].map((s) => (
+        <div key={s} style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <div style={{
+            width: "32px",
+            height: "32px",
+            borderRadius: "50%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontSize: "13px",
+            fontWeight: "600",
+            background: step >= s
+              ? "linear-gradient(135deg, #f59e0b 0%, #ea580c 100%)"
+              : darkMode ? "#374151" : "#e5e7eb",
+            color: step >= s ? "#fff" : darkMode ? "#9ca3af" : "#6b7280",
+            transition: "all 0.3s ease",
+          }}>
+            {step > s ? <FaCheckCircle size={14} /> : s}
+          </div>
+          {s < 3 && (
+            <div style={{
+              width: "40px",
+              height: "3px",
+              borderRadius: "2px",
+              background: step > s
+                ? "linear-gradient(135deg, #f59e0b 0%, #ea580c 100%)"
+                : darkMode ? "#374151" : "#e5e7eb",
+              transition: "all 0.3s ease",
+            }} />
+          )}
+        </div>
+      ))}
+    </div>
+  );
+
+  // Step Labels
+  const stepLabels = {
+    1: { title: "Masukkan Email", subtitle: "Masukkan email yang terdaftar untuk menerima kode OTP." },
+    2: { title: "Verifikasi OTP", subtitle: `Masukkan kode 6 digit yang dikirim ke ${email}` },
+    3: { title: "Buat Password Baru", subtitle: "Buat kata sandi baru yang aman untuk akun kamu." },
+  };
+
+  // Back handler
+  const handleBack = () => {
+    if (step === 1) goBackToLogin();
+    else if (step === 2) setStep(1);
+    else if (step === 3) setStep(2);
+  };
+
+  // ========== RENDER ==========
   return (
     <div className={`lp-page ${darkMode ? "lp-dark" : ""}`}>
+      {/* Loading Overlay */}
+      {loading && (
+        <div className="lp-loading-overlay">
+          <div className="lp-loading-box">
+            <div className="lp-loader">
+              <span></span><span></span><span></span>
+            </div>
+            <p className="lp-loading-text">
+              {step === 1 ? "Mengirim OTP..." : step === 2 ? "Memverifikasi..." : "Menyimpan..."}
+            </p>
+          </div>
+        </div>
+      )}
+
       <div className="lp-card">
         {/* LEFT */}
         <div className="lp-left">
           <div className="lp-illustration">
             <img src="banner_login1.jpg" alt="Forgot Password" />
           </div>
-
           <div className="lp-left-text">
-            <h3>POS NUKA · Lupa Kata Sandi</h3>
-            <h2>Reset Kata Sandi Kamu</h2>
+            <h3>POS NUKA · Reset Password</h3>
+            <h2>Lupa Kata Sandi?</h2>
             <p>
-              Gunakan email yang terdaftar untuk menerima kode OTP, lalu buat
-              kata sandi baru yang lebih aman.
+              Jangan khawatir! Masukkan email yang terdaftar dan kami
+              akan membantu reset kata sandi kamu.
             </p>
-
             <div className="lp-dots">
-              <span className="dot active" />
-              <span className="dot" />
-              <span className="dot" />
+              <span className={`dot ${step === 1 ? "active" : ""}`} />
+              <span className={`dot ${step === 2 ? "active" : ""}`} />
+              <span className={`dot ${step === 3 ? "active" : ""}`} />
             </div>
           </div>
         </div>
@@ -205,8 +291,7 @@ export default function ForgotPassword({ darkMode, setDarkMode, goBackToLogin })
         {/* RIGHT */}
         <div className="lp-right">
           <div className="lp-top-bar">
-            <span className="lp-badge">Lupa Kata Sandi</span>
-
+            <span className="lp-badge">Step {step} dari 3</span>
             <button
               type="button"
               className="lp-dark-toggle"
@@ -218,170 +303,169 @@ export default function ForgotPassword({ darkMode, setDarkMode, goBackToLogin })
                 });
               }}
             >
-              {darkMode ? (
-                <>
-                  <FaSun />
-                  <span>Mode terang</span>
-                </>
-              ) : (
-                <>
-                  <FaMoon />
-                  <span>Mode gelap</span>
-                </>
-              )}
+              {darkMode ? <><FaSun /><span>Mode terang</span></> : <><FaMoon /><span>Mode gelap</span></>}
             </button>
           </div>
 
           <div className="lp-right-main">
-            {/* tombol kembali */}
+            {/* Back Button */}
             <button
               type="button"
-              onClick={goBackToLogin}
+              onClick={handleBack}
               style={{
-                marginBottom: "14px",
-                border: "none",
-                background: "none",
-                cursor: "pointer",
-                color: darkMode ? "#d1d5db" : "#64748b",
                 display: "flex",
                 alignItems: "center",
                 gap: "6px",
+                background: "none",
+                border: "none",
+                color: darkMode ? "#9ca3af" : "#64748b",
+                cursor: "pointer",
                 fontSize: "13px",
+                marginBottom: "16px",
+                padding: 0,
               }}
             >
-              <FaArrowLeft /> Kembali ke Login
+              <FaArrowLeft size={12} />
+              {step === 1 ? "Kembali ke Login" : "Kembali"}
             </button>
 
-            {step === "email" && (
-              <>
-                <h1 className="lp-title">Lupa Kata Sandi</h1>
-                <p className="lp-subtitle">
-                  Masukkan email yang terdaftar. Kami akan mengirimkan kode OTP
-                  untuk reset kata sandi.
-                </p>
+            <StepIndicator />
 
-                {error && <p className="lp-error">{error}</p>}
+            <h1 className="lp-title">{stepLabels[step].title}</h1>
+            <p className="lp-subtitle">{stepLabels[step].subtitle}</p>
 
-                <form className="lp-form" onSubmit={handleEmailSubmit}>
-                  <div className="lp-field">
-                    <label htmlFor="fp-email">Email terdaftar*</label>
-                    <div className="lp-field-input">
-                      <FaEnvelope className="lp-icon" />
-                      <input
-                        id="fp-email"
-                        type="email"
-                        name="email"
-                        placeholder="Masukkan email kamu"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                      />
-                    </div>
+            {success && (
+              <div style={{
+                padding: "12px 16px",
+                background: "rgba(34, 197, 94, 0.1)",
+                border: "1px solid rgba(34, 197, 94, 0.3)",
+                borderRadius: "12px",
+                color: "#22c55e",
+                fontSize: "13px",
+                marginBottom: "16px",
+              }}>
+                ✓ {success}
+              </div>
+            )}
+            {error && <p className="lp-error">{error}</p>}
+
+            {/* ========== STEP 1: Email ========== */}
+            {step === 1 && (
+              <form className="lp-form" onSubmit={handleEmailSubmit}>
+                <div className="lp-field">
+                  <label htmlFor="email">Email Terdaftar*</label>
+                  <div className="lp-field-input">
+                    <FaEnvelope className="lp-icon" />
+                    <input
+                      id="email"
+                      type="email"
+                      placeholder="Masukkan email kamu"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                    />
                   </div>
+                </div>
 
-                  <button
-                    type="submit"
-                    className="lp-btn-primary"
-                    style={{ opacity: loading ? 0.7 : 1 }}
-                    disabled={loading}
-                  >
-                    {loading ? "Mengirim OTP..." : "Kirim Kode OTP"}
-                  </button>
-                </form>
-              </>
+                <button type="submit" className="lp-btn-primary" disabled={loading}>
+                  Kirim Kode OTP
+                </button>
+              </form>
             )}
 
-            {step === "reset" && (
-              <>
-                <h1 className="lp-title">Verifikasi OTP & Reset</h1>
-                <p className="lp-subtitle">
-                  Masukkan kode OTP yang dikirim ke <b>{email}</b> dan buat kata
-                  sandi baru.
-                </p>
-
-                {error && <p className="lp-error">{error}</p>}
-
-                <form className="lp-form" onSubmit={handleResetSubmit}>
-                  {/* OTP */}
-                  <div className="lp-field">
-                    <label>Kode OTP (6 digit)*</label>
-                    <div style={{ display: "flex", gap: "12px" }}>
-                      {otp.map((v, i) => (
-                        <input
-                          key={i}
-                          maxLength="1"
-                          value={v}
-                          ref={(el) => (inputs.current[i] = el)}
-                          onChange={(e) =>
-                            handleOtpChange(e.target.value, i)
-                          }
-                          onKeyDown={(e) => handleOtpKeyDown(e, i)}
-                          className="lp-otp-box"
-                        />
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* PASSWORD BARU */}
-                  <div className="lp-field">
-                    <label htmlFor="newPassword">Kata Sandi Baru*</label>
-                    <div className="lp-field-input">
-                      <FaLock className="lp-icon" />
+            {/* ========== STEP 2: OTP ========== */}
+            {step === 2 && (
+              <form className="lp-form" onSubmit={handleOtpSubmit}>
+                <div className="lp-field">
+                  <label>Kode OTP (6 Digit)*</label>
+                  <div style={{ display: "flex", gap: "10px", justifyContent: "center" }}>
+                    {otp.map((digit, index) => (
                       <input
-                        id="newPassword"
-                        type={showNew ? "text" : "password"}
-                        name="newPassword"
-                        placeholder="Minimal 8 karakter"
-                        value={newPassword}
-                        onChange={(e) => setNewPassword(e.target.value)}
-                        required
+                        key={index}
+                        type="text"
+                        inputMode="numeric"
+                        maxLength={1}
+                        className="lp-otp-box"
+                        value={digit}
+                        onChange={(e) => handleOtpChange(e.target.value, index)}
+                        onKeyDown={(e) => handleOtpKeyDown(e, index)}
+                        ref={(el) => (otpRefs.current[index] = el)}
                       />
-                      <button
-                        type="button"
-                        className="lp-eye-btn"
-                        onClick={() => setShowNew((v) => !v)}
-                      >
-                        {showNew ? <FaEyeSlash /> : <FaEye />}
-                      </button>
-                    </div>
+                    ))}
                   </div>
+                </div>
 
-                  {/* KONFIRMASI PASSWORD BARU */}
-                  <div className="lp-field">
-                    <label htmlFor="confirmNew">Ulangi Kata Sandi Baru*</label>
-                    <div className="lp-field-input">
-                      <FaLock className="lp-icon" />
-                      <input
-                        id="confirmNew"
-                        type={showConfirm ? "text" : "password"}
-                        name="confirmNew"
-                        placeholder="Ketik ulang kata sandi baru"
-                        value={confirmNew}
-                        onChange={(e) => setConfirmNew(e.target.value)}
-                        required
-                      />
-                      <button
-                        type="button"
-                        className="lp-eye-btn"
-                        onClick={() => setShowConfirm((v) => !v)}
-                      >
-                        {showConfirm ? <FaEyeSlash /> : <FaEye />}
-                      </button>
-                    </div>
+                <button type="submit" className="lp-btn-primary" disabled={loading}>
+                  Verifikasi OTP
+                </button>
+              </form>
+            )}
+
+            {/* ========== STEP 3: Password ========== */}
+            {step === 3 && (
+              <form className="lp-form" onSubmit={handlePasswordSubmit}>
+                <div className="lp-field">
+                  <label htmlFor="newPassword">Kata Sandi Baru*</label>
+                  <div className="lp-field-input">
+                    <FaLock className="lp-icon" />
+                    <input
+                      id="newPassword"
+                      type={showNew ? "text" : "password"}
+                      placeholder="Minimal 8 karakter"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      required
+                    />
+                    <button
+                      type="button"
+                      className="lp-eye-btn"
+                      onClick={() => setShowNew((v) => !v)}
+                    >
+                      {showNew ? <FaEyeSlash /> : <FaEye />}
+                    </button>
                   </div>
+                  <PasswordStrengthIndicator password={newPassword} />
+                </div>
 
-                  <button
-                    type="submit"
-                    className="lp-btn-primary"
-                    style={{ opacity: loading ? 0.7 : 1 }}
-                    disabled={loading}
-                  >
-                    {loading ? "Menyimpan..." : "Reset Kata Sandi"}
-                  </button>
-                </form>
-              </>
+                <div className="lp-field">
+                  <label htmlFor="confirmPassword">Ulangi Kata Sandi Baru*</label>
+                  <div className="lp-field-input">
+                    <FaLock className="lp-icon" />
+                    <input
+                      id="confirmPassword"
+                      type={showConfirm ? "text" : "password"}
+                      placeholder="Ketik ulang kata sandi"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      required
+                    />
+                    <button
+                      type="button"
+                      className="lp-eye-btn"
+                      onClick={() => setShowConfirm((v) => !v)}
+                    >
+                      {showConfirm ? <FaEyeSlash /> : <FaEye />}
+                    </button>
+                  </div>
+                </div>
+
+                <button type="submit" className="lp-btn-primary" disabled={loading}>
+                  Reset Kata Sandi
+                </button>
+              </form>
             )}
           </div>
+
+          <p className="lp-bottom-text">
+            Ingat kata sandi?{" "}
+            <button
+              type="button"
+              className="lp-signup-link"
+              onClick={goBackToLogin}
+            >
+              Masuk di sini
+            </button>
+          </p>
         </div>
       </div>
     </div>
