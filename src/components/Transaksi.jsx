@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { FaSearch, FaTrash, FaPlus, FaMinus, FaShoppingCart, FaCashRegister, FaSpinner, FaTimes, FaMoneyBillWave, FaQrcode, FaCreditCard, FaWallet, FaCheckCircle } from "react-icons/fa";
+import { FaSearch, FaTrash, FaPlus, FaMinus, FaShoppingCart, FaCashRegister, FaSpinner, FaTimes, FaMoneyBillWave, FaQrcode, FaCreditCard, FaWallet, FaCheckCircle, FaExclamationTriangle, FaStar, FaIdCard, FaUserCheck } from "react-icons/fa";
 import { api } from "../api";
 import "./transaksi.css";
 
@@ -10,21 +10,38 @@ const formatRp = (n) =>
     maximumFractionDigits: 0,
   });
 
-// ====================================
-// KATEGORI
-// ====================================
-const categories = [
-  { label: "Semua", icon: "/img/cat-lainnya.png" },
-  { label: "Makanan", icon: "/img/cat-makanan.png" },
-  { label: "Sembako", icon: "/img/cat-sembako.png" },
-  { label: "Perawatan Tubuh", icon: "/img/cat-perawatan.png" },
-  { label: "Produk Bayi", icon: "/img/cat-bayi.png" },
-  { label: "Frozen Food", icon: "/img/cat-frozen.png" },
-  { label: "Minuman", icon: "/img/cat-minuman.png" },
-  { label: "Kebutuhan Rumah Tangga", icon: "/img/cat-rumah.png" },
-  { label: "Peralatan / Alat", icon: "/img/cat-alat.png" },
-  { label: "Obat & Kesehatan", icon: "/img/cat-obat.png" },
-];
+// Mapping icon default untuk kategori (fallback jika tidak ada gambar)
+const defaultCategoryIcons = {
+  "semua": "/img/cat-lainnya.png",
+  "makanan": "/img/cat-makanan.png",
+  "sembako": "/img/cat-sembako.png",
+  "perawatan tubuh": "/img/cat-perawatan.png",
+  "produk bayi": "/img/cat-bayi.png",
+  "frozen food": "/img/cat-frozen.png",
+  "minuman": "/img/cat-minuman.png",
+  "kebutuhan rumah tangga": "/img/cat-rumah.png",
+  "kebutuhan rumah": "/img/cat-rumah.png",
+  "peralatan / alat": "/img/cat-alat.png",
+  "alat": "/img/cat-alat.png",
+  "obat & kesehatan": "/img/cat-obat.png",
+  "bumbu dapur": "/img/cat-lainnya.png",
+  "lainnya": "/img/cat-lainnya.png",
+};
+
+// Helper untuk mendapatkan icon kategori
+const getCategoryIcon = (categoryName, categoryId) => {
+  // Cek di mapping default dulu
+  const lowerName = categoryName?.toLowerCase() || "";
+  if (defaultCategoryIcons[lowerName]) {
+    return defaultCategoryIcons[lowerName];
+  }
+  // Jika ada categoryId, coba ambil dari API image
+  if (categoryId) {
+    return `/admin/category/${categoryId}/image`;
+  }
+  // Fallback ke icon default
+  return "/img/cat-lainnya.png";
+};
 
 // METODE PEMBAYARAN
 const paymentMethods = [
@@ -47,12 +64,25 @@ const getItemTotal = (item) => {
 // MAIN COMPONENT
 // ====================================
 const Transaksi = () => {
+  // Get user role from localStorage
+  const getUserRole = () => {
+    try {
+      const user = JSON.parse(localStorage.getItem("user") || "{}");
+      return user.role || "KASIR";
+    } catch {
+      return "KASIR";
+    }
+  };
+  const userRole = getUserRole();
+  const isAdminOrSuperAdmin = userRole === "ADMIN" || userRole === "SUPERADMIN";
+
   const [activeCategory, setActiveCategory] = useState("Semua");
   const [search, setSearch] = useState("");
   const [cart, setCart] = useState([]);
 
   // STATE untuk data dari API
   const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]); // Kategori dari database
   const [promos, setPromos] = useState([]); // State untuk promo produk
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -69,18 +99,57 @@ const Transaksi = () => {
   const [paymentSuccess, setPaymentSuccess] = useState(false);
   const [paymentError, setPaymentError] = useState(null);
 
-  // Fetch produk dan promo dari backend
+  // MEMBER & REDEEM POINTS STATE
+  const [memberLookup, setMemberLookup] = useState("");
+  const [memberData, setMemberData] = useState(null);
+  const [memberLookupLoading, setMemberLookupLoading] = useState(false);
+  const [memberError, setMemberError] = useState("");
+  const [redeemPoints, setRedeemPoints] = useState(0);
+  const POINT_VALUE = 100; // 1 poin = Rp100
+
+  // STOCK ALERT POPUP STATE
+  const [showStockAlert, setShowStockAlert] = useState(false);
+  const [stockAlertProduct, setStockAlertProduct] = useState(null);
+
+  // Fetch produk, kategori, dan promo dari backend
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       setError(null);
       try {
-        // Fetch products dan promos secara paralel
-        const [productsRes, promosRes] = await Promise.all([
-          api.get("/admin/products"),
-          api.get("/admin/promo").catch(() => ({ data: [] })), // Promo optional
+        // Use different endpoints based on user role
+        // KASIR uses /kasir/products, ADMIN uses /admin/products
+        const productsEndpoint = isAdminOrSuperAdmin ? "/admin/products" : "/kasir/products";
+        const categoriesEndpoint = "/admin/categories"; // Categories are public for display
+        const promoEndpoint = "/admin/promo"; // Promos for display
+
+        console.log("[Transaksi] Fetching with role:", userRole, "using endpoint:", productsEndpoint);
+
+        // Fetch products, categories, dan promos secara paralel
+        const [productsRes, categoriesRes, promosRes] = await Promise.all([
+          api.get(productsEndpoint).catch((err) => {
+            console.error("[Transaksi] Failed to fetch products:", err?.response?.data || err.message);
+            return { data: [] };
+          }),
+          api.get(categoriesEndpoint).catch(() => ({ data: [] })), // Categories
+          api.get(promoEndpoint).catch(() => ({ data: [] })), // Promo optional
         ]);
         setProducts(productsRes.data || []);
+
+        // Set categories dari API dengan format yang sesuai
+        const apiCategories = (categoriesRes.data || []).map((cat) => ({
+          id: cat.id,
+          label: cat.name,
+          icon: getCategoryIcon(cat.name, cat.id),
+        }));
+
+        // Tambahkan "Semua" di awal
+        setCategories([
+          { id: null, label: "Semua", icon: "/img/cat-lainnya.png" },
+          ...apiCategories,
+        ]);
+
+        console.log("Categories from API:", apiCategories);
 
         // Debug: log raw promo data
         console.log("Raw promos from API:", promosRes.data);
@@ -108,7 +177,7 @@ const Transaksi = () => {
     };
 
     fetchData();
-  }, []);
+  }, [isAdminOrSuperAdmin, userRole]);
 
   // Fungsi untuk mendapatkan promo yang berlaku untuk produk
   const getApplicablePromo = (productId, qty) => {
@@ -166,6 +235,24 @@ const Transaksi = () => {
 
   // ADD TO CART
   const addToCart = (product) => {
+    // Cek apakah stock habis
+    if (product.stock <= 0) {
+      setStockAlertProduct(product);
+      setShowStockAlert(true);
+      return;
+    }
+
+    // Cek apakah sudah ada di cart
+    const existInCart = cart.find((c) => c.id === product.id);
+    if (existInCart) {
+      // Cek apakah qty + 1 melebihi stock
+      if (existInCart.qty >= product.stock) {
+        setStockAlertProduct({ ...product, currentQty: existInCart.qty });
+        setShowStockAlert(true);
+        return;
+      }
+    }
+
     setCart((prev) => {
       const exist = prev.find((c) => c.id === product.id);
       if (exist) {
@@ -180,6 +267,16 @@ const Transaksi = () => {
 
   // QTY plus/minus
   const changeQty = (id, delta) => {
+    // Jika menambah qty, cek stock dulu
+    if (delta > 0) {
+      const item = cart.find((c) => c.id === id);
+      if (item && item.qty >= item.stock) {
+        setStockAlertProduct({ ...item, currentQty: item.qty });
+        setShowStockAlert(true);
+        return;
+      }
+    }
+
     setCart((prev) =>
       prev
         .map((c) =>
@@ -193,6 +290,15 @@ const Transaksi = () => {
   const setQty = (id, value) => {
     const n = parseInt(value, 10);
     if (isNaN(n) || n <= 0) return;
+
+    // Cek apakah qty melebihi stock
+    const item = cart.find((c) => c.id === id);
+    if (item && n > item.stock) {
+      setStockAlertProduct({ ...item, currentQty: item.qty, requestedQty: n });
+      setShowStockAlert(true);
+      return;
+    }
+
     setCart((prev) =>
       prev.map((c) => (c.id === id ? { ...c, qty: n } : c))
     );
@@ -281,6 +387,50 @@ const Transaksi = () => {
     return cash - total;
   }, [cashInput, total]);
 
+  // MEMBER LOOKUP
+  const handleMemberLookup = async () => {
+    if (!memberLookup.trim()) {
+      setMemberError("Masukkan No HP atau Kode Member");
+      return;
+    }
+    setMemberLookupLoading(true);
+    setMemberError("");
+    try {
+      const isCode = memberLookup.toUpperCase().startsWith("MBR");
+      const res = await api.post("/kasir/members/lookup", {
+        memberCode: isCode ? memberLookup.trim() : undefined,
+        phone: !isCode ? memberLookup.trim() : undefined,
+      });
+      setMemberData(res.data);
+      setRedeemPoints(0); // Reset redeem points
+    } catch (err) {
+      setMemberError(err?.response?.data?.message || "Member tidak ditemukan");
+      setMemberData(null);
+    } finally {
+      setMemberLookupLoading(false);
+    }
+  };
+
+  // Clear member
+  const clearMember = () => {
+    setMemberData(null);
+    setMemberLookup("");
+    setRedeemPoints(0);
+    setMemberError("");
+  };
+
+  // Calculate points discount
+  const pointsDiscount = useMemo(() => redeemPoints * POINT_VALUE, [redeemPoints]);
+
+  // Effective total after points discount
+  const effectiveTotal = useMemo(() => Math.max(0, total - pointsDiscount), [total, pointsDiscount]);
+
+  // Recalculate kembalian with points discount
+  const kembalianWithPoints = useMemo(() => {
+    const cash = parseInt(cashInput.replace(/\D/g, ""), 10) || 0;
+    return cash - effectiveTotal;
+  }, [cashInput, effectiveTotal]);
+
   // OPEN/CLOSE PAYMENT POPUP
   const openPaymentPopup = () => {
     if (cart.length === 0) return;
@@ -289,6 +439,7 @@ const Transaksi = () => {
     setCashInput("");
     setPaymentSuccess(false);
     setPaymentError(null);
+    // Note: Member data is NOT reset here - only reset after payment success
   };
 
   const closePaymentPopup = () => {
@@ -297,6 +448,7 @@ const Transaksi = () => {
     setCashInput("");
     setPaymentSuccess(false);
     setPaymentError(null);
+    // Note: Member data is NOT reset here - only reset after payment success
   };
 
   // PROCESS PAYMENT & UPDATE STOCK
@@ -306,7 +458,7 @@ const Transaksi = () => {
       return;
     }
 
-    if (selectedPayment === "TUNAI" && kembalian < 0) {
+    if (selectedPayment === "TUNAI" && kembalianWithPoints < 0) {
       setPaymentError("Uang yang diberikan kurang");
       return;
     }
@@ -331,15 +483,29 @@ const Transaksi = () => {
           quantity: item.qty,
         }));
 
-        await api.post("/kasir/orders", {
+        console.log("[Transaksi] Creating order with items:", orderItems);
+        console.log("[Transaksi] User role for order:", userRole);
+
+        const orderResponse = await api.post("/kasir/orders", {
           items: orderItems,
           paymentMethod: selectedPayment,
           taxPercent: 11, // pajak 11%
           discountPercent: 0,
+          // Member & Redeem Points
+          memberCode: memberData?.memberCode || undefined,
+          redeemPoints: redeemPoints > 0 ? redeemPoints : undefined,
+          paidAmount: selectedPayment === "TUNAI" ? parseInt(cashInput.replace(/\D/g, ""), 10) || 0 : undefined,
         });
+
+        console.log("[Transaksi] Order created successfully:", orderResponse.data);
       } catch (orderErr) {
-        // Jika gagal buat order (misal bukan role KASIR), simpan ke localStorage saja
-        console.warn("Order creation skipped (not KASIR role or endpoint issue):", orderErr);
+        // Log detailed error for debugging
+        console.error("[Transaksi] Order creation failed:", {
+          status: orderErr?.response?.status,
+          message: orderErr?.response?.data?.message || orderErr.message,
+          role: userRole,
+        });
+        // Order gagal tapi transaksi tetap disimpan ke localStorage sebagai backup
       }
 
       // 3. Simpan transaksi ke localStorage sebagai backup/riwayat lokal
@@ -394,16 +560,21 @@ const Transaksi = () => {
   // FINISH PAYMENT - untuk menutup popup setelah sukses
   const finishPayment = () => {
     clearCart();
+    // Reset member state after successful payment
+    setMemberLookup("");
+    setMemberData(null);
+    setMemberError("");
+    setRedeemPoints(0);
     closePaymentPopup();
   };
 
-  // Quick cash buttons
+  // Quick cash buttons - based on effectiveTotal (after points discount)
   const quickCashAmounts = [
-    total,
-    Math.ceil(total / 10000) * 10000,
-    Math.ceil(total / 50000) * 50000,
-    Math.ceil(total / 100000) * 100000,
-  ].filter((v, i, arr) => arr.indexOf(v) === i && v >= total).slice(0, 4);
+    effectiveTotal,
+    Math.ceil(effectiveTotal / 10000) * 10000,
+    Math.ceil(effectiveTotal / 50000) * 50000,
+    Math.ceil(effectiveTotal / 100000) * 100000,
+  ].filter((v, i, arr) => arr.indexOf(v) === i && v >= effectiveTotal).slice(0, 4);
 
   return (
     <div className="trx-page">
@@ -1133,7 +1304,218 @@ const Transaksi = () => {
                 {/* TOTAL DISPLAY */}
                 <div className="trx-popup-total">
                   <span className="trx-popup-total-label">Total Pembayaran</span>
-                  <span className="trx-popup-total-value">{formatRp(total)}</span>
+                  <span className="trx-popup-total-value">{formatRp(effectiveTotal)}</span>
+                  {pointsDiscount > 0 && (
+                    <span style={{ fontSize: "0.8rem", opacity: 0.9 }}>
+                      (Sudah termasuk potongan poin {formatRp(pointsDiscount)})
+                    </span>
+                  )}
+                </div>
+
+                {/* MEMBER SECTION - Gunakan Poin */}
+                <div className="trx-popup-section" style={{ background: "linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, rgba(59, 130, 246, 0.05) 100%)" }}>
+                  <h4 style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    <FaIdCard style={{ color: "#8b5cf6" }} /> Gunakan Poin Member
+                  </h4>
+
+                  {!memberData ? (
+                    <>
+                      {/* Lookup Input */}
+                      <div style={{ display: "flex", gap: "10px", marginBottom: "12px" }}>
+                        <input
+                          type="text"
+                          placeholder="Masukkan No HP atau Kode Member..."
+                          value={memberLookup}
+                          onChange={(e) => setMemberLookup(e.target.value)}
+                          onKeyDown={(e) => e.key === "Enter" && handleMemberLookup()}
+                          style={{
+                            flex: 1,
+                            padding: "12px 16px",
+                            border: "2px solid #e2e8f0",
+                            borderRadius: "12px",
+                            fontSize: "14px",
+                            outline: "none",
+                          }}
+                        />
+                        <button
+                          onClick={handleMemberLookup}
+                          disabled={memberLookupLoading}
+                          style={{
+                            padding: "12px 20px",
+                            background: "linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)",
+                            color: "#fff",
+                            border: "none",
+                            borderRadius: "12px",
+                            fontWeight: "700",
+                            cursor: memberLookupLoading ? "not-allowed" : "pointer",
+                            opacity: memberLookupLoading ? 0.7 : 1,
+                          }}
+                        >
+                          {memberLookupLoading ? <FaSpinner className="trx-btn-spinner" /> : "Cari"}
+                        </button>
+                      </div>
+                      {memberError && (
+                        <div style={{ color: "#ef4444", fontSize: "13px", marginTop: "8px" }}>
+                          {memberError}
+                        </div>
+                      )}
+                      <p style={{ fontSize: "12px", color: "#94a3b8", margin: 0 }}>
+                        *Opsional - Masukkan data member untuk menggunakan poin
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      {/* Member Found - Show Info */}
+                      <div style={{
+                        background: "linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)",
+                        border: "2px solid #86efac",
+                        borderRadius: "16px",
+                        padding: "16px",
+                        marginBottom: "16px",
+                      }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                            <div style={{
+                              width: "48px",
+                              height: "48px",
+                              borderRadius: "50%",
+                              background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              color: "#fff",
+                              fontWeight: "700",
+                              fontSize: "18px",
+                            }}>
+                              <FaUserCheck />
+                            </div>
+                            <div>
+                              <div style={{ fontWeight: "700", color: "#166534", fontSize: "1rem" }}>
+                                {memberData.customer?.name || "Member"}
+                              </div>
+                              <div style={{ fontSize: "12px", color: "#16a34a", fontFamily: "monospace" }}>
+                                {memberData.memberCode}
+                              </div>
+                            </div>
+                          </div>
+                          <button
+                            onClick={clearMember}
+                            style={{
+                              background: "transparent",
+                              border: "none",
+                              color: "#dc2626",
+                              cursor: "pointer",
+                              padding: "8px",
+                            }}
+                          >
+                            <FaTimes />
+                          </button>
+                        </div>
+
+                        {/* Points Display */}
+                        <div style={{
+                          marginTop: "12px",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "8px",
+                          padding: "10px 14px",
+                          background: "linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)",
+                          borderRadius: "10px",
+                        }}>
+                          <FaStar style={{ color: "#f59e0b", fontSize: "18px" }} />
+                          <span style={{ fontWeight: "700", color: "#b45309", fontSize: "1.1rem" }}>
+                            {(memberData.points || 0).toLocaleString()} poin
+                          </span>
+                          <span style={{ fontSize: "12px", color: "#92400e", marginLeft: "auto" }}>
+                            = {formatRp((memberData.points || 0) * POINT_VALUE)}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Redeem Points Slider */}
+                      {memberData.points > 0 && (
+                        <div style={{ marginBottom: "16px" }}>
+                          <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
+                            <span style={{ fontWeight: "600", color: "#475569" }}>Tukar Poin:</span>
+                            <span style={{ fontWeight: "700", color: "#8b5cf6" }}>
+                              {redeemPoints} poin = {formatRp(pointsDiscount)}
+                            </span>
+                          </div>
+                          <input
+                            type="range"
+                            min="0"
+                            max={Math.min(memberData.points, Math.ceil(total / POINT_VALUE))}
+                            value={redeemPoints}
+                            onChange={(e) => setRedeemPoints(Number(e.target.value))}
+                            style={{
+                              width: "100%",
+                              height: "8px",
+                              background: "linear-gradient(90deg, #8b5cf6 0%, #7c3aed 100%)",
+                              borderRadius: "4px",
+                              cursor: "pointer",
+                              accentColor: "#8b5cf6",
+                            }}
+                          />
+                          <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11px", color: "#94a3b8", marginTop: "4px" }}>
+                            <span>0</span>
+                            <span>{Math.min(memberData.points, Math.ceil(total / POINT_VALUE))} poin max</span>
+                          </div>
+
+                          {/* Quick Redeem Buttons */}
+                          <div style={{ display: "flex", gap: "8px", marginTop: "12px" }}>
+                            <button
+                              onClick={() => setRedeemPoints(0)}
+                              style={{
+                                flex: 1,
+                                padding: "8px",
+                                background: redeemPoints === 0 ? "#8b5cf6" : "#e2e8f0",
+                                color: redeemPoints === 0 ? "#fff" : "#64748b",
+                                border: "none",
+                                borderRadius: "8px",
+                                fontWeight: "600",
+                                fontSize: "12px",
+                                cursor: "pointer",
+                              }}
+                            >
+                              Tidak Pakai
+                            </button>
+                            <button
+                              onClick={() => setRedeemPoints(Math.min(memberData.points, Math.ceil(total / POINT_VALUE)))}
+                              style={{
+                                flex: 1,
+                                padding: "8px",
+                                background: redeemPoints === Math.min(memberData.points, Math.ceil(total / POINT_VALUE)) ? "#8b5cf6" : "#e2e8f0",
+                                color: redeemPoints === Math.min(memberData.points, Math.ceil(total / POINT_VALUE)) ? "#fff" : "#64748b",
+                                border: "none",
+                                borderRadius: "8px",
+                                fontWeight: "600",
+                                fontSize: "12px",
+                                cursor: "pointer",
+                              }}
+                            >
+                              Pakai Semua
+                            </button>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Point Discount Summary */}
+                      {pointsDiscount > 0 && (
+                        <div style={{
+                          padding: "12px 16px",
+                          background: "linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)",
+                          borderRadius: "12px",
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          color: "#fff",
+                        }}>
+                          <span style={{ fontWeight: "600" }}>💎 Potongan dari Poin</span>
+                          <span style={{ fontWeight: "800", fontSize: "1.1rem" }}>-{formatRp(pointsDiscount)}</span>
+                        </div>
+                      )}
+                    </>
+                  )}
                 </div>
 
                 {/* PAYMENT METHODS */}
@@ -1177,9 +1559,9 @@ const Transaksi = () => {
                       ))}
                     </div>
                     {cashInput && (
-                      <div className={`trx-change-display ${kembalian >= 0 ? 'positive' : 'negative'}`}>
+                      <div className={`trx-change-display ${kembalianWithPoints >= 0 ? 'positive' : 'negative'}`}>
                         <span>Kembalian:</span>
-                        <span className="trx-change-value">{formatRp(kembalian)}</span>
+                        <span className="trx-change-value">{formatRp(kembalianWithPoints)}</span>
                       </div>
                     )}
                   </div>
@@ -1217,6 +1599,246 @@ const Transaksi = () => {
                 </div>
               </>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* ==========================================
+          STOCK ALERT POPUP MODAL
+       ========================================== */}
+      {showStockAlert && stockAlertProduct && (
+        <div className="trx-popup-overlay" onClick={() => setShowStockAlert(false)}>
+          <div
+            className="trx-stock-alert-modal"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              background: "linear-gradient(135deg, #1e293b 0%, #0f172a 100%)",
+              borderRadius: "20px",
+              padding: "0",
+              maxWidth: "400px",
+              width: "90%",
+              boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)",
+              animation: "popIn 0.3s ease-out",
+              overflow: "hidden",
+            }}
+          >
+            {/* HEADER */}
+            <div style={{
+              background: "linear-gradient(135deg, #ef4444 0%, #dc2626 100%)",
+              padding: "24px",
+              display: "flex",
+              alignItems: "center",
+              gap: "16px",
+            }}>
+              <div style={{
+                background: "rgba(255,255,255,0.2)",
+                borderRadius: "50%",
+                width: "60px",
+                height: "60px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: "1.8rem",
+              }}>
+                <FaExclamationTriangle style={{ color: "#fff" }} />
+              </div>
+              <div>
+                <h3 style={{
+                  margin: 0,
+                  color: "#fff",
+                  fontSize: "1.3rem",
+                  fontWeight: "700",
+                }}>
+                  Stock Tidak Mencukupi
+                </h3>
+                <p style={{
+                  margin: "4px 0 0 0",
+                  color: "rgba(255,255,255,0.8)",
+                  fontSize: "0.9rem",
+                }}>
+                  Jumlah yang diminta melebihi stock tersedia
+                </p>
+              </div>
+            </div>
+
+            {/* CONTENT */}
+            <div style={{ padding: "24px" }}>
+              {/* Product Info */}
+              <div style={{
+                background: "rgba(255,255,255,0.05)",
+                borderRadius: "12px",
+                padding: "16px",
+                marginBottom: "20px",
+                border: "1px solid rgba(255,255,255,0.1)",
+              }}>
+                <div style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "12px",
+                }}>
+                  <div style={{
+                    width: "50px",
+                    height: "50px",
+                    borderRadius: "10px",
+                    background: "linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: "1.5rem",
+                  }}>
+                    📦
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{
+                      color: "#fff",
+                      fontWeight: "600",
+                      fontSize: "1rem",
+                      marginBottom: "4px",
+                    }}>
+                      {stockAlertProduct.name}
+                    </div>
+                    <div style={{
+                      color: "#94a3b8",
+                      fontSize: "0.85rem",
+                    }}>
+                      {formatRp(stockAlertProduct.price)}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Stock Status */}
+              <div style={{
+                display: "grid",
+                gridTemplateColumns: stockAlertProduct.stock === 0 ? "1fr" : "1fr 1fr",
+                gap: "12px",
+                marginBottom: "20px",
+              }}>
+                {stockAlertProduct.stock === 0 ? (
+                  <div style={{
+                    background: "linear-gradient(135deg, #ef4444 0%, #dc2626 100%)",
+                    borderRadius: "12px",
+                    padding: "16px",
+                    textAlign: "center",
+                  }}>
+                    <div style={{
+                      fontSize: "2.5rem",
+                      fontWeight: "800",
+                      color: "#fff",
+                      marginBottom: "4px",
+                    }}>
+                      HABIS
+                    </div>
+                    <div style={{
+                      color: "rgba(255,255,255,0.8)",
+                      fontSize: "0.85rem",
+                    }}>
+                      Stock Kosong
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <div style={{
+                      background: "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)",
+                      borderRadius: "12px",
+                      padding: "16px",
+                      textAlign: "center",
+                    }}>
+                      <div style={{
+                        fontSize: "1.8rem",
+                        fontWeight: "800",
+                        color: "#fff",
+                        marginBottom: "4px",
+                      }}>
+                        {stockAlertProduct.stock}
+                      </div>
+                      <div style={{
+                        color: "rgba(255,255,255,0.8)",
+                        fontSize: "0.8rem",
+                      }}>
+                        Sisa Stock
+                      </div>
+                    </div>
+                    <div style={{
+                      background: "linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)",
+                      borderRadius: "12px",
+                      padding: "16px",
+                      textAlign: "center",
+                    }}>
+                      <div style={{
+                        fontSize: "1.8rem",
+                        fontWeight: "800",
+                        color: "#fff",
+                        marginBottom: "4px",
+                      }}>
+                        {stockAlertProduct.currentQty || 0}
+                      </div>
+                      <div style={{
+                        color: "rgba(255,255,255,0.8)",
+                        fontSize: "0.8rem",
+                      }}>
+                        Sudah di Keranjang
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+
+              {/* Info Message */}
+              <div style={{
+                background: "rgba(239, 68, 68, 0.1)",
+                border: "1px solid rgba(239, 68, 68, 0.3)",
+                borderRadius: "10px",
+                padding: "12px 16px",
+                display: "flex",
+                alignItems: "center",
+                gap: "10px",
+              }}>
+                <span style={{ fontSize: "1.2rem" }}>💡</span>
+                <span style={{
+                  color: "#fca5a5",
+                  fontSize: "0.85rem",
+                }}>
+                  {stockAlertProduct.stock === 0
+                    ? "Produk ini sudah habis. Silakan pilih produk lain atau tunggu restock."
+                    : `Anda hanya dapat menambahkan maksimal ${stockAlertProduct.stock} item untuk produk ini.`
+                  }
+                </span>
+              </div>
+            </div>
+
+            {/* FOOTER */}
+            <div style={{
+              padding: "16px 24px 24px",
+              display: "flex",
+              gap: "12px",
+            }}>
+              <button
+                onClick={() => setShowStockAlert(false)}
+                style={{
+                  flex: 1,
+                  background: "linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)",
+                  color: "#fff",
+                  border: "none",
+                  borderRadius: "12px",
+                  padding: "14px",
+                  fontSize: "1rem",
+                  fontWeight: "600",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "8px",
+                  transition: "all 0.2s ease",
+                  boxShadow: "0 4px 15px rgba(99, 102, 241, 0.4)",
+                }}
+                onMouseOver={(e) => e.currentTarget.style.transform = "translateY(-2px)"}
+                onMouseOut={(e) => e.currentTarget.style.transform = "translateY(0)"}
+              >
+                <FaTimes />
+                Tutup
+              </button>
+            </div>
           </div>
         </div>
       )}

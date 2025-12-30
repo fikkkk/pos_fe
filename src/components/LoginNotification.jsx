@@ -1,17 +1,94 @@
 import React, { useEffect, useState, useRef } from "react";
-import { FaCheckCircle, FaTimes, FaStar } from "react-icons/fa";
+import { FaCheckCircle, FaTimes, FaStar, FaUserShield, FaCashRegister, FaCrown, FaUserAlt } from "react-icons/fa";
 
 /**
  * Modern Login Notification
  * Premium glassmorphism style with animations
+ * Supports different popups based on user role
  */
-export default function LoginNotification({ show, onClose, userName }) {
+export default function LoginNotification({ show, onClose, userName, userRole }) {
   const [render, setRender] = useState(show);
   const [visible, setVisible] = useState(false);
   const [progress, setProgress] = useState(100);
   const progressRef = useRef(null);
 
   const AUTO_DISMISS_MS = 5000;
+
+  // Role-based configuration
+  const getRoleConfig = (role) => {
+    const normalizedRole = (role || "").toUpperCase();
+
+    switch (normalizedRole) {
+      case "PELANGGAN":
+        return {
+          title: "Selamat Datang, Pelanggan!",
+          subtitle: "Nikmati kemudahan berbelanja dengan POS Nuka",
+          emoji: "🛒",
+          icon: FaUserAlt,
+          gradient: "linear-gradient(135deg, #667eea 0%, #764ba2 50%, #6B8DD6 100%)",
+          borderColor: "rgba(102, 126, 234, 0.2)",
+          progressGradient: "linear-gradient(90deg, #667eea, #764ba2)",
+          bgGradient: "linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(240,240,255,0.95) 100%)",
+          shimmer: "linear-gradient(90deg, #667eea, #764ba2, #667eea)",
+          nameColor: "#667eea",
+        };
+      case "ADMIN":
+        return {
+          title: "Selamat Datang, Admin!",
+          subtitle: "Kelola toko Anda dengan mudah",
+          emoji: "⚙️",
+          icon: FaUserShield,
+          gradient: "linear-gradient(135deg, #f093fb 0%, #f5576c 50%, #f093fb 100%)",
+          borderColor: "rgba(240, 147, 251, 0.2)",
+          progressGradient: "linear-gradient(90deg, #f093fb, #f5576c)",
+          bgGradient: "linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,240,245,0.95) 100%)",
+          shimmer: "linear-gradient(90deg, #f093fb, #f5576c, #f093fb)",
+          nameColor: "#f5576c",
+        };
+      case "KASIR":
+        return {
+          title: "Selamat Datang, Kasir!",
+          subtitle: "Siap melayani transaksi hari ini",
+          emoji: "💰",
+          icon: FaCashRegister,
+          gradient: "linear-gradient(135deg, #11998e 0%, #38ef7d 50%, #11998e 100%)",
+          borderColor: "rgba(17, 153, 142, 0.2)",
+          progressGradient: "linear-gradient(90deg, #11998e, #38ef7d)",
+          bgGradient: "linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(240,255,250,0.95) 100%)",
+          shimmer: "linear-gradient(90deg, #11998e, #38ef7d, #11998e)",
+          nameColor: "#11998e",
+        };
+      case "SUPER_ADMIN":
+        return {
+          title: "Selamat Datang, Super Admin!",
+          subtitle: "Kontrol penuh atas sistem POS Nuka",
+          emoji: "👑",
+          icon: FaCrown,
+          gradient: "linear-gradient(135deg, #ff416c 0%, #ff4b2b 30%, #ffd200 70%, #ff416c 100%)",
+          borderColor: "rgba(255, 65, 108, 0.3)",
+          progressGradient: "linear-gradient(90deg, #ff416c, #ffd200, #ff4b2b)",
+          bgGradient: "linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,245,240,0.95) 50%, rgba(255,250,230,0.95) 100%)",
+          shimmer: "linear-gradient(90deg, #ff416c, #ffd200, #ff4b2b, #ff416c)",
+          nameColor: "#ff416c",
+        };
+      default:
+        return {
+          title: "Login Berhasil!",
+          subtitle: "Selamat datang kembali",
+          emoji: "🎉",
+          icon: FaCheckCircle,
+          gradient: "linear-gradient(135deg, #2ecc71 0%, #27ae60 50%, #1abc9c 100%)",
+          borderColor: "rgba(46, 204, 113, 0.2)",
+          progressGradient: "linear-gradient(90deg, #2ecc71, #27ae60)",
+          bgGradient: "linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(240,253,244,0.95) 100%)",
+          shimmer: "linear-gradient(90deg, #2ecc71, #27ae60, #2ecc71)",
+          nameColor: "#2ecc71",
+        };
+    }
+  };
+
+  const roleConfig = getRoleConfig(userRole);
+  const IconComponent = roleConfig.icon;
 
   useEffect(() => {
     if (show) {
@@ -111,7 +188,7 @@ export default function LoginNotification({ show, onClose, userName }) {
           align-items: center;
           gap: 14px;
           padding: 18px 22px;
-          background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(240,253,244,0.95) 100%);
+          background: ${roleConfig.bgGradient};
           backdrop-filter: blur(20px);
           -webkit-backdrop-filter: blur(20px);
           border-radius: 20px;
@@ -120,9 +197,9 @@ export default function LoginNotification({ show, onClose, userName }) {
             0 8px 25px rgba(46, 204, 113, 0.15),
             0 0 0 1px rgba(255,255,255,0.8) inset,
             0 2px 0 rgba(255,255,255,0.9) inset;
-          border: 1px solid rgba(46, 204, 113, 0.2);
-          max-width: 380px;
-          min-width: 320px;
+          border: 1px solid ${roleConfig.borderColor};
+          max-width: 420px;
+          min-width: 340px;
           position: relative;
           overflow: hidden;
         }
@@ -133,7 +210,7 @@ export default function LoginNotification({ show, onClose, userName }) {
           left: 0;
           right: 0;
           height: 3px;
-          background: linear-gradient(90deg, #2ecc71, #27ae60, #2ecc71);
+          background: ${roleConfig.shimmer};
           background-size: 200% 100%;
           animation: shimmer 2s linear infinite;
         }
@@ -143,7 +220,7 @@ export default function LoginNotification({ show, onClose, userName }) {
           display: flex;
           align-items: center;
           justify-content: center;
-          background: linear-gradient(135deg, #2ecc71 0%, #27ae60 50%, #1abc9c 100%);
+          background: ${roleConfig.gradient};
           border-radius: 14px;
           color: #fff;
           font-size: 22px;
@@ -178,7 +255,7 @@ export default function LoginNotification({ show, onClose, userName }) {
           line-height: 1.4;
         }
         .notification-subtitle b {
-          color: #2ecc71;
+          color: ${roleConfig.nameColor};
           font-weight: 600;
         }
         .notification-close {
@@ -203,7 +280,7 @@ export default function LoginNotification({ show, onClose, userName }) {
           bottom: 0;
           left: 0;
           height: 4px;
-          background: linear-gradient(90deg, #2ecc71, #27ae60);
+          background: ${roleConfig.progressGradient};
           border-radius: 0 0 20px 20px;
           transition: width 0.1s linear;
         }
@@ -234,16 +311,16 @@ export default function LoginNotification({ show, onClose, userName }) {
 
           {/* Icon */}
           <div className="notification-icon">
-            <FaCheckCircle />
+            <IconComponent />
           </div>
 
           {/* Content */}
           <div className="notification-content">
             <h4 className="notification-title">
-              Login Berhasil! <span className="emoji">🎉</span>
+              {roleConfig.title} <span className="emoji">{roleConfig.emoji}</span>
             </h4>
             <p className="notification-subtitle">
-              Selamat datang kembali, <b>{userName || "User"}</b>
+              {roleConfig.subtitle}, <b>{userName || "User"}</b>
             </p>
           </div>
 
