@@ -9,10 +9,7 @@ import {
   FaCog,
   FaSignOutAlt,
   FaExclamationTriangle,
-<<<<<<< Updated upstream
-=======
   FaTimes,
->>>>>>> Stashed changes
 } from "react-icons/fa";
 import "./Dashboard.css";
 import ThemeToggle from "./dashboard/ThemeToggle";
@@ -241,23 +238,6 @@ export default function Sidebar({ activeMenu, setActiveMenu, isDarkMode, toggleT
 
       {/* LOGOUT CONFIRMATION MODAL */}
       {showLogoutModal && (
-<<<<<<< Updated upstream
-        <div className="logout-modal-overlay" onClick={() => setShowLogoutModal(false)}>
-          <div className="logout-modal-content" onClick={(e) => e.stopPropagation()}>
-            <div className="logout-modal-icon">
-              <FaExclamationTriangle />
-            </div>
-            <h3 className="logout-modal-title">Konfirmasi Logout</h3>
-            <p className="logout-modal-message">
-              Apakah Anda yakin ingin keluar dari aplikasi?
-            </p>
-            <div className="logout-modal-actions">
-              <button className="logout-btn-cancel" onClick={() => setShowLogoutModal(false)}>
-                Batal
-              </button>
-              <button className="logout-btn-confirm" onClick={confirmLogout}>
-                Ya, Logout
-=======
         <div className="logout-overlay" onClick={cancelLogout}>
           <div className="logout-modal" onClick={(e) => e.stopPropagation()}>
             {/* Close Button */}
@@ -305,7 +285,6 @@ export default function Sidebar({ activeMenu, setActiveMenu, isDarkMode, toggleT
               <button className="logout-btn-confirm" onClick={confirmLogout}>
                 <FaSignOutAlt />
                 <span>Ya, Logout</span>
->>>>>>> Stashed changes
               </button>
             </div>
           </div>
@@ -314,4 +293,3 @@ export default function Sidebar({ activeMenu, setActiveMenu, isDarkMode, toggleT
     </>
   );
 }
-
