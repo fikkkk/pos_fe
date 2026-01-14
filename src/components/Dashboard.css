@@ -881,15 +881,27 @@ body {
   padding: 10px 14px;
   background: transparent;
   border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--line);
   transition: all 0.2s ease;
   cursor: pointer;
 }
 
 .donut-legend li:hover,
 .donut-legend li.active {
+  background: var(--bg);
+  border-color: var(--line);
+}
+
+/* Dark mode: remove any white artifacts */
+.dashboard.dark .donut-legend li {
+  border-color: transparent;
+  background: transparent;
+}
+
+.dashboard.dark .donut-legend li:hover,
+.dashboard.dark .donut-legend li.active {
   background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
 .donut-legend .dot {
